@@ -172,6 +172,21 @@ This file is updated at the end of each working session.
 - Continue full real-auth browser QA with a confirmed Supabase student account.
 - Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
 
+## 2026-05-14 - Landing Glass Ask Input
+
+### Completed
+- Changed the landing hero ask input field to a glassmorphic surface with a thin white border.
+- Kept the landing hero `ASK` CTA as a white button with black text.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- This update only affects the landing hero ask input.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
 ## 2026-05-14 - Chat Input Glassmorphism Update
 
 ### Completed
