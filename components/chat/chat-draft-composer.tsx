@@ -31,7 +31,7 @@ export function ChatDraftComposer({
       </div>
 
       <textarea
-        className="mt-4 min-h-[132px] w-full resize-none rounded-[12px] border border-white/18 bg-white px-4 py-3 text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-black outline-none placeholder:text-black/45 focus-visible:ring-2 focus-visible:ring-white/50"
+        className="mt-4 min-h-[132px] w-full resize-none rounded-[12px] border border-white/22 bg-white/10 px-4 py-3 text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] placeholder:text-white/45 focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24"
         onChange={(event) => setDraft(event.target.value)}
         placeholder="Ask a question from your syllabus..."
         value={draft}
@@ -42,7 +42,7 @@ export function ChatDraftComposer({
           AI/RAG is not connected yet. Your question stays as a draft.
         </p>
         <button
-          className="inline-flex h-11 items-center justify-center rounded-[12px] bg-white px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] text-black disabled:opacity-55"
+          className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/22 bg-white/12 px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[18px] disabled:opacity-55"
           disabled
           type="button"
         >

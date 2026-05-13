@@ -147,9 +147,24 @@
   body {
     @apply bg-background text-foreground;
     background-color: var(--mw-dark-charcoal);
+    overflow-x: hidden;
   }
   html {
     @apply font-sans;
+  }
+  :where(h1, h2, h3, h4, h5, h6, p, span, small, li, dt, dd, figcaption, blockquote, label) {
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  :where(input, textarea) {
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  :where(a, button, select, option) {
+    user-select: none;
+    -webkit-user-select: none;
   }
 }
 

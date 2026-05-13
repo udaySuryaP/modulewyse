@@ -172,6 +172,48 @@ This file is updated at the end of each working session.
 - Continue full real-auth browser QA with a confirmed Supabase student account.
 - Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
 
+## 2026-05-14 - Landing Simplification Tweaks
+
+### Completed
+- Removed the three landing feature cards: `MODULE-AWARE`, `EXAM-READY`, and `CURATED CONTENT`.
+- Changed the hero ask-box powered label to `POWERED BY O4-MINI`.
+- Changed the hero ask-box submit button to white with a black arrow.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- The landing page now flows directly from hero ask box to the subject status panel.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - UI Polish, Glass Inputs, Motion
+
+### Completed
+- Added `framer-motion` and reusable liquid reveal/stagger wrappers.
+- Applied smooth motion to the landing, auth, and chat dashboard surfaces with reduced-motion handling.
+- Made display text non-selectable across headings, body copy, labels, and metadata while keeping inputs and textareas selectable/editable.
+- Stabilized the shared background image layer with a fixed large-viewport-height background to reduce vertical drift during scroll.
+- Converted auth, onboarding, landing, and chat inputs from white fields to glassmorphic fields with thin white borders.
+- Added password visibility eye toggles to password fields through the shared `TextInput` component.
+- Added missing onboarding placeholders for college name, graduation year, and referral source.
+- Converted the landing ask arrow button and chat mock ask button to glassmorphic controls.
+- Browser smoke-tested:
+  - `/login` password placeholder renders
+  - password eye toggle button renders
+  - `/` hero input renders
+  - `/` subject panel renders
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- `npm install framer-motion` reported two moderate audit findings in the dependency tree; no forced audit fix was applied because it may introduce breaking changes.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
 ## 2026-05-14 - Subject Preview Mobile Trim
 
 ### Completed

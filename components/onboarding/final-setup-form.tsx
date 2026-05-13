@@ -88,6 +88,7 @@ export function FinalSetupForm() {
       <Field label="How did you hear about ModuleWyse?">
         <TextInput
           onChange={(event) => setReferralSource(event.target.value)}
+          placeholder="Friend, class group, search, or social media"
           required
           value={referralSource}
         />

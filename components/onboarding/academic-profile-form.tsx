@@ -56,6 +56,7 @@ export function AcademicProfileForm() {
       <Field label="College name">
         <TextInput
           onChange={(event) => setCollegeName(event.target.value)}
+          placeholder="Enter your college name"
           required
           value={collegeName}
         />
@@ -66,6 +67,7 @@ export function AcademicProfileForm() {
           max="2035"
           min="2020"
           onChange={(event) => setGraduationYear(event.target.value)}
+          placeholder="2026"
           required
           type="number"
           value={graduationYear}
