@@ -11,12 +11,19 @@ const MAX_LENGTH = 3000;
 export function HeroAskBox() {
   const router = useRouter();
   const [question, setQuestion] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const route = nextRouteForQuestion(question);
-    router.push(route);
+    setIsSubmitting(true);
+
+    try {
+      const route = await nextRouteForQuestion(question);
+      router.push(route);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -30,7 +37,7 @@ export function HeroAskBox() {
           <span>Powered by o4-mini</span>
         </div>
 
-        <div className="flex min-h-[58px] items-center gap-3 rounded-[12px] bg-white px-4 py-2 text-black shadow-[0_16px_40px_rgba(0,0,0,0.12)] sm:min-h-[74px] sm:py-3">
+        <div className="flex min-h-[50px] items-center gap-3 rounded-[12px] bg-white px-4 py-1.5 text-black shadow-[0_16px_40px_rgba(0,0,0,0.12)] sm:min-h-[62px] sm:py-2">
           <input
             aria-label="Ask a question from your syllabus"
             className="min-w-0 flex-1 bg-transparent text-[14px] font-normal leading-[1.35] tracking-[-0.02em] text-black outline-none placeholder:text-black/55 sm:text-[16px]"
@@ -42,6 +49,7 @@ export function HeroAskBox() {
           <button
             aria-label="Ask ModuleWyse"
             className="grid size-8 shrink-0 place-items-center rounded-full bg-black text-white transition-colors hover:bg-black/82 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 sm:size-10"
+            disabled={isSubmitting}
             type="submit"
           >
             <ArrowUp className="size-4 sm:size-5" strokeWidth={2} />

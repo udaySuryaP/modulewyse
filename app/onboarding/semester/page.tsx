@@ -1,14 +1,14 @@
-import { OnboardingContinuityPage } from "@/components/landing/onboarding-continuity-page";
-import { ROUTES } from "@/lib/constants";
+import { OnboardingShell } from "@/components/onboarding/onboarding-shell";
+import { SemesterForm } from "@/components/onboarding/semester-form";
 
 export default function SemesterPage() {
   return (
-    <OnboardingContinuityPage
-      body="Semester and subject selection will control the module-aware chat context."
-      primaryHref={ROUTES.ONBOARDING_FINAL}
-      primaryLabel="Continue"
+    <OnboardingShell
+      body="Semester selection controls which subjects and module-aware answers are prioritized."
       step="Step 3 / Semester"
       title="Pick your semester."
-    />
+    >
+      <SemesterForm />
+    </OnboardingShell>
   );
 }

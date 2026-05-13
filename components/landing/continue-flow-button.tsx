@@ -19,7 +19,7 @@ export function ContinueFlowButton({
   return (
     <GlassButton
       className={className}
-      onClick={() => router.push(pendingDestinationRoute())}
+      onClick={() => router.push(pendingDestinationRoute() ?? "/chat")}
     >
       {children}
     </GlassButton>

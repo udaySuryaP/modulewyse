@@ -1,16 +1,14 @@
-import { AuthContinuityPage } from "@/components/landing/auth-continuity-page";
-import { ROUTES } from "@/lib/constants";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { SignupForm } from "@/components/auth/signup-form";
 
 export default function SignupPage() {
   return (
-    <AuthContinuityPage
+    <AuthShell
       body="Create your student account, then complete a short academic setup before opening the dashboard."
       eyebrow="Student access"
-      primaryHref={ROUTES.ONBOARDING_ACADEMIC}
-      primaryLabel="Continue Setup"
-      secondaryHref={ROUTES.LOGIN}
-      secondaryLabel="Login"
       title="Start with ModuleWyse."
-    />
+    >
+      <SignupForm />
+    </AuthShell>
   );
 }

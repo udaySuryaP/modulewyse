@@ -1,30 +1,10 @@
+import { hasSupabasePublicEnv } from "@/lib/env";
+import { createClient } from "@/lib/supabase/client";
+
 export const PENDING_QUESTION_KEY = "modulewyse.pendingQuestion";
 export const PENDING_DESTINATION_KEY = "modulewyse.pendingDestination";
-export const DEMO_AUTHENTICATED_KEY = "modulewyse.demo.authenticated";
-export const DEMO_ONBOARDING_COMPLETE_KEY =
-  "modulewyse.demo.onboardingComplete";
 
 export type PendingDestination = "/chat" | "/subjects";
-
-export type ClientAuthState = {
-  isAuthenticated: boolean;
-  isOnboardingComplete: boolean;
-};
-
-export function getClientAuthState(): ClientAuthState {
-  if (typeof window === "undefined") {
-    return {
-      isAuthenticated: false,
-      isOnboardingComplete: false,
-    };
-  }
-
-  return {
-    isAuthenticated: localStorage.getItem(DEMO_AUTHENTICATED_KEY) === "true",
-    isOnboardingComplete:
-      localStorage.getItem(DEMO_ONBOARDING_COMPLETE_KEY) === "true",
-  };
-}
 
 export function savePendingQuestion(question: string) {
   if (typeof window === "undefined") {
@@ -91,39 +71,6 @@ export function chatHrefWithQuestion(question: string) {
   return `/chat?q=${encodeURIComponent(trimmedQuestion)}`;
 }
 
-export function nextRouteForQuestion(question: string) {
-  const { isAuthenticated, isOnboardingComplete } = getClientAuthState();
-
-  savePendingQuestion(question);
-  savePendingDestination("/chat");
-
-  if (!isAuthenticated) {
-    return "/signup";
-  }
-
-  if (!isOnboardingComplete) {
-    return "/onboarding/academic-profile";
-  }
-
-  return chatHrefWithQuestion(question);
-}
-
-export function nextRouteForSubjects() {
-  const { isAuthenticated, isOnboardingComplete } = getClientAuthState();
-
-  savePendingDestination("/subjects");
-
-  if (!isAuthenticated) {
-    return "/signup";
-  }
-
-  if (!isOnboardingComplete) {
-    return "/onboarding/academic-profile";
-  }
-
-  return "/subjects";
-}
-
 export function pendingDestinationRoute() {
   const destination = readPendingDestination();
 
@@ -137,5 +84,55 @@ export function pendingDestinationRoute() {
     return chatHrefWithQuestion(readPendingQuestion());
   }
 
-  return "/chat";
+  return null;
+}
+
+async function getClientOnboardingState() {
+  if (!hasSupabasePublicEnv()) {
+    return {
+      isAuthenticated: false,
+      isOnboardingComplete: false,
+    };
+  }
+
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      isAuthenticated: false,
+      isOnboardingComplete: false,
+    };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("onboarding_completed")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  return {
+    isAuthenticated: true,
+    isOnboardingComplete: Boolean(profile?.onboarding_completed),
+  };
+}
+
+export async function nextRouteForQuestion(question: string) {
+  const { isAuthenticated, isOnboardingComplete } =
+    await getClientOnboardingState();
+
+  savePendingQuestion(question);
+  savePendingDestination("/chat");
+
+  if (!isAuthenticated) {
+    return "/signup";
+  }
+
+  if (!isOnboardingComplete) {
+    return "/onboarding/academic-profile";
+  }
+
+  return chatHrefWithQuestion(question);
 }
