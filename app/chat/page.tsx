@@ -12,7 +12,7 @@ export default function ChatPage() {
       <PageOverlay />
       <main className="min-h-dvh">
         <LandingNavigation />
-        <section className="mx-auto grid w-full max-w-[900px] gap-5 px-5 py-16 sm:px-8">
+        <section className="mx-auto grid w-full gap-5 px-5 py-16 sm:px-8 lg:px-14">
           <div className="rounded-[12px] border border-white/18 bg-white/12 p-6 backdrop-blur-[28px] sm:p-8">
             <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
               Student dashboard

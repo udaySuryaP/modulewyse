@@ -26,7 +26,7 @@ export function OnboardingContinuityPage({
     <>
       <VideoBackground />
       <PageOverlay />
-      <main className="grid min-h-dvh place-items-center px-5 py-10">
+      <main className="grid min-h-dvh place-items-center px-5 py-10 sm:px-8 lg:px-14">
         <section className="w-full max-w-[560px] rounded-[12px] border border-white/18 bg-white/12 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[28px] sm:p-8">
           <Link
             className="text-[24px] font-normal leading-none tracking-[-0.03em] text-white"

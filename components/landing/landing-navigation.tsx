@@ -1,15 +1,17 @@
+import Link from "next/link";
+
 import { GlassButton } from "@/components/landing/glass-button";
 import { ROUTES } from "@/lib/constants";
 
 export function LandingNavigation() {
   return (
-    <header className="relative z-10 flex w-full items-center justify-between px-5 py-4 sm:px-8 lg:px-[120px]">
-      <a
+    <header className="relative z-10 flex w-full items-center justify-between px-5 py-4 sm:px-8 lg:px-14">
+      <Link
         className="text-[20px] font-normal leading-none tracking-[-0.03em] text-white sm:text-[24px]"
         href={ROUTES.HOME}
       >
         ModuleWyse
-      </a>
+      </Link>
 
       <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">
         <GlassButton

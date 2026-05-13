@@ -18,14 +18,19 @@ export default function SubjectsPage() {
       <PageOverlay />
       <main className="min-h-dvh">
         <LandingNavigation />
-        <section className="mx-auto w-full max-w-[900px] px-5 py-16 sm:px-8">
+        <section className="mx-auto w-full px-5 py-16 sm:px-8 lg:px-14">
           <div className="rounded-[12px] border border-white/18 bg-white/12 p-6 backdrop-blur-[28px] sm:p-8">
             <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
-              Available subjects
+              Subjects
             </p>
             <h1 className="mt-4 text-[36px] font-normal leading-[1.1] tracking-[-0.03em] text-white">
-              Browse ModuleWyse subjects.
+              Browse available and upcoming ModuleWyse subjects.
             </h1>
+            <p className="mt-4 max-w-[760px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+              Start with available subjects and see what is currently in beta
+              or coming soon.
+            </p>
+
             <div className="mt-8 grid gap-3">
               {subjects.map(([name, status]) => (
                 <div

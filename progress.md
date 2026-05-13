@@ -28,6 +28,16 @@ This file is updated at the end of each working session.
 - Updated the root layout and shared landing background component to use `/images/bgImage.png` as the app-wide background.
 - Re-ran `npm run lint` and `npm run build`; both pass after the background change.
 - Opened/refreshed the app in Chrome at `http://localhost:3000` to render the updated background.
+- Updated the landing layout per feedback:
+  - desktop page padding is now `56px` on the active app surfaces
+  - changed visible `KTU AI EXAM PREP` copy to `KTU BASED EXAM PREP COMPANION`
+  - reduced the hero input placeholder/input text by 4px
+  - removed the `S4`, `OOP`, `Module 3`, and `0/3,000` row
+  - stretched the three preview cards and subject panel to the available content width
+  - made `VIEW SUBJECTS` open `/subjects` directly
+  - expanded `/subjects` into a full-width page with the existing navbar and subject status list
+- Re-ran `npm run lint` and `npm run build`; both pass after these layout changes.
+- Verified in Chrome that `VIEW SUBJECTS` navigates to `/subjects`.
 
 ### Issues / Notes
 - The app is still mostly placeholder screens before the landing page implementation.
@@ -36,6 +46,7 @@ This file is updated at the end of each working session.
 - The video background depends on the provided remote CloudFront URL staying available.
 - The login/signup screens preserve visual continuity but are not real auth forms yet.
 - The former `VideoBackground` component now renders the shared background image, despite the legacy component name.
+- The subjects page still uses static placeholder subject data until the database layer exists.
 
 ### Next
 - Implement Supabase auth, profiles, onboarding persistence, route guards, and real redirect decisions.

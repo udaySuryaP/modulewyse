@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 
 import { GlassButton } from "@/components/landing/glass-button";
 import { StatusBadge } from "@/components/landing/status-badge";
-import { nextRouteForSubjects } from "@/lib/landing-flow";
 
 const subjects = [
   {
@@ -33,7 +32,7 @@ export function SubjectStatusPanel() {
   const router = useRouter();
 
   return (
-    <aside className="mx-auto w-full max-w-[760px] rounded-[12px] border border-white/18 bg-black/24 p-5 backdrop-blur-[28px] sm:p-6">
+    <aside className="mx-auto w-full rounded-[12px] border border-white/18 bg-black/24 p-5 backdrop-blur-[28px] sm:p-6">
       <h2 className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
         Available Subjects
       </h2>
@@ -54,7 +53,7 @@ export function SubjectStatusPanel() {
 
       <GlassButton
         className="mt-5 w-full"
-        onClick={() => router.push(nextRouteForSubjects())}
+        onClick={() => router.push("/subjects")}
         variant="primary"
       >
         View Subjects

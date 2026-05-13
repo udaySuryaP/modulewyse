@@ -15,7 +15,7 @@ export default function HomePage() {
       <main className="relative min-h-dvh overflow-hidden">
         <LandingNavigation />
 
-        <section className="mx-auto flex w-full max-w-[1200px] flex-col items-center px-5 pb-20 pt-12 sm:px-8 sm:pt-16 lg:px-0 lg:pt-[60px]">
+        <section className="mx-auto flex w-full flex-col items-center px-5 pb-20 pt-12 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[60px]">
           <div className="flex w-full -translate-y-4 flex-col items-center text-center sm:-translate-y-8 lg:-translate-y-12">
             <HeroBadge />
 
@@ -28,7 +28,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-2 grid w-full max-w-[960px] gap-4 md:grid-cols-3">
+          <div className="mt-2 grid w-full gap-4 md:grid-cols-3">
             <FeatureCard
               description="Choose semester, subject, and module before asking."
               label="MODULE-AWARE"
@@ -51,8 +51,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        <footer className="relative z-10 flex flex-col gap-2 px-5 pb-6 text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/55 sm:px-8 lg:flex-row lg:justify-between lg:px-[120px]">
-          <p>CURATED NOTES / MODULE-AWARE ANSWERS / KTU AI EXAM PREP WEB APP</p>
+        <footer className="relative z-10 flex flex-col gap-2 px-5 pb-6 text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/55 sm:px-8 lg:flex-row lg:justify-between lg:px-14">
+          <p>
+            CURATED NOTES / MODULE-AWARE ANSWERS / KTU BASED EXAM PREP COMPANION
+          </p>
           <p>© 2026 MODULEWYSE / STUDENT BETA</p>
         </footer>
       </main>
