@@ -1,5 +1,3 @@
-import type { Profile } from "@/lib/auth/types";
-
 export function safeNextPath(next: string | null) {
   if (!next || !next.startsWith("/") || next.startsWith("//")) {
     return null;
@@ -8,11 +6,7 @@ export function safeNextPath(next: string | null) {
   return next;
 }
 
-export function redirectAfterAuth(profile: Profile | null, next?: string | null) {
-  if (!profile?.onboarding_completed) {
-    return "/onboarding/academic-profile";
-  }
-
+export function redirectAfterAuth(next?: string | null) {
   return safeNextPath(next ?? null) ?? "/chat";
 }
 

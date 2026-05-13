@@ -16,19 +16,23 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      return NextResponse.redirect(
+        new URL("/login?error=callback", request.url),
+      );
+    }
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (user) {
-      const profile = await ensureProfile(supabase, user);
-      return NextResponse.redirect(
-        new URL(redirectAfterAuth(profile, next), request.url),
-      );
+      await ensureProfile(supabase, user);
+      return NextResponse.redirect(new URL(redirectAfterAuth(next), request.url));
     }
   }
 
-  return NextResponse.redirect(new URL("/login", request.url));
+  return NextResponse.redirect(new URL("/login?error=callback", request.url));
 }

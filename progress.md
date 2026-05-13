@@ -116,3 +116,74 @@ This file is updated at the end of each working session.
   - `/chat` redirects logged-out users to `/login?next=/chat`
 - Re-ran `npm run lint`; passed.
 - Re-ran `npm run build`; passed with `.env.local`.
+
+## 2026-05-14 - Student Auth Flow Redirect Update
+
+### Completed
+- Updated the auth redirect policy so successful login, immediate-session signup, and auth callback default to `/chat`.
+- Removed onboarding-completion checks from `proxy.ts`; the guard now only protects authenticated student routes and onboarding routes from logged-out users.
+- Allowed authenticated users to visit onboarding routes without being forced there before `/chat`.
+- Updated `/login` so it ensures the profile exists, preserves pending questions/destinations, honors safe `next` paths, and defaults to `/chat`.
+- Updated `/signup` so immediate-session signups ensure the profile and land on `/chat`; email-confirmation signups show a check-email state with a back-to-login action.
+- Updated `/auth/callback` to exchange the Supabase code, ensure the profile exists, and redirect to a safe `next` path or `/chat`.
+- Added `components/chat/chat-draft-composer.tsx` for the current non-AI chat draft state.
+- Updated `/chat` to:
+  - require an authenticated user
+  - show the normal dashboard even when onboarding is incomplete
+  - show a `Complete your academic setup` prompt when profile setup is incomplete
+  - prefill the draft composer from `?q=` or the stored pending question
+- Updated signout modal copy and fixed signout error text.
+- Added the missing forgot-password email placeholder.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+- Smoke-tested locally:
+  - `/login` renders placeholders
+  - `/signup` returns 200
+  - `/chat` logged out redirects to `/login?next=%2Fchat`
+  - `/subjects` logged out redirects to `/login?next=%2Fsubjects`
+  - `/onboarding/academic-profile` logged out redirects to `/login?next=%2Fonboarding%2Facademic-profile`
+  - `/auth/callback` without a code redirects to `/login?error=callback`
+
+### Issues / Notes
+- Full successful login/signup browser QA still needs a confirmed test account because Supabase email confirmation is enabled.
+- Pending question restoration after email-confirmation callback depends on browser session storage being available; login after confirmation preserves it reliably.
+- `/subjects` still uses static placeholder subject data.
+- Chat remains a draft/mock dashboard only; no AI/RAG calls are implemented.
+
+### Next
+- Test with a real confirmed Supabase student account through signup, login, onboarding, signout, and `/subjects`.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Mobile Landing Ask Box Fix
+
+### Completed
+- Fixed the hero ask-box mobile alignment for the 412x914 breakpoint and nearby mobile widths.
+- Tightened mobile form padding, label spacing, input height, input text sizing, and arrow button sizing.
+- Kept `Powered by o4-mini` on one line and aligned the ask-box meta labels cleanly on mobile.
+- Verified the page at a 412x914 mobile viewport.
+- Refreshed the local app in Chrome at `http://localhost:3000/`.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- The left ask-box meta can still wrap intentionally on narrow mobile screens because the full `KTU BASED EXAM PREP COMPANION` label is long.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Subject Preview Mobile Trim
+
+### Completed
+- Updated the landing subject status panel so subject names are trimmed after 22 characters.
+- Forced subject labels to stay on a single line with ellipsis behavior instead of wrapping.
+- Prevented status badges from shrinking when subject names are long.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- Full subject names remain available in the row title attribute for desktop hover.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.

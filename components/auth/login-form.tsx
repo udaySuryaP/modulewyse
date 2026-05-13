@@ -9,16 +9,28 @@ import { SubmitButton } from "@/components/auth/submit-button";
 import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { safeNextPath } from "@/lib/auth/redirects";
 import { hasSupabasePublicEnv } from "@/lib/env";
-import { pendingDestinationRoute } from "@/lib/landing-flow";
+import {
+  chatHrefWithQuestion,
+  pendingDestinationRoute,
+  readPendingQuestion,
+} from "@/lib/landing-flow";
 import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
+  const callbackError = searchParams.get("error") === "callback";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(next ? "Sign in to continue." : "");
+  const [notice] = useState(
+    callbackError
+      ? "Unable to complete sign in. Please try again."
+      : next
+        ? "Sign in to continue."
+        : "",
+  );
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -44,15 +56,15 @@ export function LoginForm() {
         return;
       }
 
-      const profile = await ensureProfile(supabase, data.user);
+      await ensureProfile(supabase, data.user);
 
-      if (!profile?.onboarding_completed) {
-        router.push("/onboarding/academic-profile");
-        router.refresh();
-        return;
-      }
-
-      router.push(pendingDestinationRoute() ?? next ?? "/chat");
+      const pendingQuestion = readPendingQuestion();
+      router.push(
+        pendingDestinationRoute() ??
+          (pendingQuestion
+            ? chatHrefWithQuestion(pendingQuestion)
+            : next ?? "/chat"),
+      );
       router.refresh();
     } catch {
       setMessage("Unable to connect. Please try again.");
@@ -84,9 +96,12 @@ export function LoginForm() {
         />
       </Field>
 
-      {message ? (
-        <FormMessage tone={next ? "muted" : "error"}>{message}</FormMessage>
+      {notice && !message ? (
+        <FormMessage tone={callbackError ? "error" : "muted"}>
+          {notice}
+        </FormMessage>
       ) : null}
+      {message ? <FormMessage>{message}</FormMessage> : null}
 
       <SubmitButton disabled={isSubmitting}>
         {isSubmitting ? "Signing In..." : "Login"}

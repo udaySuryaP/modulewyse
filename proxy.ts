@@ -61,29 +61,8 @@ export async function proxy(request: NextRequest) {
     return getResponse();
   }
 
-  let onboardingCompleted = false;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("onboarding_completed")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  onboardingCompleted = Boolean(profile?.onboarding_completed);
-
   if ((pathname === "/login" || pathname === "/signup") && user) {
-    return redirect(
-      request,
-      onboardingCompleted ? "/chat" : "/onboarding/academic-profile",
-    );
-  }
-
-  if (isOnboarding && onboardingCompleted) {
     return redirect(request, "/chat");
-  }
-
-  if (isProtected && !onboardingCompleted) {
-    return redirect(request, "/onboarding/academic-profile");
   }
 
   if (isPublic || isOnboarding || isProtected) {

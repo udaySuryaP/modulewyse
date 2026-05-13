@@ -8,6 +8,11 @@ import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { env, hasSupabasePublicEnv } from "@/lib/env";
+import {
+  chatHrefWithQuestion,
+  pendingDestinationRoute,
+  readPendingQuestion,
+} from "@/lib/landing-flow";
 import { createClient } from "@/lib/supabase/client";
 
 function authErrorMessage(message: string) {
@@ -86,12 +91,18 @@ export function SignupForm() {
 
       if (data.session && data.user) {
         await ensureProfile(supabase, data.user);
-        router.push("/onboarding/academic-profile");
+        const pendingQuestion = readPendingQuestion();
+        router.push(
+          pendingDestinationRoute() ??
+            (pendingQuestion ? chatHrefWithQuestion(pendingQuestion) : "/chat"),
+        );
         router.refresh();
         return;
       }
 
-      setSuccess("Check your email to confirm your account.");
+      setSuccess(
+        "Check your email. Confirm your account, then sign in to continue.",
+      );
     } catch {
       setMessage("Unable to connect. Please try again.");
     } finally {
@@ -149,6 +160,15 @@ export function SignupForm() {
       <SubmitButton disabled={isSubmitting}>
         {isSubmitting ? "Creating..." : "Create Account"}
       </SubmitButton>
+
+      {success ? (
+        <Link
+          className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/18 bg-white/10 px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] text-white"
+          href="/login"
+        >
+          Back To Login
+        </Link>
+      ) : null}
 
       <p className="text-center text-[14px] text-white/55">
         Already have an account?{" "}

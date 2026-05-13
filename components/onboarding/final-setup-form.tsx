@@ -65,7 +65,7 @@ export function FinalSetupForm() {
       );
       router.refresh();
     } catch {
-      setMessage("Couldn’t complete setup. Try again.");
+      setMessage("Couldn't complete setup. Try again.");
     } finally {
       setIsSubmitting(false);
     }
