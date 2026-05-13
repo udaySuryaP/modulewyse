@@ -47,7 +47,7 @@ export function HeroAskBox() {
           </span>
         </div>
 
-        <div className="flex min-h-[42px] items-center gap-2 rounded-[12px] border border-white/22 bg-white/10 px-3 py-1 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px] min-[380px]:min-h-[46px] min-[380px]:gap-3 min-[380px]:px-4 sm:min-h-[62px] sm:py-2">
+        <div className="flex min-h-[42px] items-center gap-2 rounded-[12px] border border-white/22 bg-white/10 px-2 py-1 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px] min-[380px]:min-h-[46px] min-[380px]:gap-3 min-[380px]:px-3 sm:min-h-[62px] sm:py-2">
           <input
             aria-label="Ask a question from your syllabus"
             className="min-w-0 flex-1 bg-transparent text-[13px] font-normal leading-[1.35] tracking-[-0.02em] text-white outline-none placeholder:text-white/45 min-[380px]:text-[14px] sm:text-[16px]"
@@ -58,7 +58,7 @@ export function HeroAskBox() {
           />
           <button
             aria-label="Ask ModuleWyse"
-            className="grid h-7 shrink-0 place-items-center rounded-[12px] bg-white px-3 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 min-[380px]:h-8 sm:h-10 sm:px-4 sm:text-[12px]"
+            className="grid h-7 shrink-0 place-items-center rounded-[12px] bg-white px-[14px] font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 min-[380px]:h-8 sm:h-10 sm:px-[18px] sm:text-[12px]"
             disabled={isSubmitting}
             type="submit"
           >

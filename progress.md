@@ -172,6 +172,21 @@ This file is updated at the end of each working session.
 - Continue full real-auth browser QA with a confirmed Supabase student account.
 - Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
 
+## 2026-05-14 - Ask Field Spacing Tweak
+
+### Completed
+- Increased the `ASK` CTA horizontal width slightly in the landing ask field and `/chat` draft composer.
+- Reduced horizontal padding inside the landing ask field and `/chat` draft composer field by 4px where applicable.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- No behavior or routing changed.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
 ## 2026-05-14 - Landing Glass Ask Input
 
 ### Completed

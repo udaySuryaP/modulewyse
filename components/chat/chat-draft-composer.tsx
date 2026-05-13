@@ -30,7 +30,7 @@ export function ChatDraftComposer({
         </p>
       </div>
 
-      <div className="mt-4 flex min-h-[56px] items-center gap-3 rounded-[12px] border border-white/22 bg-white/10 px-4 py-2 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px]">
+      <div className="mt-4 flex min-h-[56px] items-center gap-3 rounded-[12px] border border-white/22 bg-white/10 px-3 py-2 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px]">
         <input
           className="min-w-0 flex-1 bg-transparent text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white outline-none placeholder:text-white/45"
           onChange={(event) => setDraft(event.target.value)}
@@ -39,7 +39,7 @@ export function ChatDraftComposer({
         />
         <button
           aria-label="Ask ModuleWyse"
-          className="grid h-10 shrink-0 place-items-center rounded-[12px] bg-white px-4 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className="grid h-10 shrink-0 place-items-center rounded-[12px] bg-white px-[18px] font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           type="button"
         >
           Ask
