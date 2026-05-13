@@ -2,7 +2,7 @@
 
 ## 2026-05-12
 
-Current direction: KTU Prep AI is a curated KTU CSE exam-prep answer engine.
+Current direction: ModuleWyse is a curated KTU CSE exam-prep answer engine.
 
 Current decisions:
 - Student-side MVP first.

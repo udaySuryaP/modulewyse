@@ -1,30 +1,25 @@
 # ModuleWyse
 
-**ModuleWyse** — A curated AI exam-prep platform for KTU students with module-aware, syllabus-grounded answers from structured academic notes.
+ModuleWyse is a curated AI exam-prep platform for KTU students with module-aware, syllabus-grounded answers from structured academic notes.
 
 ## Tech Stack
 
 | Layer | Tech |
-|-------|------|
-| Framework | Next.js 15 (App Router) |
+| --- | --- |
+| Framework | Next.js 16 App Router |
 | Language | TypeScript |
 | Styling | Tailwind CSS v4 |
-| Components | shadcn/ui |
-| Auth / DB / Vector | Supabase (coming) |
-| AI Model | OpenAI o4-mini (coming) |
-| Embeddings | text-embedding-3-small (coming) |
+| Components | shadcn/ui and Base UI |
+| Auth / DB / Vector | Supabase planned |
+| AI Model | OpenAI model configured through env |
+| Embeddings | `text-embedding-3-small` planned |
 | Deployment | Vercel |
 
 ## Getting Started
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Copy env template and fill in values
 cp .env.example .env.local
-
-# 3. Run dev server
 npm run dev
 ```
 
@@ -32,31 +27,25 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
-```
-app/                  # Next.js App Router pages
-  ├── page.tsx        # Landing page
-  ├── login/          # Auth
-  ├── signup/
-  ├── forgot-password/
-  ├── onboarding/     # 4-step onboarding flow
-  ├── chat/           # AI chat interface
-  ├── subjects/       # Subject browsing
-  ├── library/        # Question history
-  ├── profile/        # User profile
-  └── settings/       # Account / academic / preferences
-components/
-  └── ui/             # shadcn/ui components
-lib/
-  ├── utils.ts        # cn() utility
-  ├── env.ts          # Type-safe env access
-  └── constants.ts    # App constants + routes + design tokens
-docs/                 # Product & design documentation
+```txt
+app/                  Next.js App Router pages
+components/           Reusable UI and landing components
+lib/                  App constants, env access, and helpers
+docs/                 Product and implementation documentation
+PROJECT_MEMORY.md     Durable project direction and working rules
+progress.md           End-of-session progress log
 ```
 
-## Docs
+## Current Scope
 
-See [`docs/README.md`](docs/README.md) for the full documentation index.
+The student-side MVP comes first: landing, auth/onboarding flow, subjects, chat, library, profile/settings, curated OOP content ingestion, RAG retrieval, answer verification, and eval gates.
+
+Students do not upload notes. Admin UI is deferred.
+
+## Workflow
+
+Before coding against Next.js APIs, read the relevant installed docs in `node_modules/next/dist/docs/` because this project uses Next.js 16. At the end of each session, update `progress.md` with completed work, issues, and next steps.
 
 ## License
 
-Private — not open-source.
+Private. Not open source.

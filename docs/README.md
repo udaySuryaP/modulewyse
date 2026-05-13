@@ -1,4 +1,4 @@
-# KTU Prep AI — Current Documentation Pack
+# ModuleWyse — Current Documentation Pack
 
 Updated: 2026-05-12  
 Status: Current canonical project docs  
@@ -8,7 +8,7 @@ Embedding model: OpenAI `text-embedding-3-small`
 Vector dimension: `1536`
 
 ## Current project direction
-KTU Prep AI is a curated KTU CSE exam-prep answer engine. It is not a generic chatbot.
+ModuleWyse is a curated KTU CSE exam-prep answer engine. It is not a generic chatbot.
 
 Students can sign up, complete onboarding, select semester/subject/module, ask questions, get syllabus-grounded answers from curated content, copy answers, give feedback, browse subjects/library, edit profile/settings, and sign out.
 

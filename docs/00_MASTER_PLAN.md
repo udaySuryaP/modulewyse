@@ -1,7 +1,7 @@
 # 00 — Master Plan
 
 ## Product summary
-KTU Prep AI is a student-facing AI exam-prep app for KTU CSE students. It gives clear, structured, exam-ready answers from curated academic material.
+ModuleWyse is a student-facing AI exam-prep app for KTU CSE students. It gives clear, structured, exam-ready answers from curated academic material.
 
 ## Current strategic direction
 ```txt
@@ -38,4 +38,4 @@ CSE alone can easily become 8 semesters × about 8 papers × 5 modules = around 
 - All branches available
 
 ## Success definition
-The MVP succeeds if students prefer KTU Prep AI answers over generic chatbot answers for selected CSE subjects.
+The MVP succeeds if students prefer ModuleWyse answers over generic chatbot answers for selected CSE subjects.

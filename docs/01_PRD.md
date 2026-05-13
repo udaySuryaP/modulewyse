@@ -1,7 +1,7 @@
 # 01 — Product Requirements Document
 
 ## Product name
-KTU Prep AI
+ModuleWyse
 
 ## Target users
 KTU CSE students preparing for exams.

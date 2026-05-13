@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,15 +8,16 @@ const inter = Inter({
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["500"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "ModuleWyse — KTU AI Exam Prep",
+    default: "ModuleWyse - KTU AI Exam Prep",
     template: "%s | ModuleWyse",
   },
   description:
@@ -40,14 +41,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} dark`}
+      className={`${inter.variable} ${ibmPlexMono.variable} dark`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh font-sans antialiased">
-        {/* Global cinematic background — fixed behind all pages */}
+        {/* Global cinematic background - fixed behind all pages */}
         <div
           className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/bg-gradient.png')" }}
+          style={{ backgroundImage: "url('/images/bgImage.png')" }}
           aria-hidden="true"
         />
         {children}
