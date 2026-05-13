@@ -1,16 +1,14 @@
-import { AuthContinuityPage } from "@/components/landing/auth-continuity-page";
-import { ROUTES } from "@/lib/constants";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 
 export default function ForgotPasswordPage() {
   return (
-    <AuthContinuityPage
-      body="Password reset will be connected with Supabase Auth in the next backend phase."
+    <AuthShell
+      body="Enter your email and ModuleWyse will send a secure password reset link."
       eyebrow="Account recovery"
-      primaryHref={ROUTES.LOGIN}
-      primaryLabel="Back To Login"
-      secondaryHref={ROUTES.SIGNUP}
-      secondaryLabel="Get Started"
       title="Reset access safely."
-    />
+    >
+      <ForgotPasswordForm />
+    </AuthShell>
   );
 }

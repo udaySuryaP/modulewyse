@@ -60,3 +60,59 @@ This file is updated at the end of each working session.
 - Replace the temporary local/session storage auth flow with Supabase session checks.
 - Build the real chat composer around the preserved pending question.
 - Add database schema, RLS, and seed content for the OOP-first MVP.
+
+## 2026-05-13 - Onboarding Branch
+
+### Completed
+- Created branch `onboarding`.
+- Installed only the requested Supabase packages:
+  - `@supabase/supabase-js`
+  - `@supabase/ssr`
+- Updated `.env.example` with the provided Supabase URL and required auth variables.
+- Added Supabase browser, server, and proxy clients.
+- Added `supabase/schema.sql` for the student `profiles` table, updated-at trigger, signup profile trigger, and RLS policies.
+- Added auth/profile helpers for profile creation, profile lookup, and redirect decisions.
+- Replaced placeholder signup, login, and forgot-password pages with real Supabase email/password forms while preserving the glass UI.
+- Added `/auth/callback` route for exchanging Supabase auth codes and redirecting based on onboarding state.
+- Replaced onboarding placeholders with real forms for academic profile, branch, semester, and final setup.
+- Added onboarding draft preservation between steps and final persistence into `profiles`.
+- Replaced fake localStorage auth checks in `lib/landing-flow.ts` with Supabase session/profile checks while preserving pending question behavior.
+- Added Next.js 16 `proxy.ts` route guard for protected and onboarding routes.
+- Added signout modal/action to `/settings` and `/profile`.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Real Supabase auth could not be tested end-to-end locally because `NEXT_PUBLIC_SUPABASE_ANON_KEY` was not provided and the SQL schema has not been confirmed as applied in Supabase yet.
+- `proxy.ts` is used instead of root `middleware.ts` because Next.js 16 local docs state Middleware is now called Proxy.
+- `/subjects` is now covered by the protected-route guard as requested in the auth prompt. The landing CTA still opens `/subjects`; unauthenticated users will be redirected by the guard once Supabase env is configured.
+- Password reset currently sends users through Supabase recovery to `/settings/account`; a dedicated password update UI is still minimal/future work.
+
+### Next
+- Add the Supabase anon key to `.env.local`.
+- Run `supabase/schema.sql` in the Supabase SQL editor.
+- Configure Supabase Auth redirect URLs for local and deployed app URLs.
+- Manually test signup, login, onboarding, protected redirects, signout, and forgot password.
+- Build real chat composer behavior around preserved pending question and mock conversation state, without AI/RAG yet.
+- Reduced the hero ask input inner vertical padding.
+- Added placeholders to signup and login form fields.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+- Refreshed Chrome preview at `http://localhost:3000`.
+- Added `.env.local` locally with the provided Supabase URL and anon key. This file remains ignored and must not be committed.
+- Applied `supabase/schema.sql` to Supabase project `frcdrjfupoqnlgqiwffy` via the connected Supabase tool.
+- Verified the Supabase schema:
+  - `public.profiles` exists
+  - RLS policies exist for own-profile select/insert/update
+  - `profiles_set_updated_at` trigger exists
+  - `on_auth_user_created` trigger exists
+- Smoke-tested real Supabase signup with a generated test email:
+  - signup API succeeded
+  - email confirmation is enabled because no session was returned
+  - signup trigger created a `profiles` row with `onboarding_completed = false`
+  - generated test user was deleted afterward
+- Browser smoke-tested:
+  - `/signup` renders form placeholders
+  - `/chat` redirects logged-out users to `/login?next=/chat`
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed with `.env.local`.

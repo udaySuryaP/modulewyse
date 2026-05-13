@@ -1,14 +1,14 @@
-import { OnboardingContinuityPage } from "@/components/landing/onboarding-continuity-page";
-import { ROUTES } from "@/lib/constants";
+import { BranchForm } from "@/components/onboarding/branch-form";
+import { OnboardingShell } from "@/components/onboarding/onboarding-shell";
 
 export default function BranchPage() {
   return (
-    <OnboardingContinuityPage
-      body="ModuleWyse will start with supported KTU engineering preparation content and expand through quality gates."
-      primaryHref={ROUTES.ONBOARDING_SEMESTER}
-      primaryLabel="Continue"
+    <OnboardingShell
+      body="Choose the study track ModuleWyse should use for subject and module context."
       step="Step 2 / Branch"
       title="Choose your study track."
-    />
+    >
+      <BranchForm />
+    </OnboardingShell>
   );
 }

@@ -1,26 +1,20 @@
 /**
- * Type-safe environment variable access.
+ * Environment variable access for ModuleWyse.
  *
- * Public (client-safe) variables use NEXT_PUBLIC_ prefix.
- * Server-only variables must never be imported in client components.
- *
- * This file will be expanded when Supabase / OpenAI integrations are added.
+ * Public variables are safe to import in client components.
+ * Server-only variables must never be imported into client components.
  */
 
-// ---------------------------------------------------------------------------
-// Public (available in browser)
-// ---------------------------------------------------------------------------
 export const env = {
   NEXT_PUBLIC_APP_URL:
     process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  NEXT_PUBLIC_SUPABASE_URL:
+    process.env.NEXT_PUBLIC_SUPABASE_URL ??
+    "https://frcdrjfupoqnlgqiwffy.supabase.co",
   NEXT_PUBLIC_SUPABASE_ANON_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
 } as const;
 
-// ---------------------------------------------------------------------------
-// Server-only (never import this object in client components)
-// ---------------------------------------------------------------------------
 export const serverEnv = {
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
@@ -32,3 +26,9 @@ export const serverEnv = {
   UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL ?? "",
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN ?? "",
 } as const;
+
+export function hasSupabasePublicEnv() {
+  return Boolean(
+    env.NEXT_PUBLIC_SUPABASE_URL && env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
