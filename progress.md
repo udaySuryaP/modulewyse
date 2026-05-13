@@ -172,6 +172,140 @@ This file is updated at the end of each working session.
 - Continue full real-auth browser QA with a confirmed Supabase student account.
 - Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
 
+## 2026-05-14 - Ask Field Spacing Tweak
+
+### Completed
+- Increased the `ASK` CTA horizontal width slightly in the landing ask field and `/chat` draft composer.
+- Reduced horizontal padding inside the landing ask field and `/chat` draft composer field by 4px where applicable.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- No behavior or routing changed.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Landing Glass Ask Input
+
+### Completed
+- Changed the landing hero ask input field to a glassmorphic surface with a thin white border.
+- Kept the landing hero `ASK` CTA as a white button with black text.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- This update only affects the landing hero ask input.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Chat Input Glassmorphism Update
+
+### Completed
+- Changed the `/chat` draft composer input field to a glassmorphic surface with a thin white border.
+- Kept the `/chat` `ASK` CTA as a white button with black text.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- This update only affects the `/chat` draft composer input.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Ask CTA Text Update
+
+### Completed
+- Changed the landing ask-box enter CTA from an arrow icon to `ASK`.
+- Changed the `/chat` draft composer enter CTA from an arrow icon to `ASK`.
+- Set both ask CTAs to `12px` border radius.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- No route or auth behavior changed.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Responsive Powered Label
+
+### Completed
+- Updated the landing ask-box powered label so it splits into `POWERED BY` and `O4-MINI` on small screens only.
+- Kept the powered label as `POWERED BY O4-MINI` on `md` and larger screens.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- No functional behavior changed.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Landing Input Radius Update
+
+### Completed
+- Changed the landing ask input shell to `12px` border radius.
+- Added a thin white border to the landing ask input shell.
+- Changed the landing ask submit button from circular to square with `4px` border radius.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- This update only affects the landing hero ask input.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Landing Powered Label Wrap
+
+### Completed
+- Updated the landing ask-box powered label so `POWERED BY` is right-aligned and `O4-MINI` appears on the next line.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- No functional behavior changed.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
+## 2026-05-14 - Auth Mobile Fit and Chat Input Reset
+
+### Completed
+- Restored the landing hero ask input to the previous white-field, black-enter-button style.
+- Set the landing hero ask input shell radius to `48px`.
+- Restored the `/chat` draft composer to a white single-line input with a black circular enter button.
+- Set the `/chat` draft composer input shell radius to `48px`.
+- Added a top-left secondary `HOME` CTA to auth pages.
+- Compacted the mobile auth shell spacing so signup fits in a single 412x914 viewport.
+- Shortened the signup page body copy.
+- Removed client-side signup email format validation and changed the signup email field from native `email` to `text` with email input mode.
+- Removed the signup success-state `BACK TO LOGIN` secondary CTA.
+- Shortened mobile auth input and submit heights.
+- Browser-verified `/signup` at 412x914:
+  - `HOME` CTA renders
+  - `CREATE ACCOUNT` renders
+  - signup form fits in the viewport
+  - removed `BACK TO LOGIN` success CTA from initial render
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+
+### Issues / Notes
+- Supabase will still validate email format server-side during signup; only the app-side/browser email validation was removed.
+
+### Next
+- Continue full real-auth browser QA with a confirmed Supabase student account.
+- Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+
 ## 2026-05-14 - Landing Simplification Tweaks
 
 ### Completed

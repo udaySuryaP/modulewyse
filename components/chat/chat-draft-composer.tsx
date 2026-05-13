@@ -30,25 +30,25 @@ export function ChatDraftComposer({
         </p>
       </div>
 
-      <textarea
-        className="mt-4 min-h-[132px] w-full resize-none rounded-[12px] border border-white/22 bg-white/10 px-4 py-3 text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] placeholder:text-white/45 focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24"
-        onChange={(event) => setDraft(event.target.value)}
-        placeholder="Ask a question from your syllabus..."
-        value={draft}
-      />
-
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/55">
-          AI/RAG is not connected yet. Your question stays as a draft.
-        </p>
+      <div className="mt-4 flex min-h-[56px] items-center gap-3 rounded-[12px] border border-white/22 bg-white/10 px-3 py-2 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px]">
+        <input
+          className="min-w-0 flex-1 bg-transparent text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white outline-none placeholder:text-white/45"
+          onChange={(event) => setDraft(event.target.value)}
+          placeholder="Ask a question from your syllabus..."
+          value={draft}
+        />
         <button
-          className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/22 bg-white/12 px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[18px] disabled:opacity-55"
-          disabled
+          aria-label="Ask ModuleWyse"
+          className="grid h-10 shrink-0 place-items-center rounded-[12px] bg-white px-[18px] font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           type="button"
         >
           Ask
         </button>
       </div>
+
+      <p className="mt-4 text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/55">
+        AI/RAG is not connected yet. Your question stays as a draft.
+      </p>
     </div>
   );
 }

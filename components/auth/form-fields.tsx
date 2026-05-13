@@ -6,7 +6,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const inputClassName =
-  "h-12 rounded-[12px] border border-white/22 bg-white/10 px-4 text-[16px] font-normal text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] placeholder:text-white/45 focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24";
+  "h-10 rounded-[12px] border border-white/22 bg-white/10 px-4 text-[15px] font-normal text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] placeholder:text-white/45 focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24 sm:h-12 sm:text-[16px]";
 
 export function Field({
   label,
@@ -74,7 +74,7 @@ export function SelectInput({
   return (
     <select
       className={cn(
-        "h-12 rounded-[12px] border border-white/22 bg-white/10 px-4 text-[16px] font-normal text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24 [&>option]:bg-[#101111] [&>option]:text-white",
+        "h-10 rounded-[12px] border border-white/22 bg-white/10 px-4 text-[15px] font-normal text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24 sm:h-12 sm:text-[16px] [&>option]:bg-[#101111] [&>option]:text-white",
         className,
       )}
       {...props}

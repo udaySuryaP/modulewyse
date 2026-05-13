@@ -49,11 +49,6 @@ export function SignupForm() {
       return;
     }
 
-    if (!email.includes("@")) {
-      setMessage("Enter a valid email address.");
-      return;
-    }
-
     if (password.length < 8) {
       setMessage("Use at least 8 characters.");
       return;
@@ -111,7 +106,7 @@ export function SignupForm() {
   }
 
   return (
-    <form className="grid gap-4" onSubmit={handleSubmit}>
+    <form className="grid gap-3 sm:gap-4" onSubmit={handleSubmit}>
       <Field label="Full name">
         <TextInput
           autoComplete="name"
@@ -124,10 +119,11 @@ export function SignupForm() {
       <Field label="Email">
         <TextInput
           autoComplete="email"
+          inputMode="email"
           onChange={(event) => setEmail(event.target.value)}
           placeholder="name@example.com"
           required
-          type="email"
+          type="text"
           value={email}
         />
       </Field>
@@ -160,15 +156,6 @@ export function SignupForm() {
       <SubmitButton disabled={isSubmitting}>
         {isSubmitting ? "Creating..." : "Create Account"}
       </SubmitButton>
-
-      {success ? (
-        <Link
-          className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/18 bg-white/10 px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] text-white"
-          href="/login"
-        >
-          Back To Login
-        </Link>
-      ) : null}
 
       <p className="text-center text-[14px] text-white/55">
         Already have an account?{" "}
