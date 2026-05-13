@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -59,11 +58,11 @@ export function HeroAskBox() {
           />
           <button
             aria-label="Ask ModuleWyse"
-            className="grid size-7 shrink-0 place-items-center rounded-[4px] bg-black text-white transition-colors hover:bg-black/82 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 min-[380px]:size-8 sm:size-10"
+            className="grid h-7 shrink-0 place-items-center rounded-[12px] bg-black px-3 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-white transition-colors hover:bg-black/82 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 min-[380px]:h-8 sm:h-10 sm:px-4 sm:text-[12px]"
             disabled={isSubmitting}
             type="submit"
           >
-            <ArrowUp className="size-3.5 min-[380px]:size-4 sm:size-5" strokeWidth={2} />
+            Ask
           </button>
         </div>
       </form>

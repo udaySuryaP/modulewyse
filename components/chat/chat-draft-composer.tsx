@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { readPendingQuestion, savePendingQuestion } from "@/lib/landing-flow";
@@ -31,19 +30,19 @@ export function ChatDraftComposer({
         </p>
       </div>
 
-      <div className="mt-4 flex min-h-[56px] items-center gap-3 rounded-[48px] bg-white px-4 py-2 text-black shadow-[0_16px_40px_rgba(0,0,0,0.12)]">
+      <div className="mt-4 flex min-h-[56px] items-center gap-3 rounded-[12px] border border-white/22 bg-white/10 px-4 py-2 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px]">
         <input
-          className="min-w-0 flex-1 bg-transparent text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-black outline-none placeholder:text-black/55"
+          className="min-w-0 flex-1 bg-transparent text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white outline-none placeholder:text-white/45"
           onChange={(event) => setDraft(event.target.value)}
           placeholder="Ask a question from your syllabus..."
           value={draft}
         />
         <button
           aria-label="Ask ModuleWyse"
-          className="grid size-10 shrink-0 place-items-center rounded-full bg-black text-white transition-colors hover:bg-black/82 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40"
+          className="grid h-10 shrink-0 place-items-center rounded-[12px] bg-white px-4 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           type="button"
         >
-          <ArrowUp className="size-5" strokeWidth={2} />
+          Ask
         </button>
       </div>
 
