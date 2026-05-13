@@ -38,6 +38,13 @@ This file is updated at the end of each working session.
   - expanded `/subjects` into a full-width page with the existing navbar and subject status list
 - Re-ran `npm run lint` and `npm run build`; both pass after these layout changes.
 - Verified in Chrome that `VIEW SUBJECTS` navigates to `/subjects`.
+- Applied mobile-only hero ask box refinements:
+  - reduced ask-box meta text by 2px on mobile
+  - increased placeholder/input text by 2px on mobile
+  - reduced mobile input vertical padding
+  - reduced mobile arrow button/icon size
+  - hid the `LOGIN` CTA on mobile while keeping `GET STARTED`
+- Re-ran `npm run lint` and `npm run build`; both pass after the mobile refinements.
 
 ### Issues / Notes
 - The app is still mostly placeholder screens before the landing page implementation.

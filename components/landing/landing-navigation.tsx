@@ -15,7 +15,7 @@ export function LandingNavigation() {
 
       <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">
         <GlassButton
-          className="h-10 px-3 text-[12px] sm:h-11 sm:px-5 sm:text-[14px]"
+          className="hidden h-10 px-3 text-[12px] sm:inline-flex sm:h-11 sm:px-5 sm:text-[14px]"
           href={ROUTES.LOGIN}
           variant="secondary"
         >
