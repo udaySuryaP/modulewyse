@@ -47,7 +47,7 @@ export default function RootLayout({
       <body className="min-h-dvh font-sans antialiased">
         {/* Global cinematic background - fixed behind all pages */}
         <div
-          className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          className="fixed inset-x-0 top-0 -z-10 h-[100lvh] min-h-dvh w-screen bg-cover bg-center bg-no-repeat will-change-transform"
           style={{ backgroundImage: "url('/images/bgImage.png')" }}
           aria-hidden="true"
         />

@@ -53,6 +53,7 @@ export function ForgotPasswordForm() {
         <TextInput
           autoComplete="email"
           onChange={(event) => setEmail(event.target.value)}
+          placeholder="name@example.com"
           required
           type="email"
           value={email}

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageOverlay } from "@/components/landing/page-overlay";
 import { VideoBackground } from "@/components/landing/video-background";
+import { LiquidReveal } from "@/components/motion/liquid-motion";
 
 type AuthShellProps = {
   eyebrow: string;
@@ -16,7 +17,7 @@ export function AuthShell({ eyebrow, title, body, children }: AuthShellProps) {
       <VideoBackground />
       <PageOverlay />
       <main className="grid min-h-dvh place-items-center px-5 py-10 sm:px-8 lg:px-14">
-        <section className="w-full max-w-[460px] rounded-[12px] border border-white/18 bg-white/12 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[28px] sm:p-8">
+        <LiquidReveal className="w-full max-w-[460px] rounded-[12px] border border-white/18 bg-white/12 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[28px] sm:p-8">
           <Link
             className="text-[24px] font-normal leading-none tracking-[-0.03em] text-white"
             href="/"
@@ -35,7 +36,7 @@ export function AuthShell({ eyebrow, title, body, children }: AuthShellProps) {
           </p>
 
           <div className="mt-8 text-left">{children}</div>
-        </section>
+        </LiquidReveal>
       </main>
     </>
   );

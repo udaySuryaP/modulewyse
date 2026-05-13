@@ -65,7 +65,7 @@ export function FinalSetupForm() {
       );
       router.refresh();
     } catch {
-      setMessage("Couldn’t complete setup. Try again.");
+      setMessage("Couldn't complete setup. Try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -88,6 +88,7 @@ export function FinalSetupForm() {
       <Field label="How did you hear about ModuleWyse?">
         <TextInput
           onChange={(event) => setReferralSource(event.target.value)}
+          placeholder="Friend, class group, search, or social media"
           required
           value={referralSource}
         />

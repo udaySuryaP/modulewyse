@@ -20,14 +20,14 @@ export function SignoutButton() {
       const { error } = await supabase.auth.signOut();
 
       if (error) {
-        setMessage("Couldn’t sign out. Please try again.");
+        setMessage("Couldn't sign out. Please try again.");
         return;
       }
 
       router.push("/login");
       router.refresh();
     } catch {
-      setMessage("Couldn’t sign out. Please try again.");
+      setMessage("Couldn't sign out. Please try again.");
     } finally {
       setIsSigningOut(false);
     }
@@ -50,7 +50,8 @@ export function SignoutButton() {
               Sign out?
             </h2>
             <p className="mt-3 text-[14px] leading-[1.45] text-white/72">
-              You can sign back in anytime to continue your preparation.
+              You will need to sign in again to access your chats and academic
+              workspace.
             </p>
 
             {message ? (

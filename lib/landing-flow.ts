@@ -87,11 +87,10 @@ export function pendingDestinationRoute() {
   return null;
 }
 
-async function getClientOnboardingState() {
+async function getClientAuthState() {
   if (!hasSupabasePublicEnv()) {
     return {
       isAuthenticated: false,
-      isOnboardingComplete: false,
     };
   }
 
@@ -103,35 +102,22 @@ async function getClientOnboardingState() {
   if (!user) {
     return {
       isAuthenticated: false,
-      isOnboardingComplete: false,
     };
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("onboarding_completed")
-    .eq("id", user.id)
-    .maybeSingle();
-
   return {
     isAuthenticated: true,
-    isOnboardingComplete: Boolean(profile?.onboarding_completed),
   };
 }
 
 export async function nextRouteForQuestion(question: string) {
-  const { isAuthenticated, isOnboardingComplete } =
-    await getClientOnboardingState();
+  const { isAuthenticated } = await getClientAuthState();
 
   savePendingQuestion(question);
   savePendingDestination("/chat");
 
   if (!isAuthenticated) {
     return "/signup";
-  }
-
-  if (!isOnboardingComplete) {
-    return "/onboarding/academic-profile";
   }
 
   return chatHrefWithQuestion(question);
