@@ -325,22 +325,22 @@ export function ChatWorkspace({
       <div className="min-w-0 flex-1">
         <header className="min-h-4 px-3 py-3 sm:px-6 sm:py-4 lg:min-h-8 lg:px-8" />
 
-        <main className="grid gap-4 px-3 pb-[124px] sm:gap-5 sm:px-6 sm:pb-[140px] md:grid-cols-[minmax(0,1fr)_320px] lg:grid-cols-[minmax(680px,1fr)_320px] lg:px-8 xl:grid-cols-[minmax(760px,1fr)_320px]">
+        <main className="grid gap-4 px-3 pb-[124px] sm:gap-5 sm:px-6 sm:pb-[140px] lg:px-8">
           <ContextControls
             answerType={answerType}
-            className="md:col-start-1 md:row-start-1"
+            className="md:row-start-1 md:self-start"
             context={context}
             onAnswerTypeChange={setAnswerType}
             onContextChange={setContext}
           />
 
           {isProfileIncomplete ? (
-            <SetupPrompt className="md:col-start-1 md:row-start-2" />
+            <SetupPrompt className="md:row-start-2" />
           ) : null}
 
           <div
             className={cn(
-              "min-h-[390px] rounded-[12px] border border-white/18 bg-white/10 p-3 text-white backdrop-blur-[24px] sm:min-h-[520px] sm:p-5 md:col-start-1",
+              "min-h-[390px] rounded-[12px] border border-white/18 bg-white/10 p-3 text-white backdrop-blur-[24px] sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -374,8 +374,6 @@ export function ChatWorkspace({
             onKeyDown={handleKeyDown}
             onSubmit={handleSubmit}
           />
-
-          <SelectedContextPanel context={context} />
         </main>
       </div>
 
@@ -404,7 +402,7 @@ function ContextControls({
   return (
     <div
       className={cn(
-        "rounded-[12px] border border-white/18 bg-white/12 p-4 text-white backdrop-blur-[28px] sm:p-5",
+        "rounded-[12px] border border-white/18 bg-white/12 px-4 py-4 text-white backdrop-blur-[28px] sm:px-5 sm:py-4",
         className,
       )}
     >
@@ -521,36 +519,6 @@ function SetupPrompt({ className }: { className?: string }) {
   );
 }
 
-function SelectedContextPanel({ context }: { context: ChatContext }) {
-  return (
-    <aside className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px] md:row-start-1 md:self-start md:justify-self-end md:w-full md:max-w-[320px]">
-      <p className="font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/72">
-        Selected context
-      </p>
-      <ContextFact label="Branch" value="Computer Science Engineering" />
-      <ContextFact label="Semester" value={context.semester} />
-      <ContextFact label="Subject" value={context.subject} />
-      <span className="mt-2 inline-flex rounded-[12px] bg-[rgba(90,225,76,0.16)] px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-[#A8F5A0]">
-        Available
-      </span>
-      <ContextFact label="Available modules" value="5 modules" />
-    </aside>
-  );
-}
-
-function ContextFact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="mt-5">
-      <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
-        {label}
-      </p>
-      <p className="mt-2 text-[16px] font-normal leading-[1.3] text-white">
-        {value}
-      </p>
-    </div>
-  );
-}
-
 function Composer({
   canSend,
   draft,
@@ -568,7 +536,7 @@ function Composer({
 }) {
   return (
     <form
-      className="fixed bottom-3 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 rounded-[12px] border border-white/18 bg-white/12 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[28px] sm:bottom-4 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 sm:p-3 md:right-[360px] lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-[372px]"
+      className="fixed bottom-3 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 rounded-[12px] border border-white/18 bg-white/12 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[28px] sm:bottom-4 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 sm:p-3 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
       onSubmit={onSubmit}
     >
       <div className="flex min-h-[52px] items-end gap-2 rounded-[12px] border border-white/24 bg-white/14 px-2.5 py-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[18px] sm:min-h-[58px] sm:gap-3 sm:px-3 sm:py-2">
@@ -600,7 +568,7 @@ function EmptyConversation({
 }) {
   return (
     <div className="grid min-h-[330px] place-items-center sm:min-h-[360px]">
-      <div className="w-full max-w-[760px] text-center">
+      <div className="w-full text-center">
         <h2 className="text-[26px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[32px]">
           What do you want to prepare today?
         </h2>
@@ -626,7 +594,7 @@ function EmptyConversation({
 
 function UserMessage({ message }: { message: Message }) {
   return (
-    <div className="ml-auto max-w-[760px] rounded-[12px] border border-white/18 bg-white/12 p-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[20px]">
+    <div className="ml-auto w-full max-w-[860px] rounded-[12px] border border-white/18 bg-white/12 p-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[20px]">
       <p className="whitespace-pre-wrap text-[16px] leading-[1.45] tracking-[-0.02em] text-white/86">
         {message.content}
       </p>

@@ -490,6 +490,11 @@ This file is updated at the end of each working session.
 - Expanded the `/chat` dashboard grid from medium screens upward so the context-controls card and conversation card occupy the maximum available width beside the selected-context panel.
 - Adjusted the desktop `/chat` grid so the semester/subject/module card and question-answer card share a wide left column while the selected-context card is fixed to the far-right column.
 - Reworked the `/chat` dashboard into explicit card grid placement: context controls in the top-left card, question/answer card directly beneath it at the same width, and selected-context card in the top-right column from medium screens upward.
+- Trimmed the bottom padding of the `/chat` context-controls card so its bottom spacing matches the top spacing more closely.
+- Expanded the `/chat` question/answer card to span the full dashboard width from medium screens upward so the lower row no longer leaves unused right-side space.
+- Prevented the `/chat` context-controls card from stretching to match the selected-context card height on medium and larger screens, removing the excess bottom space below answer type.
+- Expanded the fixed `/chat` composer to match the full dashboard width of the question/answer card.
+- Removed the `/chat` selected-context card and reclaimed that space so the context-controls card, question/answer card, and composer occupy the full available width after the sidebar.
 - Improved protected subject list rows so long subject names truncate instead of forcing horizontal overflow.
 - Refined the `/chat` dashboard toward the provided reference layout with only the core context controls, conversation panel, selected context panel, sidebar, and fixed composer.
 - Removed extra chat header copy and notification chrome from the chat dashboard.
