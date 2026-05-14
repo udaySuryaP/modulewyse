@@ -122,3 +122,13 @@ export async function nextRouteForQuestion(question: string) {
 
   return chatHrefWithQuestion(question);
 }
+
+export async function nextRouteForAuthAction(fallbackRoute: "/login" | "/signup") {
+  const { isAuthenticated } = await getClientAuthState();
+
+  if (isAuthenticated) {
+    return "/chat";
+  }
+
+  return fallbackRoute;
+}

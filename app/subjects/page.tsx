@@ -1,7 +1,5 @@
-import { LandingNavigation } from "@/components/landing/landing-navigation";
-import { PageOverlay } from "@/components/landing/page-overlay";
+import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { StatusBadge } from "@/components/landing/status-badge";
-import { VideoBackground } from "@/components/landing/video-background";
 
 const subjects = [
   ["Object Oriented Programming", "available"],
@@ -13,40 +11,33 @@ const subjects = [
 
 export default function SubjectsPage() {
   return (
-    <>
-      <VideoBackground />
-      <PageOverlay />
-      <main className="min-h-dvh">
-        <LandingNavigation />
-        <section className="mx-auto w-full px-5 py-16 sm:px-8 lg:px-14">
-          <div className="rounded-[12px] border border-white/18 bg-white/12 p-6 backdrop-blur-[28px] sm:p-8">
-            <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
-              Subjects
-            </p>
-            <h1 className="mt-4 text-[36px] font-normal leading-[1.1] tracking-[-0.03em] text-white">
-              Browse available and upcoming ModuleWyse subjects.
-            </h1>
-            <p className="mt-4 max-w-[760px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
-              Start with available subjects and see what is currently in beta
-              or coming soon.
-            </p>
+    <StudentPageShell>
+      <div className="rounded-[12px] border border-white/18 bg-white/12 p-6 backdrop-blur-[28px] sm:p-8">
+        <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
+          Subjects
+        </p>
+        <h1 className="mt-4 text-[36px] font-normal leading-[1.1] tracking-[-0.03em] text-white">
+          Browse available and upcoming ModuleWyse subjects.
+        </h1>
+        <p className="mt-4 max-w-[760px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+          Start with available subjects and see what is currently in beta or
+          coming soon.
+        </p>
 
-            <div className="mt-8 grid gap-3">
-              {subjects.map(([name, status]) => (
-                <div
-                  className="flex items-center justify-between gap-4 rounded-[12px] border border-white/12 bg-white/8 px-4 py-3"
-                  key={name}
-                >
-                  <span className="text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
-                    {name}
-                  </span>
-                  <StatusBadge status={status} />
-                </div>
-              ))}
+        <div className="mt-8 grid gap-3">
+          {subjects.map(([name, status]) => (
+            <div
+              className="flex min-w-0 items-center justify-between gap-3 rounded-[12px] border border-white/12 bg-white/8 px-3 py-3 sm:gap-4 sm:px-4"
+              key={name}
+            >
+              <span className="min-w-0 truncate text-[15px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72 sm:text-[16px]">
+                {name}
+              </span>
+              <StatusBadge status={status} />
             </div>
-          </div>
-        </section>
-      </main>
-    </>
+          ))}
+        </div>
+      </div>
+    </StudentPageShell>
   );
 }

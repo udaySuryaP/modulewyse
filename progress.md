@@ -172,6 +172,112 @@ This file is updated at the end of each working session.
 - Continue full real-auth browser QA with a confirmed Supabase student account.
 - Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
 
+## 2026-05-14 - Real Chat Composer and Mock Flow
+
+### Completed
+- Replaced the placeholder `/chat` draft composer with `components/chat/chat-workspace.tsx`.
+- Built a local mock chat composer with:
+  - multiline textarea input
+  - disabled empty send state
+  - Enter-to-send and Shift+Enter newline behavior
+  - focus restore after sending
+  - mobile-friendly wrapping layout
+- Preserved pending question behavior:
+  - `/chat?q=...` initializes the composer
+  - pending question storage initializes the composer when no query is present
+  - URL query takes priority over stored pending question
+  - restored pending question storage is cleared safely
+  - restored questions are not auto-submitted
+- Added static chat context controls:
+  - semester selector
+  - subject selector
+  - module selector
+  - answer type selector
+- Added query-param context initialization for `/chat`:
+  - `semester`
+  - `subject`
+  - `module`
+- Added local mock conversation state:
+  - user message append
+  - assistant loading card
+  - delayed mock answer generation
+  - scroll-to-latest behavior
+- Added future-shaped assistant answer cards with:
+  - `BASED ON AVAILABLE NOTES` badge
+  - answer type badge
+  - subject/module label
+  - structured mock academic answer
+  - source chips
+  - copy, regenerate, thumbs up, thumbs down actions
+- Added local edge states:
+  - empty conversation with suggested prompts
+  - loading answer
+  - answer failed via `/fail` developer trigger
+  - insufficient content via `/insufficient` developer trigger
+  - rate limit via `/rate` developer trigger
+  - copy success toast
+  - feedback submitted toast
+  - regenerate flow
+- Preserved the non-blocking profile setup prompt on `/chat`.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+- Browser/smoke-tested:
+  - logged-out `/chat` redirects to `/login?next=/chat`
+  - logged-out `/chat?q=Explain%20inheritance` preserves query in `next`
+  - mobile 390px login redirect page renders after protected `/chat` redirect
+- Stopped the local dev server after verification.
+
+### Issues / Notes
+- Full interactive `/chat` QA requires a confirmed Supabase student account because `/chat` is protected.
+- No OpenAI, RAG, vector search, content database, or persistence was added.
+- Mock edge states are local developer triggers in the question text:
+  - `/fail`
+  - `/insufficient`
+  - `/rate`
+
+### Next
+- Build the static subjects-to-chat flow: subject cards, subject detail route, Start Chat with subject/module query params, and chat context initialization.
+
+## 2026-05-14 - Chat Dashboard Shell and Auth Flow Check
+
+### Completed
+- Made landing navigation auth-aware:
+  - authenticated users route to `/chat`
+  - unauthenticated users continue to `/login` or `/signup`
+- Kept the existing protected-route policy:
+  - logged-out `/chat` redirects to `/login?next=/chat`
+  - logged-in `/login` or `/signup` redirects to `/chat`
+- Removed the landing navigation from `/chat`, so `LOGIN` and `GET STARTED` no longer appear in the chat dashboard.
+- Removed the first `/chat` intro card containing `Student dashboard` and `Ask from your KTU syllabus`.
+- Reworked `/chat` into a dashboard-style layout:
+  - collapsible left sidebar
+  - `modulewyse` brand at the top of the sidebar
+  - sidebar collapse/expand button
+  - expanded sidebar shows icon plus nav label
+  - collapsed sidebar shows icons only
+  - main context controls
+  - large conversation panel
+  - right selected-context panel on larger screens
+  - bottom composer area
+- Preserved the non-blocking incomplete-profile setup prompt inside the dashboard flow.
+- Preserved the local mock chat composer and answer behavior from the previous phase.
+- Re-ran `npm run lint`; passed.
+- Re-ran `npm run build`; passed.
+- Smoke-tested route workflow:
+  - `/chat` logged out redirects to `/login?next=%2Fchat`
+  - `/chat?q=...&subject=...&module=...` logged out preserves query params in `next`
+  - `/login` renders
+  - `/signup` renders
+- Opened `/chat?q=...` in Chrome for visual handoff; it shows login first when no Chrome session is authenticated.
+- Stopped the local dev server after verification.
+
+### Issues / Notes
+- Full logged-in dashboard interaction QA still needs a confirmed Supabase student account in Chrome.
+- The current dashboard uses static subject/module options and local mock chat state only.
+
+### Next
+- Build the static subjects-to-chat flow: subject cards, subject detail route, Start Chat with subject/module query params, and chat context initialization.
+
 ## 2026-05-14 - Ask Field Spacing Tweak
 
 ### Completed
@@ -363,3 +469,96 @@ This file is updated at the end of each working session.
 ### Next
 - Continue full real-auth browser QA with a confirmed Supabase student account.
 - Build the real chat composer and mock conversation flow using preserved pending question, without AI/RAG.
+## 2026-05-14 - Chat Dashboard Shell and Auth-Aware Landing Flow
+
+### Completed
+- Completed a responsive layout pass across landing/auth/protected app surfaces.
+- Consolidated the protected app sidebar into a shared `StudentSidebar` component so `/chat`, `/subjects`, `/library`, `/profile`, and `/settings` use the same responsive navigation behavior.
+- Set the dashboard sidebar to a compact icon rail on mobile/tablet and an expandable icon-plus-label sidebar on large screens.
+- Tightened mobile chat spacing:
+  - smaller dashboard gutters
+  - smaller fixed composer offsets
+  - reduced mobile composer padding
+  - smaller empty-state heading and suggested prompt cards
+- Aligned the `/chat` selected-context card to the same top row as the semester, subject, and module controls on desktop.
+- Updated the fixed `/chat` composer to use the lighter glassmorphic surface treatment instead of the darker charcoal glass.
+- Updated the shared student sidebar to use a lighter glassmorphic surface.
+- Replaced the sidebar bottom meta copy with a live day/date and time display.
+- Set the shared sidebar back to the lighter glassmorphic theme across all screen sizes.
+- Reformatted the sidebar timestamp in IBM Plex Mono with time on the first line and day/date on the second line.
+- Added clock and calendar icons to the sidebar timestamp lines.
+- Expanded the `/chat` dashboard grid from medium screens upward so the context-controls card and conversation card occupy the maximum available width beside the selected-context panel.
+- Adjusted the desktop `/chat` grid so the semester/subject/module card and question-answer card share a wide left column while the selected-context card is fixed to the far-right column.
+- Reworked the `/chat` dashboard into explicit card grid placement: context controls in the top-left card, question/answer card directly beneath it at the same width, and selected-context card in the top-right column from medium screens upward.
+- Trimmed the bottom padding of the `/chat` context-controls card so its bottom spacing matches the top spacing more closely.
+- Expanded the `/chat` question/answer card to span the full dashboard width from medium screens upward so the lower row no longer leaves unused right-side space.
+- Prevented the `/chat` context-controls card from stretching to match the selected-context card height on medium and larger screens, removing the excess bottom space below answer type.
+- Expanded the fixed `/chat` composer to match the full dashboard width of the question/answer card.
+- Removed the `/chat` selected-context card and reclaimed that space so the context-controls card, question/answer card, and composer occupy the full available width after the sidebar.
+- Improved protected subject list rows so long subject names truncate instead of forcing horizontal overflow.
+- Refined the `/chat` dashboard toward the provided reference layout with only the core context controls, conversation panel, selected context panel, sidebar, and fixed composer.
+- Removed extra chat header copy and notification chrome from the chat dashboard.
+- Changed sent user-question bubbles to the same glassmorphic visual language instead of a white card.
+- Added `All modules` as the default module context and module dropdown option.
+- Tightened dropdown padding with equal left/right spacing and a custom chevron treatment.
+- Added a reusable authenticated `StudentPageShell` with the modulewyse sidebar for protected student pages.
+- Replaced landing navigation on protected student pages so `LOGIN` and `GET STARTED` no longer appear in `/subjects`, `/library`, `/profile`, `/settings`, or nested settings/subject pages.
+- Ignored local dev-server log files so Chrome/server verification does not pollute git status.
+- Fixed the `/chat` composer to the bottom of the viewport so it remains available while the conversation content scrolls.
+- Added bottom spacing to the chat main area so messages and empty states do not sit behind the fixed composer.
+- Adjusted toast placement so copy and feedback messages appear above the fixed composer.
+- Added auth-aware landing navigation actions so `LOGIN` and `GET STARTED` first check the current Supabase session and send already-authenticated users to `/chat`.
+- Kept unauthenticated landing users on the normal `/login` and `/signup` flow.
+- Removed the old `/chat` landing navigation and the first student-dashboard intro card.
+- Reworked `/chat` into a dashboard-style shell with a collapsible left sidebar.
+- Added sidebar behavior for expanded and compressed states:
+  - Expanded state shows icon plus nav label.
+  - Compressed state shows icon only.
+  - Sidebar header shows `modulewyse` with a collapse/expand control beside it.
+- Removed `LOGIN` and `GET STARTED` buttons from the chat dashboard.
+- Preserved the non-blocking academic setup prompt inside `/chat`.
+- Preserved the local mock chat composer, pending question restore, answer type controls, context selectors, mock assistant response, copy, feedback, and regenerate behavior.
+- Added a selected-context side panel for branch, semester, subject, and module availability.
+- Verified protected route behavior:
+  - Logged-out `/chat` redirects to `/login?next=/chat`.
+  - Logged-out `/chat` with query params preserves the full next URL.
+  - `/login` and `/signup` remain reachable for unauthenticated users.
+- Verified route smoke checks for `/`, `/login`, `/signup`, `/forgot-password`, `/chat`, `/subjects`, `/library`, `/profile`, and `/settings`.
+- Ran `npm run lint` successfully.
+- Ran `npm run build` successfully.
+- Opened the local `/chat` route in Chrome for route verification.
+- Stopped the local dev server after verification.
+
+### Issues / Notes
+- Full logged-in visual QA for the new chat dashboard still needs a confirmed Supabase test account.
+- The chat answer flow remains intentionally local/mock only. No AI, RAG, database chat persistence, or curated-content retrieval has been added.
+- `/subjects` still uses static placeholder subject data.
+
+### Next
+- Create or confirm a test student account and run full signup, login, dashboard, signout, and onboarding QA in the browser.
+- Build the static subjects-to-chat flow with subject detail routes and chat context initialization.
+
+## 2026-05-14 - Project Review
+
+### Completed
+- Reviewed the current project state across `progress.md`, app routes, components, Supabase schema, docs, package dependencies, and git status.
+- Confirmed the repository is on branch `onboarding` and synced with GitHub before this review update.
+- Summarized phase completion:
+  - fully completed foundation, landing, visual system, route guard foundation, Supabase foundation implementation, and progress workflow
+  - partially completed real-auth QA, onboarding QA, chat dashboard, protected student shell, subjects, profile, settings, and responsive visual QA
+  - not started OpenAI, RAG, vector search, content ingestion, embeddings, verified generation, persistent chat history, evals, and admin/content tooling
+- Identified the next practical phases:
+  - full Supabase auth QA with a confirmed student account
+  - static subjects-to-chat flow
+  - real profile/settings editing
+  - subject/module/content database schema
+  - OOP content ingestion and RAG pipeline
+
+### Issues / Notes
+- `/chat` remains local/mock only.
+- `/subjects` remains static placeholder data.
+- Full logged-in browser QA still needs a confirmed Supabase test account.
+- Some docs still need cleanup for older wording and encoding artifacts.
+
+### Next
+- Build the static subjects-to-chat flow: subject cards, subject detail route, Start Chat with subject/module query params, and chat context initialization.
