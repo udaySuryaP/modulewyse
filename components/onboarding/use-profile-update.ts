@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { ensureProfile } from "@/lib/auth/ensure-profile";
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { hasSupabasePublicEnv } from "@/lib/env/public";
 import { createClient } from "@/lib/supabase/client";
 
 export function useProfileUpdate() {

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { ensureProfile } from "@/lib/auth/ensure-profile";
-import { env, hasSupabasePublicEnv } from "@/lib/env";
+import { env, hasSupabasePublicEnv } from "@/lib/env/public";
 import {
   chatHrefWithQuestion,
   pendingDestinationRoute,

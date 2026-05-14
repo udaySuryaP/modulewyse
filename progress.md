@@ -630,3 +630,269 @@ This file is updated at the end of each working session.
 
 ### Next
 - Browser-check the authenticated `/` redirect with a confirmed Supabase session.
+
+## 2026-05-14 - Current Phase Summary
+
+### Fully Completed
+- Project foundation and documentation workflow.
+- Durable project memory in `PROJECT_MEMORY.md`.
+- Session progress workflow in `progress.md`.
+- Landing page design and behavior.
+- Shared app background image system.
+- Auth page visual continuity.
+- Supabase auth foundation:
+  - browser client
+  - server client
+  - proxy helper
+  - environment validation
+  - auth/profile helpers
+  - `profiles` schema, RLS, and triggers
+- Signup, login, forgot-password, auth callback, and signout UI wiring.
+- Protected route guard through Next.js 16 `proxy.ts`.
+- Authenticated `/` redirect to `/chat`.
+- Dashboard shell and shared sidebar.
+- Mobile dashboard top navigation.
+- Local mock `/chat` composer and mock conversation flow.
+- Pending question preservation into `/chat`.
+- Non-blocking onboarding flow.
+- Responsive UI polish across landing, auth, chat, and protected dashboard shell.
+- Latest dashboard/mobile/auth-flow changes pushed to GitHub on branch `onboarding`.
+
+### Partially Completed
+- Real authentication QA:
+  - implemented, but full testing with a confirmed Supabase user is still pending
+- Onboarding persistence:
+  - implemented, but full end-to-end QA is still pending
+- Chat dashboard:
+  - UI and mock flow are implemented
+  - real AI/RAG is not implemented
+- Subjects:
+  - static placeholder list exists
+  - subject detail route is placeholder only
+- Library:
+  - protected placeholder page exists
+- Profile/settings:
+  - protected shell and signout exist
+  - editable profile/account/academic/preference forms are not built
+- Forgot password:
+  - reset email flow exists
+  - password update UI remains minimal
+- Responsive QA:
+  - multiple layout passes completed
+  - still needs logged-in real-device/browser QA
+
+### Not Started
+- Real OpenAI answer generation.
+- RAG pipeline.
+- Vector search.
+- Subject/module/topic/content database.
+- OOP content ingestion.
+- Chunking and embeddings.
+- Verified-answer checker.
+- Persistent chat history.
+- Feedback persistence.
+- Eval test set.
+- Admin/content management tooling.
+
+### Next
+- Create or confirm a Supabase test user.
+- QA full auth flow:
+  - signup
+  - login
+  - logout
+  - forgot password
+  - onboarding
+  - protected redirects
+- Build the static subjects-to-chat flow:
+  - subject cards
+  - subject detail route
+  - module list
+  - Start Chat CTA
+  - subject/module query params into `/chat`
+- Build editable profile/settings pages.
+- Add database schema for subjects, modules, content, chunks, conversations, and feedback.
+- Seed Object Oriented Programming content.
+- Build RAG and OpenAI answer generation.
+- Add verifier and eval tests.
+
+## 2026-05-14 - Security, Supabase, GitHub, Vercel Review
+
+### Completed
+- Reviewed the current local codebase, Supabase project advisor output, Vercel project/deployment state, GitHub access limits, dependency audit output, and current git state.
+- Confirmed local checks:
+  - `npm run lint` passed
+  - `npm run build` passed
+- Confirmed no obvious committed secrets in tracked files:
+  - `.env.local` is not tracked
+  - `.env.example` only contains placeholders
+- Confirmed Supabase performance advisor returned no active findings.
+- Confirmed latest Vercel production deployment for `modulewyse` is `READY` and build logs show a successful Next.js 16.2.6 production build.
+- Confirmed Vercel project metadata:
+  - project: `modulewyse`
+  - framework: Next.js
+  - Node version: `24.x`
+  - GitHub repo visibility: private
+- Confirmed local GitHub workflow files are not present in the repo.
+
+### Issues / Notes
+- Supabase security advisor reported hardening issues:
+  - `public.set_updated_at()` has mutable `search_path`
+  - `public.handle_new_user()` is a `SECURITY DEFINER` function exposed for anon/authenticated RPC execution
+  - `public.rls_auto_enable()` exists in the database and is also exposed for anon/authenticated RPC execution, but is not defined in the repo schema
+  - leaked-password protection is disabled in Supabase Auth
+- `supabase/schema.sql` should be hardened with fixed `search_path` and explicit `REVOKE EXECUTE` statements for trigger-only functions.
+- `lib/env.ts` currently defines server-only secrets in the same module that client components import for public env checks. No secret value was found committed, but this should be split before service-role/OpenAI usage grows.
+- `npm audit` reports two moderate findings from Next.js' bundled `postcss`; no forced audit fix was applied because the suggested fix is not suitable for this Next.js 16 app.
+- GitHub Actions, branch protection, Dependabot/security-alert configuration, and repository security settings could not be fully verified because no local workflow files exist and the GitHub CLI is not installed in this environment.
+- Vercel environment variable values could not be inspected with the currently exposed tools.
+- `.vercel/project.json` is not present locally, so local Vercel CLI deploys are not linked in the repo checkout.
+
+### Next
+- Harden Supabase SQL:
+  - add fixed `search_path` to `public.set_updated_at()`
+  - revoke direct function execution for `public.handle_new_user()` from public/anon/authenticated
+  - inspect and either remove or revoke direct execution for `public.rls_auto_enable()`
+- Enable Supabase Auth leaked-password protection.
+- Split server-only environment variables into a server-only module.
+- Add GitHub CI for lint, build, and audit checks.
+- Configure Dependabot or equivalent dependency monitoring.
+- Verify Vercel production environment variables manually in the Vercel dashboard.
+
+## 2026-05-14 - Supabase Student Account QA
+
+### Completed
+- Created and confirmed one disposable Supabase QA student account:
+  - email: `modulewyse.qa.1778765450@gmail.com`
+  - profile row exists in `public.profiles`
+- Confirmed the account can authenticate through Supabase Auth API after email confirmation.
+- Verified authenticated route behavior using a Supabase SSR-compatible session cookie:
+  - `/` redirects to `/chat`
+  - `/chat` returns 200
+  - `/subjects` returns 200
+  - `/login` redirects to `/chat` when authenticated
+  - onboarding pages remain accessible while authenticated
+- Verified logged-out `/chat` redirects to `/login?next=%2Fchat`.
+- Verified incomplete profile setup prompt appears in `/chat` before onboarding completion.
+- Verified onboarding/profile persistence through authenticated `profiles` update:
+  - college name
+  - graduation year
+  - branch
+  - semester
+  - focus subject
+  - referral source
+  - `onboarding_completed = true`
+- Verified the setup prompt no longer appears in `/chat` after profile completion.
+- Verified Supabase signout API succeeds for the QA session.
+
+### Issues / Notes
+- Browser signup is currently blocked by Supabase Auth email send rate limit:
+  - Supabase returned `over_email_send_rate_limit`
+  - the app currently displays the generic `Unable to connect. Please try again.`
+- Real email confirmation link QA could not be completed because confirmation emails are rate-limited.
+- Forgot-password reset email is currently blocked by the same Supabase email send rate limit.
+- Chrome is installed and the Codex extension is configured, but Chrome was not running, so logged-in browser QA was done with API/authenticated HTTP checks instead of a live Chrome session.
+- The `.env.local` file has no usable `SUPABASE_SERVICE_ROLE_KEY`, so the QA account was confirmed through SQL-level Supabase access.
+
+### Next
+- Wait for Supabase email rate limit to clear, then retest:
+  - signup email delivery
+  - real email confirmation link
+  - forgot-password email delivery
+- Improve auth error mapping so Supabase `over_email_send_rate_limit` shows a clear message instead of `Unable to connect. Please try again.`
+- Run the same checklist in Chrome after launching Chrome or signing in there.
+
+## 2026-05-14 - Security Hardening Pass
+
+### Completed
+- Hardened Supabase SQL functions in the live Supabase project with migration `harden_profile_auth_functions`.
+- Updated `supabase/schema.sql` and added a matching local migration file:
+  - `supabase/migrations/20260514143000_harden_profile_auth_functions.sql`
+- Added fixed `search_path = public` to `public.set_updated_at()`.
+- Revoked direct execution from trigger-only functions:
+  - `public.set_updated_at()`
+  - `public.handle_new_user()`
+- Investigated `public.rls_auto_enable()`:
+  - found it attached to event trigger `ensure_rls`
+  - removed the `ensure_rls` event trigger
+  - dropped `public.rls_auto_enable()`
+- Re-ran Supabase security advisors:
+  - function exposure warnings are resolved
+  - mutable `search_path` warning is resolved
+  - only leaked-password protection remains
+- Split server-only environment variables into `lib/env.server.ts` with `import "server-only"`.
+- Kept `lib/env.ts` limited to public/client-safe variables.
+- Added GitHub Actions CI at `.github/workflows/ci.yml` for:
+  - `npm ci`
+  - `npm run lint`
+  - `npm run build`
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Committed and pushed the security hardening changes to GitHub:
+  - branch: `onboarding`
+  - commit: `4f06756 Harden auth functions and add CI`
+- Confirmed the local git worktree is clean after push.
+
+### Issues / Notes
+- Supabase Auth leaked-password protection still needs to be enabled manually in the Supabase dashboard. The current Supabase MCP tools expose advisors and SQL, but not Auth security setting mutation.
+- Vercel environment variable values could not be read through the available Vercel tools. This still needs manual dashboard verification.
+- GitHub CI references these optional repository secrets for build parity:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- CI will still install, lint, and build with the app defaults if those secrets are not configured, but production parity is better after adding them.
+
+### Next
+- In Supabase dashboard, enable leaked-password protection under Auth password/security settings.
+- In Vercel dashboard, verify production/preview/development env vars:
+  - `NEXT_PUBLIC_APP_URL`
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - future server-only vars only when needed
+- In GitHub repository settings, add the CI secrets if desired:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+## 2026-05-14 - Env Split and Manual Security Checklist
+
+### Completed
+- Re-inspected the security hardening files requested in the follow-up prompt:
+  - `supabase/schema.sql`
+  - `lib/env.ts`
+  - `lib/env.server.ts`
+  - Supabase client/server/middleware helpers
+  - `proxy.ts`
+  - `package.json`
+  - `.env.example`
+  - `progress.md`
+- Reworked environment handling into the requested module structure:
+  - `lib/env/public.ts` for client-safe public variables
+  - `lib/env/server.ts` for server-only secrets with `import "server-only"`
+- Updated all app imports so client-side and shared code import only from `lib/env/public.ts`.
+- Removed the older root-level `lib/env.ts` and `lib/env.server.ts` files.
+- Updated `.env.example` so it contains placeholders only:
+  - `NEXT_PUBLIC_SUPABASE_URL=`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY=`
+  - `NEXT_PUBLIC_APP_URL=http://localhost:3000`
+  - `SUPABASE_SERVICE_ROLE_KEY=`
+  - `OPENAI_API_KEY=`
+  - `UPSTASH_REDIS_REST_URL=`
+  - `UPSTASH_REDIS_REST_TOKEN=`
+- Kept `supabase/schema.sql` focused on the app-owned profile schema and trigger functions.
+- Added `supabase/manual_hardening.sql` with inspection and revoke guidance for `public.rls_auto_enable()`.
+- Added `docs/SECURITY_CHECKLIST.md` covering manual Supabase, Vercel, and GitHub security actions.
+- Updated GitHub CI to run `npm audit --audit-level=high` after lint/build.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed with no high/critical findings. The existing moderate Next/PostCSS advisory remains documented and was not force-fixed.
+
+### Issues / Notes
+- Supabase leaked-password protection still requires manual dashboard enablement.
+- Vercel environment variable values still require manual dashboard verification.
+- `npm audit` still reports moderate PostCSS findings through Next.js, but the requested high-severity audit threshold passes.
+
+### Next
+- Manually enable Supabase leaked-password protection.
+- Manually verify Vercel env vars and production domain.
+- Add GitHub repository secrets for CI build parity if needed:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Run full real-auth QA with a confirmed Supabase test account, then build the static subjects-to-chat flow.
