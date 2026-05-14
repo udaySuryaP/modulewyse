@@ -537,3 +537,28 @@ This file is updated at the end of each working session.
 ### Next
 - Create or confirm a test student account and run full signup, login, dashboard, signout, and onboarding QA in the browser.
 - Build the static subjects-to-chat flow with subject detail routes and chat context initialization.
+
+## 2026-05-14 - Project Review
+
+### Completed
+- Reviewed the current project state across `progress.md`, app routes, components, Supabase schema, docs, package dependencies, and git status.
+- Confirmed the repository is on branch `onboarding` and synced with GitHub before this review update.
+- Summarized phase completion:
+  - fully completed foundation, landing, visual system, route guard foundation, Supabase foundation implementation, and progress workflow
+  - partially completed real-auth QA, onboarding QA, chat dashboard, protected student shell, subjects, profile, settings, and responsive visual QA
+  - not started OpenAI, RAG, vector search, content ingestion, embeddings, verified generation, persistent chat history, evals, and admin/content tooling
+- Identified the next practical phases:
+  - full Supabase auth QA with a confirmed student account
+  - static subjects-to-chat flow
+  - real profile/settings editing
+  - subject/module/content database schema
+  - OOP content ingestion and RAG pipeline
+
+### Issues / Notes
+- `/chat` remains local/mock only.
+- `/subjects` remains static placeholder data.
+- Full logged-in browser QA still needs a confirmed Supabase test account.
+- Some docs still need cleanup for older wording and encoding artifacts.
+
+### Next
+- Build the static subjects-to-chat flow: subject cards, subject detail route, Start Chat with subject/module query params, and chat context initialization.
