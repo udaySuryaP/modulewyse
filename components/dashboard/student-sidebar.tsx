@@ -82,7 +82,7 @@ export function StudentSidebar({
               ? "hidden text-[20px] lg:block"
               : "block text-[15px] sm:text-[16px]",
           )}
-          href="/"
+          href="/chat"
         >
           {expanded ? "modulewyse" : "mw"}
         </Link>

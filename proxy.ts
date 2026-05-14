@@ -61,7 +61,7 @@ export async function proxy(request: NextRequest) {
     return getResponse();
   }
 
-  if ((pathname === "/login" || pathname === "/signup") && user) {
+  if ((pathname === "/" || pathname === "/login" || pathname === "/signup") && user) {
     return redirect(request, "/chat");
   }
 

@@ -353,7 +353,7 @@ export function ChatWorkspace({
 
         <header className="hidden min-h-4 px-3 py-3 sm:px-6 sm:py-4 md:block lg:min-h-8 lg:px-8" />
 
-        <main className="grid gap-4 px-3 pb-[124px] sm:gap-5 sm:px-6 sm:pb-[140px] lg:px-8">
+        <main className="grid gap-4 px-3 pb-[124px] pt-4 sm:gap-5 sm:px-6 sm:pb-[140px] md:pt-0 lg:px-8">
           <ContextControls
             answerType={answerType}
             className="hidden md:block md:row-start-1 md:self-start"
@@ -458,7 +458,7 @@ function MobileChatTopbar({
       <div className="flex items-center justify-between gap-3">
         <Link
           className="text-[20px] font-normal leading-none tracking-[-0.03em] text-white"
-          href="/"
+          href="/chat"
         >
           modulewyse
         </Link>
@@ -474,7 +474,7 @@ function MobileChatTopbar({
       </div>
 
       {isOpen ? (
-        <div className="mt-4 grid gap-4">
+        <div className="mt-4 grid gap-4 pb-3">
           <div>
             <p className="text-[12px] font-normal uppercase leading-[1.4] tracking-[0.08em] text-white/55">
               Answer type
@@ -706,12 +706,12 @@ function Composer({
 }) {
   return (
     <form
-      className="fixed bottom-3 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 rounded-[12px] border border-white/18 bg-white/12 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[28px] sm:bottom-4 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 sm:p-3 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
+      className="fixed bottom-5 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 sm:bottom-6 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
       onSubmit={onSubmit}
     >
-      <div className="flex min-h-[52px] items-end gap-2 rounded-[12px] border border-white/24 bg-white/14 px-2.5 py-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[18px] sm:min-h-[58px] sm:gap-3 sm:px-3 sm:py-2">
+      <div className="flex min-h-[52px] items-end gap-2 rounded-[12px] border border-white/24 bg-white/14 py-1.5 pl-2.5 pr-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[18px] sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
         <textarea
-          className="max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] font-normal leading-[1.45] tracking-[-0.02em] text-white outline-none placeholder:text-white/45 sm:min-h-[40px] sm:text-[16px]"
+          className="max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden bg-transparent py-2 text-[15px] font-normal leading-[1.45] tracking-[-0.02em] text-white outline-none placeholder:text-white/45 sm:min-h-[40px] sm:text-[16px]"
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={onKeyDown}
           placeholder="Ask from selected subject..."
@@ -764,7 +764,7 @@ function EmptyConversation({
 
 function UserMessage({ message }: { message: Message }) {
   return (
-    <div className="ml-auto w-full max-w-[860px] rounded-[12px] border border-white/18 bg-white/12 p-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[20px]">
+    <div className="ml-auto w-fit max-w-[min(860px,88%)] rounded-[12px] border border-white/18 bg-white/12 p-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[20px]">
       <p className="whitespace-pre-wrap text-[16px] leading-[1.45] tracking-[-0.02em] text-white/86">
         {message.content}
       </p>
