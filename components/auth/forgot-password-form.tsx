@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
-import { env, hasSupabasePublicEnv } from "@/lib/env";
+import { env, hasSupabasePublicEnv } from "@/lib/env/public";
 import { createClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {

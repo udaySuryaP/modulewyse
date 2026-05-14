@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/public";
 
 export function createMiddlewareClient(request: NextRequest) {
   let response = NextResponse.next({

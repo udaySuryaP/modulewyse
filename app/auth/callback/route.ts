@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { redirectAfterAuth, safeNextPath } from "@/lib/auth/redirects";
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { hasSupabasePublicEnv } from "@/lib/env/public";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {

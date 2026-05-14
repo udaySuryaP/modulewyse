@@ -1,4 +1,4 @@
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { hasSupabasePublicEnv } from "@/lib/env/public";
 import { createClient } from "@/lib/supabase/client";
 
 export const PENDING_QUESTION_KEY = "modulewyse.pendingQuestion";

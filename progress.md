@@ -850,3 +850,49 @@ This file is updated at the end of each working session.
 - In GitHub repository settings, add the CI secrets if desired:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+## 2026-05-14 - Env Split and Manual Security Checklist
+
+### Completed
+- Re-inspected the security hardening files requested in the follow-up prompt:
+  - `supabase/schema.sql`
+  - `lib/env.ts`
+  - `lib/env.server.ts`
+  - Supabase client/server/middleware helpers
+  - `proxy.ts`
+  - `package.json`
+  - `.env.example`
+  - `progress.md`
+- Reworked environment handling into the requested module structure:
+  - `lib/env/public.ts` for client-safe public variables
+  - `lib/env/server.ts` for server-only secrets with `import "server-only"`
+- Updated all app imports so client-side and shared code import only from `lib/env/public.ts`.
+- Removed the older root-level `lib/env.ts` and `lib/env.server.ts` files.
+- Updated `.env.example` so it contains placeholders only:
+  - `NEXT_PUBLIC_SUPABASE_URL=`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY=`
+  - `NEXT_PUBLIC_APP_URL=http://localhost:3000`
+  - `SUPABASE_SERVICE_ROLE_KEY=`
+  - `OPENAI_API_KEY=`
+  - `UPSTASH_REDIS_REST_URL=`
+  - `UPSTASH_REDIS_REST_TOKEN=`
+- Kept `supabase/schema.sql` focused on the app-owned profile schema and trigger functions.
+- Added `supabase/manual_hardening.sql` with inspection and revoke guidance for `public.rls_auto_enable()`.
+- Added `docs/SECURITY_CHECKLIST.md` covering manual Supabase, Vercel, and GitHub security actions.
+- Updated GitHub CI to run `npm audit --audit-level=high` after lint/build.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed with no high/critical findings. The existing moderate Next/PostCSS advisory remains documented and was not force-fixed.
+
+### Issues / Notes
+- Supabase leaked-password protection still requires manual dashboard enablement.
+- Vercel environment variable values still require manual dashboard verification.
+- `npm audit` still reports moderate PostCSS findings through Next.js, but the requested high-severity audit threshold passes.
+
+### Next
+- Manually enable Supabase leaked-password protection.
+- Manually verify Vercel env vars and production domain.
+- Add GitHub repository secrets for CI build parity if needed:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Run full real-auth QA with a confirmed Supabase test account, then build the static subjects-to-chat flow.

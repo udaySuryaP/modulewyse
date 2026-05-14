@@ -1,16 +1,13 @@
 /**
- * Environment variable access for ModuleWyse.
+ * Client-safe environment variable access for ModuleWyse.
  *
- * Public variables are safe to import in client components.
- * Server-only variables must never be imported into client components.
+ * This file may be imported from client components.
  */
 
 export const env = {
   NEXT_PUBLIC_APP_URL:
     process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-  NEXT_PUBLIC_SUPABASE_URL:
-    process.env.NEXT_PUBLIC_SUPABASE_URL ??
-    "https://frcdrjfupoqnlgqiwffy.supabase.co",
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   NEXT_PUBLIC_SUPABASE_ANON_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
 } as const;

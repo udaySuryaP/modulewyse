@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { loginUrlWithNext } from "@/lib/auth/redirects";
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { hasSupabasePublicEnv } from "@/lib/env/public";
 import { createMiddlewareClient } from "@/lib/supabase/middleware";
 
 const publicRoutes = new Set([

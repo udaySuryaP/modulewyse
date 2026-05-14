@@ -8,7 +8,7 @@ import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { safeNextPath } from "@/lib/auth/redirects";
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { hasSupabasePublicEnv } from "@/lib/env/public";
 import {
   chatHrefWithQuestion,
   pendingDestinationRoute,

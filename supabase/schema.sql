@@ -93,12 +93,3 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row
 execute function public.handle_new_user();
-
-do $$
-begin
-  if to_regprocedure('public.rls_auto_enable()') is not null then
-    drop event trigger if exists ensure_rls;
-    drop function public.rls_auto_enable();
-  end if;
-end;
-$$;
