@@ -21,6 +21,7 @@ create table if not exists public.profiles (
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.updated_at = now();
@@ -78,9 +79,26 @@ begin
 end;
 $$;
 
+revoke all on function public.set_updated_at() from public;
+revoke all on function public.set_updated_at() from anon;
+revoke all on function public.set_updated_at() from authenticated;
+
+revoke all on function public.handle_new_user() from public;
+revoke all on function public.handle_new_user() from anon;
+revoke all on function public.handle_new_user() from authenticated;
+
 drop trigger if exists on_auth_user_created on auth.users;
 
 create trigger on_auth_user_created
 after insert on auth.users
 for each row
 execute function public.handle_new_user();
+
+do $$
+begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    drop event trigger if exists ensure_rls;
+    drop function public.rls_auto_enable();
+  end if;
+end;
+$$;
