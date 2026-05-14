@@ -1,16 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import {
+  BookOpen,
+  CalendarDays,
+  Clock,
+  Library,
+  Menu,
+  MessageSquare,
+  Settings,
+  User,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { PageOverlay } from "@/components/landing/page-overlay";
 import { VideoBackground } from "@/components/landing/video-background";
 import { StudentSidebar } from "@/components/dashboard/student-sidebar";
+
+const mobileNavItems = [
+  { href: "/chat", icon: MessageSquare, label: "Chat" },
+  { href: "/subjects", icon: BookOpen, label: "Subjects" },
+  { href: "/library", icon: Library, label: "Library" },
+  { href: "/profile", icon: User, label: "Profile" },
+  { href: "/settings", icon: Settings, label: "Settings" },
+];
 
 type StudentPageShellProps = {
   children: React.ReactNode;
 };
 
 export function StudentPageShell({ children }: StudentPageShellProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -21,8 +42,14 @@ export function StudentPageShell({ children }: StudentPageShellProps) {
     <>
       <VideoBackground />
       <PageOverlay />
-      <main className="flex min-h-dvh text-white">
+      <main className="min-h-dvh text-white md:flex">
+        <MobileStudentTopbar
+          isOpen={mobileMenuOpen}
+          onToggle={() => setMobileMenuOpen((current) => !current)}
+        />
+
         <StudentSidebar
+          className="hidden md:flex"
           expanded={sidebarExpanded}
           onToggle={() => setSidebarExpanded((current) => !current)}
         />
@@ -32,5 +59,91 @@ export function StudentPageShell({ children }: StudentPageShellProps) {
         </section>
       </main>
     </>
+  );
+}
+
+function MobileStudentTopbar({
+  isOpen,
+  onToggle,
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const [dateTime, setDateTime] = useState({ date: "", time: "" });
+
+  useEffect(() => {
+    function updateDateTime() {
+      const now = new Date();
+      const date = new Intl.DateTimeFormat(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }).format(now);
+      const time = new Intl.DateTimeFormat(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(now);
+
+      setDateTime({ date, time });
+    }
+
+    updateDateTime();
+    const interval = window.setInterval(updateDateTime, 30_000);
+    return () => window.clearInterval(interval);
+  }, []);
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-white/18 bg-white/12 px-3 py-3 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.08)] backdrop-blur-[28px] md:hidden">
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          className="text-[20px] font-normal leading-none tracking-[-0.03em] text-white"
+          href="/chat"
+        >
+          modulewyse
+        </Link>
+        <button
+          aria-expanded={isOpen}
+          aria-label={isOpen ? "Collapse menu" : "Expand menu"}
+          className="grid size-10 place-items-center rounded-[12px] border border-white/18 bg-white/12 text-white/78"
+          onClick={onToggle}
+          type="button"
+        >
+          {isOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+        </button>
+      </div>
+
+      {isOpen ? (
+        <div className="mt-4 grid gap-4">
+          <nav className="grid gap-2" aria-label="Student dashboard mobile">
+            {mobileNavItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  className="flex h-10 items-center gap-3 rounded-[12px] border border-white/14 bg-white/10 px-3 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/76"
+                  href={item.href}
+                  key={item.href}
+                >
+                  <Icon className="size-4 shrink-0" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="grid gap-1.5 font-mono text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-white/55">
+            <span className="flex items-center gap-2">
+              <Clock className="size-3.5 shrink-0" />
+              <span>{dateTime.time}</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <CalendarDays className="size-3.5 shrink-0" />
+              <span>{dateTime.date}</span>
+            </span>
+          </div>
+        </div>
+      ) : null}
+    </header>
   );
 }

@@ -586,3 +586,47 @@ This file is updated at the end of each working session.
 
 ### Next
 - Browser-check `/chat` on a logged-in mobile viewport and confirm the expanded top-bar ordering visually.
+
+## 2026-05-14 - Mobile Navigation Refinement
+
+### Completed
+- Added spacing between the mobile `/chat` top bar and the first content card.
+- Scoped the mobile `/chat` expanded top bar to chat controls only:
+  - answer type
+  - semester
+  - subject
+  - module
+- Added the same mobile top-bar pattern to the other protected student pages through `StudentPageShell`.
+- Kept other protected-page mobile top bars focused on navigation links and date/time.
+- Hid the shared sidebar on small screens for protected pages and kept it from `md` upward.
+- Removed the extra outer glass box around the fixed `/chat` composer, leaving only the input field surface and `ASK` CTA.
+- Increased bottom spacing below the fixed `/chat` input field.
+- Hid the scrollbar inside the `/chat` input textarea.
+- Added Chat, Subjects, Library, Profile, and Settings navigation links below the chat controls in the mobile `/chat` expanded navbar.
+- Added time/date rows below the mobile `/chat` navbar links.
+- Added extra bottom padding inside the expanded mobile `/chat` navbar card.
+- Reduced the right padding inside the fixed `/chat` question input field.
+- Updated sent user-question bubbles to fill the available conversation row width so left and right margins are balanced.
+- Re-aligned sent user-question bubbles toward the right side with a tighter right edge and constrained max width.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- `md` and `lg` dashboard/sidebar behavior was left unchanged.
+
+### Next
+- Browser-check `/chat`, `/subjects`, `/library`, `/profile`, and `/settings` at mobile widths while logged in.
+
+## 2026-05-14 - Authenticated Landing Redirect
+
+### Completed
+- Updated `proxy.ts` so authenticated users visiting `/` are redirected to `/chat`.
+- Updated dashboard brand links in the chat mobile top bar, protected-page mobile top bar, and shared sidebar to point to `/chat` instead of the landing page.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Logged-out users can still access the landing page normally.
+
+### Next
+- Browser-check the authenticated `/` redirect with a confirmed Supabase session.
