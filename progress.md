@@ -827,6 +827,10 @@ This file is updated at the end of each working session.
   - `npm run build`
 - Ran `npm run lint`; passed.
 - Ran `npm run build`; passed.
+- Committed and pushed the security hardening changes to GitHub:
+  - branch: `onboarding`
+  - commit: `4f06756 Harden auth functions and add CI`
+- Confirmed the local git worktree is clean after push.
 
 ### Issues / Notes
 - Supabase Auth leaked-password protection still needs to be enabled manually in the Supabase dashboard. The current Supabase MCP tools expose advisors and SQL, but not Auth security setting mutation.
@@ -846,4 +850,3 @@ This file is updated at the end of each working session.
 - In GitHub repository settings, add the CI secrets if desired:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- Push the security hardening changes to GitHub.
