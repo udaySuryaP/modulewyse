@@ -562,3 +562,27 @@ This file is updated at the end of each working session.
 
 ### Next
 - Build the static subjects-to-chat flow: subject cards, subject detail route, Start Chat with subject/module query params, and chat context initialization.
+
+## 2026-05-14 - Mobile Chat Top Bar
+
+### Completed
+- Added a mobile-only `/chat` top bar with `modulewyse` on the left and an expand/collapse button on the right.
+- Changed the mobile `/chat` navigation behavior so the menu expands vertically instead of widening sideways.
+- Added the requested expanded mobile top-bar order:
+  - brand/header row
+  - answer type controls
+  - semester dropdown
+  - subject dropdown
+  - module dropdown
+  - Chat, Subjects, Library, Profile, Settings links
+  - time and date rows with icons
+- Hid the `/chat` side rail on mobile only.
+- Kept the existing sidebar/dashboard behavior for `md` and `lg` views.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; first attempt failed because Next could not fetch Google Fonts, then the retry passed.
+
+### Issues / Notes
+- This change is scoped to the `/chat` mobile layout. Other protected pages still use the shared student shell behavior.
+
+### Next
+- Browser-check `/chat` on a logged-in mobile viewport and confirm the expanded top-bar ordering visually.

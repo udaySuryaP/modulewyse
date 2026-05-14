@@ -26,11 +26,16 @@ const navItems = [
 ];
 
 type StudentSidebarProps = {
+  className?: string;
   expanded: boolean;
   onToggle: () => void;
 };
 
-export function StudentSidebar({ expanded, onToggle }: StudentSidebarProps) {
+export function StudentSidebar({
+  className,
+  expanded,
+  onToggle,
+}: StudentSidebarProps) {
   const pathname = usePathname();
   const [dateTime, setDateTime] = useState({ date: "", time: "" });
 
@@ -61,6 +66,7 @@ export function StudentSidebar({ expanded, onToggle }: StudentSidebarProps) {
       className={cn(
         "sticky top-0 z-20 flex h-dvh shrink-0 flex-col border-r border-white/18 bg-white/12 px-2 py-4 shadow-[inset_-1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-[28px] transition-[width] duration-300 sm:px-3 sm:py-5",
         expanded ? "w-[60px] sm:w-[72px] lg:w-[228px]" : "w-[60px] sm:w-[72px]",
+        className,
       )}
     >
       <div
