@@ -1518,3 +1518,64 @@ create table if not exists public.message_feedback (
 ### Next
 - Apply the migration and seed to Supabase.
 - Replace static subjects with Supabase-backed subjects while keeping static fallback data.
+
+## 2026-05-16 - Supabase-Backed Subjects With Static Fallback
+
+### Completed
+- Re-inspected the requested subject data phase context:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `supabase/schema.sql`
+  - `supabase/migrations/20260516000538_add_student_content_foundation.sql`
+  - `supabase/seed.sql`
+  - `types/database.ts`
+  - `lib/data/subjects.ts`
+  - `lib/mock-subjects.ts`
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/chat`
+  - `components/chat/chat-workspace.tsx`
+  - `components/subjects`
+  - Supabase client/server helpers
+  - `proxy.ts`
+- Confirmed Supabase public env values are present locally, but no service-role/privileged database connection is configured.
+- Checked live Supabase through anon access:
+  - `public.subjects` is not currently available in the schema cache
+  - `public.modules` is not currently available in the schema cache
+  - `public.topics` is not currently available in the schema cache
+- Did not apply the migration or seed from the app session because a safe privileged database connection was not available.
+- Updated `lib/data/subjects.ts` so database reads fail safely:
+  - `getSubjects()`
+  - `getSubjectBySlug(slug)`
+  - `getSubjectModules(subjectId)`
+  - `getSubjectWithModules(slug)`
+- Added normalized subject view-model helpers in `lib/data/subjects.ts`:
+  - `getSubjectListWithFallback()`
+  - `getSubjectWithModulesAndFallback(slug)`
+  - `getFallbackSubjectBySlug(slug)`
+  - `getFallbackSubjectList()`
+  - `normalizeSubjectModuleValue(value, modules)`
+- Updated `/subjects` to prefer Supabase subject data and fall back to `lib/mock-subjects.ts` when Supabase data is missing, empty, or query-failing.
+- Updated `/subjects/[id]` to prefer Supabase subject/module data and fall back to static mock data by slug.
+- Updated `components/subjects/subject-detail-panel.tsx` to render normalized subject view models.
+- Updated `/chat` query-param context initialization to use the same Supabase/fallback subject lookup for `subject` and `module`.
+- Preserved pending question restoration, mock chat behavior, copy/feedback/regenerate, setup prompt, and protected route behavior.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Route-checked logged-out behavior:
+  - `/subjects` redirects to `/login?next=%2Fsubjects`
+  - `/subjects/oop` redirects to `/login?next=%2Fsubjects%2Foop`
+  - `/chat?subject=oop&module=3` redirects to `/login?next=%2Fchat%3Fsubject%3Doop%26module%3D3`
+
+### Issues / Notes
+- The live Supabase content tables still need the migration and seed applied.
+- Full logged-in browser testing of DB-backed subject pages was not completed in this session because a confirmed authenticated browser session was not available.
+- Static imports remain intentionally in landing, library, settings, and chat workspace for existing placeholder/fallback flows.
+- The chat workspace selector options still use the static subject list; the route-level initial context now supports Supabase/fallback subjects, and a fuller selector data-source swap can happen after subjects are seeded.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Apply `supabase/migrations/20260516000538_add_student_content_foundation.sql` and `supabase/seed.sql` to Supabase.
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
