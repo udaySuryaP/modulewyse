@@ -1451,3 +1451,70 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Add database schema for subjects, modules, topics, conversations, and feedback.
+
+## 2026-05-16 - Student Content and Conversation Schema Foundation
+
+### Completed
+- Re-inspected the requested database/content phase context:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `supabase/schema.sql`
+  - existing `supabase/migrations`
+  - `lib/mock-subjects.ts`
+  - `lib/mock-library.ts`
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/chat`
+  - `components/chat/chat-workspace.tsx`
+  - Supabase client/server helpers
+  - `proxy.ts`
+- Added the student content/conversation foundation to `supabase/schema.sql`.
+- Created migration `supabase/migrations/20260516000538_add_student_content_foundation.sql`.
+- Added database tables for:
+  - `public.subjects`
+  - `public.modules`
+  - `public.topics`
+  - `public.conversations`
+  - `public.messages`
+  - `public.message_feedback`
+- Reused the existing `public.set_updated_at()` trigger function and added update triggers for:
+  - `subjects`
+  - `modules`
+  - `topics`
+  - `conversations`
+- Enabled RLS on all new tables.
+- Added RLS policies for:
+  - authenticated reads of visible subjects/modules/topics
+  - user-owned conversations
+  - messages constrained to owned conversations
+  - feedback constrained to owned messages/conversations
+- Created `supabase/seed.sql` with idempotent seed data for:
+  - Object Oriented Programming
+  - Database Management Systems
+  - Operating Systems
+  - Computer Networks
+  - Data Structures
+  - five placeholder modules per subject
+  - starter OOP and DBMS topics
+- Added simple TypeScript database types in `types/database.ts`.
+- Added small Supabase server read helpers in `lib/data/subjects.ts`:
+  - `getSubjects()`
+  - `getSubjectBySlug(slug)`
+  - `getSubjectModules(subjectId)`
+  - `getSubjectWithModules(slug)`
+- Kept the existing static UI unchanged.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- The migration and seed were written but not applied to the live Supabase project in this session.
+- A privileged database migration connection or manual Supabase SQL editor run is still required.
+- The app still uses static subject/library/mock chat data; database-backed UI replacement is intentionally deferred to the next phase.
+- No OpenAI, RAG, embeddings, vector search, admin UI, content upload UI, payment, or student uploads were added.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Apply the migration and seed to Supabase.
+- Replace static subjects with Supabase-backed subjects while keeping static fallback data.
