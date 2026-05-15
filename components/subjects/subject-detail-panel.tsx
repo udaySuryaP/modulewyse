@@ -4,21 +4,18 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { StatusBadge } from "@/components/landing/status-badge";
-import type { MockSubject, SubjectModule } from "@/lib/mock-subjects";
-import {
-  isChatEnabledSubject,
-  subjectModuleLabel,
-  subjectStatusLabel,
-} from "@/lib/mock-subjects";
+import type { SubjectModule } from "@/lib/mock-subjects";
+import { subjectStatusLabel } from "@/lib/mock-subjects";
+import type { SubjectViewModel } from "@/lib/data/subjects";
 import { cn } from "@/lib/utils";
 
 type SubjectDetailPanelProps = {
-  subject: MockSubject;
+  subject: SubjectViewModel;
 };
 
 export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
   const [selectedModule, setSelectedModule] = useState<SubjectModule>("all");
-  const chatEnabled = isChatEnabledSubject(subject);
+  const chatEnabled = subject.status === "available" || subject.status === "beta";
   const chatHref = useMemo(
     () => `/chat?subject=${subject.slug}&module=${selectedModule}`,
     [selectedModule, subject.slug],
@@ -64,14 +61,14 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
                   <button
                     className={cn(
                       "h-10 rounded-[12px] border border-white/18 bg-white/10 px-4 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-white/72 transition-colors hover:bg-white/16 hover:text-white",
-                      selectedModule === module &&
+                      selectedModule === module.value &&
                         "bg-white text-black hover:bg-white hover:text-black",
                     )}
-                    key={module}
-                    onClick={() => setSelectedModule(module)}
+                    key={module.value}
+                    onClick={() => setSelectedModule(module.value)}
                     type="button"
                   >
-                    {subjectModuleLabel(module)}
+                    {module.label}
                   </button>
                 ))}
               </div>
@@ -108,14 +105,18 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           Topic preview
         </p>
         <div className="mt-4 grid gap-2">
-          {subject.topicSamples.map((topic) => (
+          {subject.topicSamples.length > 0 ? subject.topicSamples.map((topic) => (
             <div
               className="rounded-[12px] border border-white/12 bg-white/8 px-4 py-3 text-[14px] leading-[1.4] text-white/72"
               key={topic}
             >
               {topic}
             </div>
-          ))}
+          )) : (
+            <div className="rounded-[12px] border border-white/12 bg-white/8 px-4 py-3 text-[14px] leading-[1.4] text-white/55">
+              Topic previews will appear after content is synced.
+            </div>
+          )}
         </div>
 
         <div className="mt-6 grid gap-1 text-[14px] leading-[1.45] text-white/68">

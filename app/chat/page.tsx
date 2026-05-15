@@ -5,10 +5,9 @@ import { PageOverlay } from "@/components/landing/page-overlay";
 import { VideoBackground } from "@/components/landing/video-background";
 import { getUserProfile } from "@/lib/auth/get-user-profile";
 import {
-  getSubjectBySlug,
-  normalizeSubjectModule,
-  subjectModuleLabel,
-} from "@/lib/mock-subjects";
+  getSubjectWithModulesAndFallback,
+  normalizeSubjectModuleValue,
+} from "@/lib/data/subjects";
 
 type ChatPageProps = {
   searchParams: Promise<{
@@ -37,10 +36,15 @@ export default async function ChatPage({ searchParams }: ChatPageProps) {
   const params = await searchParams;
   const pendingQuestion = firstParam(params.q);
   const subjectParam = firstParam(params.subject);
-  const routedSubject = getSubjectBySlug(subjectParam);
-  const routedModule = routedSubject
-    ? subjectModuleLabel(normalizeSubjectModule(routedSubject, firstParam(params.module)))
-    : firstParam(params.module);
+  const { subject: routedSubject } = subjectParam
+    ? await getSubjectWithModulesAndFallback(subjectParam)
+    : { subject: null };
+  const normalizedModule = routedSubject
+    ? normalizeSubjectModuleValue(firstParam(params.module), routedSubject.modules)
+    : "all";
+  const routedModule = routedSubject?.modules.find(
+    (module) => module.value === normalizedModule,
+  )?.label;
   const initialContext = {
     semester: firstParam(params.semester) || routedSubject?.semester || "S4",
     subject: routedSubject?.name || subjectParam || "Object Oriented Programming",
