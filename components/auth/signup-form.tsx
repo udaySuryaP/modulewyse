@@ -26,6 +26,10 @@ function authErrorMessage(message: string) {
     return "Use at least 8 characters.";
   }
 
+  if (lowerMessage.includes("rate limit")) {
+    return "Too many emails were sent. Please wait and try again.";
+  }
+
   return "Unable to connect. Please try again.";
 }
 

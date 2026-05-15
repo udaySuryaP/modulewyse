@@ -4,29 +4,7 @@ import { useRouter } from "next/navigation";
 
 import { GlassButton } from "@/components/landing/glass-button";
 import { StatusBadge } from "@/components/landing/status-badge";
-
-const subjects = [
-  {
-    name: "Object Oriented Programming",
-    status: "available",
-  },
-  {
-    name: "DBMS",
-    status: "beta",
-  },
-  {
-    name: "Operating Systems",
-    status: "coming soon",
-  },
-  {
-    name: "Computer Networks",
-    status: "coming soon",
-  },
-  {
-    name: "Data Structures",
-    status: "coming soon",
-  },
-] as const;
+import { mockSubjects } from "@/lib/mock-subjects";
 
 function trimSubjectName(name: string) {
   if (name.length <= 22) {
@@ -46,10 +24,10 @@ export function SubjectStatusPanel() {
       </h2>
 
       <div className="mt-5 grid gap-3">
-        {subjects.map((subject) => (
+        {mockSubjects.map((subject) => (
           <div
             className="flex items-center justify-between gap-3 rounded-[12px] border border-white/12 bg-white/8 px-4 py-3"
-            key={subject.name}
+            key={subject.slug}
           >
             <span
               className="min-w-0 max-w-[22ch] truncate whitespace-nowrap text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/72"

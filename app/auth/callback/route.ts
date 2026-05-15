@@ -29,8 +29,14 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (user) {
-      await ensureProfile(supabase, user);
-      return NextResponse.redirect(new URL(redirectAfterAuth(next), request.url));
+      try {
+        await ensureProfile(supabase, user);
+        return NextResponse.redirect(new URL(redirectAfterAuth(next), request.url));
+      } catch {
+        return NextResponse.redirect(
+          new URL("/login?error=callback", request.url),
+        );
+      }
     }
   }
 

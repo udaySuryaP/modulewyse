@@ -4,6 +4,11 @@ import { ChatWorkspace } from "@/components/chat/chat-workspace";
 import { PageOverlay } from "@/components/landing/page-overlay";
 import { VideoBackground } from "@/components/landing/video-background";
 import { getUserProfile } from "@/lib/auth/get-user-profile";
+import {
+  getSubjectBySlug,
+  normalizeSubjectModule,
+  subjectModuleLabel,
+} from "@/lib/mock-subjects";
 
 type ChatPageProps = {
   searchParams: Promise<{
@@ -31,10 +36,15 @@ export default async function ChatPage({ searchParams }: ChatPageProps) {
 
   const params = await searchParams;
   const pendingQuestion = firstParam(params.q);
+  const subjectParam = firstParam(params.subject);
+  const routedSubject = getSubjectBySlug(subjectParam);
+  const routedModule = routedSubject
+    ? subjectModuleLabel(normalizeSubjectModule(routedSubject, firstParam(params.module)))
+    : firstParam(params.module);
   const initialContext = {
-    semester: firstParam(params.semester) || "S4",
-    subject: firstParam(params.subject) || "Object Oriented Programming",
-    module: firstParam(params.module) || "All modules",
+    semester: firstParam(params.semester) || routedSubject?.semester || "S4",
+    subject: routedSubject?.name || subjectParam || "Object Oriented Programming",
+    module: routedModule || "All modules",
   };
   const isProfileIncomplete = !profile?.onboarding_completed;
 

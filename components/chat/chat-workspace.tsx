@@ -21,18 +21,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { StudentSidebar } from "@/components/dashboard/student-sidebar";
 import { clearPendingQuestion, readPendingQuestion } from "@/lib/landing-flow";
+import {
+  mockSubjects,
+  subjectModules,
+  subjectModuleLabel,
+} from "@/lib/mock-subjects";
 import { cn } from "@/lib/utils";
 
 const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"];
-const subjects = [
-  "Object Oriented Programming",
-  "Database Management Systems",
-  "Operating Systems",
-  "Computer Networks",
-  "Data Structures",
-];
-const modules = ["Module 1", "Module 2", "Module 3", "Module 4", "Module 5"];
-const moduleOptions = ["All modules", ...modules];
+const subjects = mockSubjects.map((subject) => subject.name);
+const moduleOptions = subjectModules.map(subjectModuleLabel);
 const answerTypes = ["Default", "Short", "Medium", "Long", "Part A", "Part B", "Part C"];
 const suggestedPrompts = [
   "Explain inheritance in OOP",
@@ -60,7 +58,7 @@ type ChatContext = {
   module: string;
 };
 
-type SourceChip = "OOP" | "MODULE 3" | "NOTES";
+type SourceChip = string;
 
 type Message = {
   id: string;
@@ -144,6 +142,26 @@ function contextFromProps(initialContext: ChatContext) {
   };
 }
 
+function sourceChipsForContext(context: ChatContext): SourceChip[] {
+  const subject = mockSubjects.find(
+    (item) => item.name.toLowerCase() === context.subject.toLowerCase(),
+  );
+  const subjectChip =
+    subject?.shortName ??
+    context.subject
+      .split(/\s+/)
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 6)
+      .toUpperCase();
+  const moduleChip =
+    context.module.toLowerCase() === "all modules"
+      ? "ALL MODULES"
+      : context.module.toUpperCase();
+
+  return [subjectChip, moduleChip, "NOTES"];
+}
+
 export function ChatWorkspace({
   initialQuestion,
   initialContext,
@@ -194,32 +212,43 @@ export function ChatWorkspace({
   function assistantMessage(
     question: string,
     status: AssistantStatus = "complete",
+    contextSnapshot: ChatContext = context,
+    answerTypeSnapshot: string = answerType,
   ): Message {
     return {
       id: newId("assistant"),
       role: "assistant",
       content:
         status === "complete"
-          ? mockAnswer(question, answerType)
+          ? mockAnswer(question, answerTypeSnapshot)
           : status === "insufficient"
             ? "I do not have enough verified material for this answer yet."
             : status === "rate-limited"
               ? "Local mock rate limit reached. Try again in a moment."
               : "The local mock answer failed to generate.",
       createdAt: new Date(),
-      answerType,
-      context,
-      sources: ["OOP", "MODULE 3", "NOTES"],
+      answerType: answerTypeSnapshot,
+      context: contextSnapshot,
+      sources: sourceChipsForContext(contextSnapshot),
       status,
     };
   }
 
-  function finishMockAnswer(question: string) {
+  function finishMockAnswer(
+    question: string,
+    contextSnapshot: ChatContext,
+    answerTypeSnapshot: string,
+  ) {
     const forcedState = shouldTriggerState(question);
 
     setMessages((current) => [
       ...current.filter((message) => message.status !== "loading"),
-      assistantMessage(question, forcedState ?? "complete"),
+      assistantMessage(
+        question,
+        forcedState ?? "complete",
+        contextSnapshot,
+        answerTypeSnapshot,
+      ),
     ]);
     setIsGenerating(false);
     focusComposer();
@@ -233,6 +262,10 @@ export function ChatWorkspace({
     }
 
     setDraft("");
+    const contextSnapshot = context;
+    const answerTypeSnapshot = answerType;
+    const sourceChips = sourceChipsForContext(contextSnapshot);
+
     setMessages((current) => [
       ...current,
       {
@@ -246,16 +279,19 @@ export function ChatWorkspace({
         role: "assistant",
         content: "Generating from selected notes...",
         createdAt: new Date(),
-        answerType,
-        context,
+        answerType: answerTypeSnapshot,
+        context: contextSnapshot,
         status: "loading",
-        sources: ["OOP", "MODULE 3", "NOTES"],
+        sources: sourceChips,
       },
     ]);
     setIsGenerating(true);
 
     const delay = 700 + Math.round(Math.random() * 500);
-    window.setTimeout(() => finishMockAnswer(trimmedQuestion), delay);
+    window.setTimeout(
+      () => finishMockAnswer(trimmedQuestion, contextSnapshot, answerTypeSnapshot),
+      delay,
+    );
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -299,6 +335,10 @@ export function ChatWorkspace({
       return;
     }
 
+    const targetMessage = messages[index];
+    const contextSnapshot = targetMessage?.context ?? context;
+    const answerTypeSnapshot = targetMessage?.answerType ?? answerType;
+
     setMessages((current) =>
       current.map((message) =>
         message.id === messageId
@@ -317,7 +357,12 @@ export function ChatWorkspace({
       setMessages((current) =>
         current.map((message) =>
           message.id === messageId
-            ? assistantMessage(previousQuestion, "complete")
+            ? assistantMessage(
+                previousQuestion,
+                "complete",
+                contextSnapshot,
+                answerTypeSnapshot,
+              )
             : message,
         ),
       );
@@ -836,7 +881,11 @@ function AssistantMessage({
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {(message.sources ?? ["OOP", "MODULE 3", "NOTES"]).map((source) => (
+        {(message.sources ?? sourceChipsForContext(message.context ?? {
+          semester: "S4",
+          subject: "Object Oriented Programming",
+          module: "All modules",
+        })).map((source) => (
           <Badge key={source}>{source}</Badge>
         ))}
       </div>
