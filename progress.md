@@ -896,3 +896,625 @@ This file is updated at the end of each working session.
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - Run full real-auth QA with a confirmed Supabase test account, then build the static subjects-to-chat flow.
+
+## 2026-05-15 - Prompt 1 Security Hardening Verification
+
+### Completed
+- Treated this as Prompt 1 in the 10-prompt sequence.
+- Re-inspected the requested project context before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `supabase/schema.sql`
+  - `supabase/manual_hardening.sql`
+  - `docs/SECURITY_CHECKLIST.md`
+  - `package.json`
+  - `.env.example`
+  - app routes
+  - components
+  - `lib/supabase`
+  - `lib/env`
+  - `proxy.ts`
+- Confirmed security hardening is already present:
+  - `public.set_updated_at()` has fixed `set search_path = public`
+  - `public.handle_new_user()` remains `security definer` for the auth trigger and has fixed `set search_path = public`
+  - direct execution is revoked from `public`, `anon`, and `authenticated` for trigger-only functions
+  - `supabase/manual_hardening.sql` documents `public.rls_auto_enable()` inspection and revoke steps
+  - `docs/SECURITY_CHECKLIST.md` documents Supabase, Vercel, and GitHub manual security actions
+- Confirmed the app uses split environment modules:
+  - `lib/env/public.ts`
+  - `lib/env/server.ts`
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- No product feature work was added.
+- Manual dashboard actions still remain:
+  - enable Supabase leaked-password protection
+  - verify Supabase redirect URLs
+  - verify Vercel env vars and production domain
+  - enable GitHub Dependabot/security alerts and add branch protection later
+
+### Next
+- Continue with Prompt 2.
+
+## 2026-05-15 - Prompt 2 Env Split and CI Verification
+
+### Completed
+- Treated this as Prompt 2 in the 10-prompt sequence.
+- Re-inspected the requested files before making any changes:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `package.json`
+  - `.env.example`
+  - `lib/env`
+  - `lib/supabase/client.ts`
+  - `lib/supabase/server.ts`
+  - `lib/supabase/middleware.ts`
+  - `proxy.ts`
+  - `.github/workflows/ci.yml`
+- Confirmed `lib/supabase/proxy.ts` does not exist; this project uses `lib/supabase/middleware.ts`.
+- Confirmed the public/server environment split is complete:
+  - `lib/env/public.ts` exposes only public variables
+  - `lib/env/server.ts` contains server-only placeholders and `import "server-only"`
+- Confirmed client and shared auth code imports only from `@/lib/env/public`.
+- Confirmed `.env.example` contains placeholders only and no real Supabase URL or key.
+- Confirmed GitHub CI exists at `.github/workflows/ci.yml` and runs:
+  - `npm ci`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed with no high or critical findings.
+
+### Issues / Notes
+- No product feature work was added.
+- `npm audit` still reports the known moderate Next/PostCSS advisory, but the requested high-severity threshold passes.
+- GitHub CI uses optional secrets for Supabase public env parity:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### Next
+- Continue with Prompt 3.
+
+## 2026-05-15 - Prompt 3 Auth QA Flow Support
+
+### Completed
+- Treated this as Prompt 3 in the 10-prompt sequence.
+- Re-inspected the requested auth-related project context before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - auth app routes
+  - signup, login, forgot-password pages and forms
+  - auth callback route
+  - onboarding routes and forms
+  - `/chat`, `/subjects`, `/profile`, and `/settings`
+  - `lib/auth`
+  - `lib/supabase`
+  - `proxy.ts`
+- Kept onboarding non-blocking and did not redesign any page.
+- Hardened `/auth/callback` so `ensureProfile()` failures redirect to `/login?error=callback` instead of throwing a server error.
+- Improved signup error handling for Supabase email rate limiting:
+  - now shows `Too many emails were sent. Please wait and try again.`
+- Verified logged-out route behavior:
+  - `/` returns 200
+  - `/chat` redirects to `/login?next=%2Fchat`
+  - `/subjects` redirects to `/login?next=%2Fsubjects`
+- Verified logged-in route behavior with a Supabase session cookie:
+  - `/` redirects to `/chat`
+  - `/login` redirects to `/chat`
+  - `/signup` redirects to `/chat`
+  - `/chat` returns 200
+  - `/subjects` returns 200
+  - `/onboarding/academic-profile` returns 200 and remains accessible
+  - `/profile` returns 200
+  - `/settings` returns 200
+- Verified confirmed-user login through Supabase Auth API with the existing QA account.
+- Verified forgot-password reset API succeeds and uses the generic non-enumerating success flow.
+- Verified signup creates a Supabase user and profile row through the trigger when email confirmation is required.
+- Deleted the disposable Prompt 3 signup test user after verifying the trigger-created profile row.
+- Verified Supabase signout API succeeds.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Full click-by-click browser QA was not run in Chrome during this prompt.
+- Email confirmation link opening was not tested end-to-end in an inbox.
+- Protected-page UI signout buttons were not clicked in browser, but the same Supabase signout API path used by the buttons was verified.
+
+### Next
+- Continue with Prompt 4.
+
+## 2026-05-15 - Prompt 4 Static Subjects-to-Chat Flow
+
+### Completed
+- Treated this as Prompt 4 in the 10-prompt sequence.
+- Re-inspected the requested subjects/chat project context before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - app routes
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/chat`
+  - `components/chat/chat-workspace.tsx`
+  - `components/dashboard/student-page-shell.tsx`
+  - `components/dashboard/student-sidebar.tsx`
+  - landing status/subject card components
+- Read the local Next.js 16 docs for dynamic routes, page props, and `Link` before editing the App Router pages.
+- Added centralized static subject data in `lib/mock-subjects.ts` with:
+  - Object Oriented Programming (`oop`, available)
+  - Database Management Systems (`dbms`, beta)
+  - Operating Systems (`os`, coming soon)
+  - Computer Networks (`cn`, coming soon)
+  - Data Structures (`ds`, coming soon)
+- Updated `/subjects` to render protected warm-glass subject cards from the centralized static data.
+- Available and beta subjects now open subject detail routes:
+  - `/subjects/oop`
+  - `/subjects/dbms`
+- Coming-soon subjects render as disabled/read-only cards.
+- Rebuilt `/subjects/[id]` as a static subject detail route using the existing protected dashboard shell.
+- Added `components/subjects/subject-detail-panel.tsx` with:
+  - subject metadata
+  - status badge
+  - description
+  - module selector
+  - topic preview
+  - beta warning
+  - `START CHAT` CTA for available/beta subjects
+  - coming-soon state with `VIEW AVAILABLE SUBJECTS`
+- `START CHAT` now routes to `/chat?subject=<slug>&module=<module>`.
+- Updated `/chat` query initialization so subject slugs resolve to readable subject names and module labels.
+- Updated the chat context selectors and landing subject status panel to use the centralized static subject data.
+- Updated `StatusBadge` to accept both `coming soon` and `coming-soon`.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- This remains a static/mock subject flow only.
+- Unknown KTU subject codes and semesters for non-OOP subjects are currently stored as `TBD` placeholders.
+- Coming-soon subjects are not linked from `/subjects` by design; direct unknown subject slugs redirect back to `/subjects`.
+- No database-backed subjects, content pipeline, OpenAI, RAG, embeddings, or admin tooling was added.
+
+### Next
+- Continue with Prompt 5.
+
+## 2026-05-15 - Prompt 5 Chat Query Context Initialization
+
+### Completed
+- Treated this as Prompt 5 in the 10-prompt sequence.
+- Re-inspected the requested chat/context files before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `/chat` route
+  - `components/chat/chat-workspace.tsx`
+  - `lib/landing-flow.ts`
+  - `lib/mock-subjects.ts`
+  - `proxy.ts`
+  - `components/dashboard/student-page-shell.tsx`
+  - `components/subjects/subject-detail-panel.tsx`
+- Confirmed `/chat` already consumes subject/module query params from Prompt 4:
+  - `/chat?subject=oop&module=3`
+  - `/chat?subject=dbms&module=all`
+  - `/chat?q=Explain%20inheritance&subject=oop&module=3`
+- Preserved pending question priority:
+  - URL `?q=` remains the first source for the composer draft
+  - stored pending question remains the fallback
+  - restored stored pending question is still cleared safely
+- Updated mock chat source chips so assistant messages reflect the selected context:
+  - `OOP / MODULE 3 / NOTES`
+  - `DBMS / ALL MODULES / NOTES`
+  - subject short names come from centralized subject data
+- Updated mock answer generation to snapshot the selected subject/module and answer type when the user sends a message.
+- Regenerate now preserves the original assistant message context and answer type instead of using whatever selector state is currently active.
+- Verified the static Start Chat href shape from subject detail remains:
+  - `/chat?subject=<slug>&module=<module>`
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- No browser session QA was run for this prompt because `/chat` is auth-protected.
+- No AI calls, persistence, database-backed subjects, RAG, embeddings, or content ingestion were added.
+- Chat context is still local UI state after page load; changing selectors does not update the URL yet.
+
+### Next
+- Continue with Prompt 6.
+
+## 2026-05-15 - Prompt 6 Profile and Settings Editing
+
+### Completed
+- Treated this as Prompt 6 in the 10-prompt sequence.
+- Re-inspected the requested profile/settings context before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `supabase/schema.sql`
+  - `/profile`
+  - `/settings`
+  - `/settings/account`
+  - `/settings/academic`
+  - `/settings/preferences`
+  - onboarding profile update logic
+  - Supabase client/server helpers
+  - `StudentPageShell`
+  - signout and form message components
+  - protected route behavior in `proxy.ts`
+- Confirmed `public.profiles` fields available for student editing:
+  - `full_name`
+  - `email`
+  - `college_name`
+  - `graduation_year`
+  - `branch`
+  - `semester`
+  - `focus_subject`
+  - `referral_source`
+  - `onboarding_completed`
+- Rebuilt `/profile` as a real profile summary page showing:
+  - profile identity fields
+  - academic fields
+  - onboarding completion state
+  - usage placeholders
+  - Edit Profile, Settings, and Sign Out actions
+- Rebuilt `/settings` as an overview page linking to:
+  - Account
+  - Academic
+  - Preferences
+- Built `/settings/account` with `components/settings/account-settings-form.tsx`:
+  - editable `full_name`
+  - read-only `email`
+  - save state
+  - success/error message
+- Built `/settings/academic` with `components/settings/academic-settings-form.tsx`:
+  - editable `college_name`
+  - editable `graduation_year`
+  - editable `branch`
+  - editable `semester`
+  - editable `focus_subject`
+  - save state
+  - success/error message
+- Built `/settings/preferences` with `components/settings/preferences-form.tsx`:
+  - default answer type
+  - exam mode default
+  - show source chips
+  - show suggested prompts
+  - compact answer cards
+  - localStorage persistence only
+- Kept profile updates client-side through the normal Supabase browser client and existing RLS policies.
+- Did not add service-role usage, admin fields, role columns, or any admin UI.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Preferences are device-local and not synced to Supabase.
+- Email is read-only; email change and password update UI remain future account work.
+- Usage stats are placeholders:
+  - Questions asked: `0`
+  - Subjects used: `Static/mock`
+  - Answers copied: `0`
+  - Feedback given: `0`
+- Browser form-submit QA was not run during this prompt.
+
+### Next
+- Continue with Prompt 7.
+
+## 2026-05-15 - Prompt 7 Static Previous-Question Library
+
+### Completed
+- Treated this as Prompt 7 in the 10-prompt sequence.
+- Re-inspected the requested library/chat context before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `/library`
+  - `/chat` query-param behavior
+  - `lib/mock-subjects.ts`
+  - `StudentPageShell`
+  - shared form, badge, card, and dashboard styling patterns
+- Read the local Next.js 16 page docs before editing the route.
+- Added static previous-question data in `lib/mock-library.ts`.
+- Rebuilt `/library` as a protected student dashboard page using `StudentPageShell`.
+- Added `components/library/question-library.tsx` with static question cards for:
+  - `Explain inheritance in OOP.`
+  - `Differentiate TCP and UDP.`
+  - `Explain normalization in DBMS.`
+  - `Explain process scheduling.`
+- Added client-side filters:
+  - Subject
+  - Module
+  - Answer type
+  - Year
+- Added `ASK AI` routing for available/beta subjects:
+  - `/chat?q=<question>&subject=<slug>&module=<module>`
+- Added disabled coming-soon states for subjects that are not enabled yet:
+  - Computer Networks
+  - Operating Systems
+- Kept filter controls and cards responsive with wrapping/grid layouts for mobile widths.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Library content is static placeholder data only.
+- No Supabase library tables, real previous-question ingestion, OpenAI, RAG, vector search, embeddings, or admin tooling was added.
+- Browser viewport QA was not run during this prompt, but the layout uses mobile-safe grids and full-width CTAs below large-screen breakpoints.
+
+### Next
+- Continue with Prompt 8.
+
+## 2026-05-15 - Prompt 8 Chat Persistence Decision
+
+### Completed
+- Treated this as Prompt 8 in the 10-prompt sequence.
+- Re-inspected the requested persistence context before coding:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `supabase/schema.sql`
+  - `/chat`
+  - `components/chat/chat-workspace.tsx`
+  - Supabase browser, server, and middleware helpers
+  - auth/profile RLS patterns
+  - current local Supabase files
+- Confirmed the current local app-owned schema only defines `public.profiles`.
+- Confirmed the live app code currently persists only profile/account/academic data through `public.profiles`.
+- Decided not to implement app-level chat persistence in this prompt.
+
+### Decision
+- Chat persistence is deferred.
+- Reason:
+  - the current chat is intentionally local/mock-only
+  - no real conversation model or AI/RAG answer contract exists yet
+  - adding persistence now would create migration, RLS, client-write, and partial-history risks before the chat data shape is stable
+  - the prompt explicitly allows deferral when adding full persistence would risk bugs or delay
+- The existing local mock chat behavior is preserved unchanged.
+
+### Recommended Schema For Next Persistence Prompt
+```sql
+create table if not exists public.conversations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title text not null default 'New chat',
+  subject_slug text,
+  module_value text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  conversation_id uuid not null references public.conversations(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  role text not null check (role in ('user', 'assistant')),
+  content text not null,
+  answer_type text,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.message_feedback (
+  id uuid primary key default gen_random_uuid(),
+  message_id uuid not null references public.messages(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  rating text not null check (rating in ('up', 'down')),
+  created_at timestamptz not null default now()
+);
+```
+
+### Recommended RLS For Next Persistence Prompt
+- Enable RLS on:
+  - `public.conversations`
+  - `public.messages`
+  - `public.message_feedback`
+- Conversations:
+  - users can select their own rows where `(select auth.uid()) = user_id`
+  - users can insert their own rows with `with check ((select auth.uid()) = user_id)`
+  - users can update/delete their own rows where `(select auth.uid()) = user_id`
+- Messages:
+  - users can select their own rows where `(select auth.uid()) = user_id`
+  - users can insert their own rows with `with check ((select auth.uid()) = user_id)`
+  - message access should also be constrained through an owned conversation check before expanding beyond MVP
+- Feedback:
+  - users can select their own feedback if needed
+  - users can insert/update their own feedback where `(select auth.uid()) = user_id`
+  - add a unique constraint later on `(message_id, user_id)` if one feedback record per message is desired
+
+### Issues / Notes
+- No schema changes were made in this prompt.
+- No app-level persistence code was added.
+- No service-role key was used.
+- No admin UI, OpenAI, RAG, embeddings, vector search, content ingestion, content tables, payment, or student uploads were added.
+- Run-time database inspection through Supabase dashboard/MCP was not performed in this prompt; the decision used the repo schema and code paths.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Next
+- Continue with Prompt 9.
+
+## 2026-05-15 - Prompt 9 Responsive QA and Student Foundation Polish
+
+### Completed
+- Treated this as Prompt 9 in the 10-prompt sequence.
+- Re-inspected the requested student foundation context before QA:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - app route files
+  - dashboard shell/sidebar/mobile navigation
+  - `/chat`
+  - `/subjects`
+  - `/subjects/oop`
+  - `/library`
+  - `/profile`
+  - `/settings`
+  - `/settings/account`
+  - `/settings/academic`
+  - `/settings/preferences`
+  - shared components
+  - `app/globals.css`
+- Verified logged-out route behavior:
+  - `/chat` redirects to `/login?next=%2Fchat`
+  - `/subjects` redirects to `/login?next=%2Fsubjects`
+- Verified authenticated route behavior with a Supabase QA session cookie:
+  - `/` redirects to `/chat`
+  - `/chat` returns 200
+  - `/chat?subject=oop&module=3&q=Explain%20inheritance` returns 200
+  - `/subjects` returns 200
+  - `/subjects/oop` returns 200
+  - `/library` returns 200
+  - `/profile` returns 200
+  - `/settings` returns 200
+  - `/settings/account` returns 200
+  - `/settings/academic` returns 200
+  - `/settings/preferences` returns 200
+- Verified confirmed-user login through Supabase Auth API using the existing QA account.
+- Verified Supabase signout API succeeds.
+- Verified profile/settings persistence paths through authenticated Supabase API calls:
+  - profile read succeeds
+  - account update succeeds
+  - academic update succeeds
+- Verified server-rendered content is present for protected pages and includes responsive safety patterns such as:
+  - `min-w-0`
+  - `truncate`
+  - `flex-wrap`
+  - responsive grid layouts
+- Reviewed responsive layout implementation for requested breakpoints:
+  - desktop
+  - `412x914`
+  - `390x844`
+- Confirmed static/code-level mobile safety patterns:
+  - dashboard mobile topbars are present
+  - protected-page mobile nav uses stacked links
+  - chat mobile nav includes context controls and links
+  - fixed chat composer has bottom padding in the page content
+  - subject cards truncate long names
+  - library filters use wrapping responsive grids
+  - settings forms use full-width controls inside bounded cards
+  - chat source chips use `flex-wrap`
+  - global `overflow-x: hidden` is set on `body`
+- No product feature changes were made.
+- `PROJECT_MEMORY.md` did not need changes because project rules did not change.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- Full visual logged-in browser interaction was limited by the browser automation surface:
+  - the automation tool could not type into the email input reliably
+  - the browser tool rejected direct cookie-setting through a JavaScript URL for security reasons
+  - therefore logged-in dashboard checks were performed through authenticated HTTP/API checks plus static responsive inspection instead of click-by-click visual browser testing
+- Profile/settings form saves were verified through the same authenticated Supabase update paths used by the app, not through browser clicks.
+- Chat copy, feedback, and regenerate behavior were code-reviewed as existing local client behavior but not click-tested in a logged-in browser during this prompt.
+- The existing moderate `postcss` audit advisory through `next` remains; no forced audit fix was run because it would install a breaking Next.js version.
+
+### Next
+- Add database schema for subjects, modules, topics, conversations, and feedback.
+
+## 2026-05-15 - Prompt 10 Student Foundation Final Report
+
+### Completed
+- Treated this as Prompt 10 in the 10-prompt sequence.
+- Re-inspected the requested final-report context:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `docs/SECURITY_CHECKLIST.md`
+  - `supabase/schema.sql`
+  - `.env.example`
+  - `package.json`
+  - app routes
+  - components
+  - `lib/env`
+  - `lib/supabase`
+  - `proxy.ts`
+  - `.github/workflows/ci.yml`
+- Confirmed the student-side non-AI foundation includes:
+  - hardened Supabase profile schema and auth trigger functions
+  - split public/server environment modules
+  - GitHub CI for lint, build, and high-severity audit
+  - protected student auth flow
+  - static subjects-to-chat flow
+  - mock chat composer/conversation flow
+  - non-blocking onboarding
+  - profile/settings editing through `public.profiles`
+  - static previous-question library
+- Confirmed chat persistence remains intentionally deferred until the conversation/content schema is added.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run because it would install a breaking Next.js version.
+- Manual dashboard checks remain required for Supabase, Vercel, and GitHub repository settings.
+- No admin UI, OpenAI, RAG, embeddings, vector search, content ingestion, payment, or student uploads were added.
+
+### Next
+- Add database schema for subjects, modules, topics, conversations, and feedback.
+
+## 2026-05-16 - Student Content and Conversation Schema Foundation
+
+### Completed
+- Re-inspected the requested database/content phase context:
+  - `progress.md`
+  - `PROJECT_MEMORY.md`
+  - `README.md`
+  - `supabase/schema.sql`
+  - existing `supabase/migrations`
+  - `lib/mock-subjects.ts`
+  - `lib/mock-library.ts`
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/chat`
+  - `components/chat/chat-workspace.tsx`
+  - Supabase client/server helpers
+  - `proxy.ts`
+- Added the student content/conversation foundation to `supabase/schema.sql`.
+- Created migration `supabase/migrations/20260516000538_add_student_content_foundation.sql`.
+- Added database tables for:
+  - `public.subjects`
+  - `public.modules`
+  - `public.topics`
+  - `public.conversations`
+  - `public.messages`
+  - `public.message_feedback`
+- Reused the existing `public.set_updated_at()` trigger function and added update triggers for:
+  - `subjects`
+  - `modules`
+  - `topics`
+  - `conversations`
+- Enabled RLS on all new tables.
+- Added RLS policies for:
+  - authenticated reads of visible subjects/modules/topics
+  - user-owned conversations
+  - messages constrained to owned conversations
+  - feedback constrained to owned messages/conversations
+- Created `supabase/seed.sql` with idempotent seed data for:
+  - Object Oriented Programming
+  - Database Management Systems
+  - Operating Systems
+  - Computer Networks
+  - Data Structures
+  - five placeholder modules per subject
+  - starter OOP and DBMS topics
+- Added simple TypeScript database types in `types/database.ts`.
+- Added small Supabase server read helpers in `lib/data/subjects.ts`:
+  - `getSubjects()`
+  - `getSubjectBySlug(slug)`
+  - `getSubjectModules(subjectId)`
+  - `getSubjectWithModules(slug)`
+- Kept the existing static UI unchanged.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- The migration and seed were written but not applied to the live Supabase project in this session.
+- A privileged database migration connection or manual Supabase SQL editor run is still required.
+- The app still uses static subject/library/mock chat data; database-backed UI replacement is intentionally deferred to the next phase.
+- No OpenAI, RAG, embeddings, vector search, admin UI, content upload UI, payment, or student uploads were added.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Apply the migration and seed to Supabase.
+- Replace static subjects with Supabase-backed subjects while keeping static fallback data.
