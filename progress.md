@@ -1704,3 +1704,67 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Re-run visual QA on shared buttons in auth, settings, and dashboard screens.
+
+## 2026-05-16 - Supabase Content Schema Applied And Seeded
+
+### Completed
+- Inspected the local content database artifacts and subject data layer:
+  - `supabase/schema.sql`
+  - `supabase/migrations/20260516000538_add_student_content_foundation.sql`
+  - `supabase/seed.sql`
+  - `lib/data/subjects.ts`
+  - `lib/mock-subjects.ts`
+  - `types/database.ts`
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/chat`
+  - Supabase client/server helpers
+  - `proxy.ts`
+- Used the Supabase project `frcdrjfupoqnlgqiwffy` for live verification.
+- Confirmed the content tables were missing before migration.
+- Applied the existing content foundation migration through Supabase `apply_migration`.
+- Applied the existing idempotent seed SQL.
+- Verified these live tables now exist with RLS enabled:
+  - `public.subjects`
+  - `public.modules`
+  - `public.topics`
+  - `public.conversations`
+  - `public.messages`
+  - `public.message_feedback`
+- Verified seed data:
+  - 5 subjects exist.
+  - `oop` is `available`.
+  - `dbms` is `beta`.
+  - `os`, `cn`, and `ds` are `coming-soon`.
+  - OOP has 5 modules.
+  - OOP has 8 starter topics.
+  - DBMS has 5 starter topics.
+- Verified authenticated-role read access through SQL role simulation:
+  - visible subjects: 5
+  - visible modules: 25
+  - visible topics: 13
+- Verified no student write policies exist for subjects, modules, or topics.
+- Verified conversation/message/feedback policy counts are present for own-user access patterns:
+  - conversations: select/insert/update/delete own rows
+  - messages: select/insert in owned conversations
+  - feedback: select/insert/update own feedback on owned conversation messages
+- Verified anon REST behavior:
+  - anon subject reads return 0 rows
+  - anon subject insert is rejected with 401
+- Confirmed static fallback code remains in `lib/data/subjects.ts` and is still used when Supabase public env is missing, queries fail, or no subjects return.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Route-checked logged-out behavior:
+  - `/subjects` redirects to `/login?next=%2Fsubjects`
+  - `/subjects/oop` redirects to `/login?next=%2Fsubjects%2Foop`
+
+### Issues / Notes
+- Full authenticated browser route checks were not completed in this session because no logged-in browser session/test credentials were used.
+- `/subjects` should use DB-backed data for authenticated users now that the live content tables and seed exist; logged-out route checks still redirect before rendering by design.
+- The chat workspace selector options still use the static subject list internally; route-level subject/module initialization already supports the Supabase/fallback subject lookup.
+- No OpenAI, RAG, embeddings, vector search, admin UI, upload UI, payment, student uploads, or chat persistence were added.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
