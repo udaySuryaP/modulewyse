@@ -26,15 +26,15 @@ export function PendingQuestionHandler() {
   }
 
   return (
-    <div className="rounded-[12px] border border-white/18 bg-white/12 p-4 text-white/72 backdrop-blur-[24px]">
-      <p className="text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/55">
+    <div className="mw-card p-4">
+      <p className="mw-label">
         Pending question
       </p>
-      <p className="mt-2 text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white">
+      <p className="mt-2 text-[16px] font-normal leading-[1.5] text-[var(--mw-body)]">
         {question}
       </p>
       <button
-        className="mt-4 rounded-[12px] border border-white/18 bg-white/10 px-4 py-2 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-white"
+        className="mw-pill-outline mt-4 px-4 py-2 text-[13px]"
         onClick={() => {
           clearPendingQuestion();
           setDismissed(true);

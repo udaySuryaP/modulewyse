@@ -28,10 +28,10 @@ export function HeroAskBox() {
   return (
     <div className="mx-auto w-full max-w-[760px]">
       <form
-        className="rounded-[12px] border border-white/18 bg-white/13 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[24px] min-[380px]:p-4 sm:p-5"
+        className="mw-card p-3 shadow-[0_20px_80px_rgba(12,10,9,0.05)] min-[380px]:p-4 sm:p-5"
         onSubmit={handleSubmit}
       >
-        <div className="mb-4 flex items-start justify-between gap-2 text-[11px] font-normal leading-[1.35] tracking-[-0.01em] text-white/55 min-[380px]:gap-3 min-[380px]:text-[12px] sm:mb-5 sm:items-center sm:gap-4 sm:text-[14px]">
+        <div className="mb-4 flex items-start justify-between gap-2 text-[11px] font-medium leading-[1.35] text-[var(--mw-muted)] min-[380px]:gap-3 min-[380px]:text-[12px] sm:mb-5 sm:items-center sm:gap-4 sm:text-[13px]">
           <span className="max-w-[160px] text-left min-[380px]:max-w-[185px] sm:max-w-none">
             KTU BASED EXAM PREP COMPANION
           </span>
@@ -47,10 +47,11 @@ export function HeroAskBox() {
           </span>
         </div>
 
-        <div className="flex min-h-[42px] items-center gap-2 rounded-[12px] border border-white/22 bg-white/10 px-2 py-1 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[18px] min-[380px]:min-h-[46px] min-[380px]:gap-3 min-[380px]:px-3 sm:min-h-[62px] sm:py-2">
+        <div className="rounded-2xl border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5">
+          <div className="mw-input flex min-h-[42px] items-center gap-2 px-2 py-1 min-[380px]:min-h-[46px] min-[380px]:gap-3 min-[380px]:px-3 sm:min-h-[58px] sm:py-2">
           <input
             aria-label="Ask a question from your syllabus"
-            className="min-w-0 flex-1 bg-transparent text-[13px] font-normal leading-[1.35] tracking-[-0.02em] text-white outline-none placeholder:text-white/45 min-[380px]:text-[14px] sm:text-[16px]"
+            className="min-w-0 flex-1 bg-transparent text-[13px] font-normal leading-[1.35] text-[var(--mw-ink)] outline-none placeholder:text-[var(--mw-muted-soft)] min-[380px]:text-[14px] sm:text-[16px]"
             maxLength={MAX_LENGTH}
             onChange={(event) => setQuestion(event.target.value)}
             placeholder="Ask a question from your syllabus..."
@@ -58,16 +59,17 @@ export function HeroAskBox() {
           />
           <button
             aria-label="Ask ModuleWyse"
-            className="grid h-7 shrink-0 place-items-center rounded-[12px] bg-white px-[14px] font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 min-[380px]:h-8 sm:h-10 sm:px-[18px] sm:text-[12px]"
+            className="grid h-8 shrink-0 place-items-center rounded-full bg-[var(--mw-primary)] px-[16px] text-[12px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 sm:h-10 sm:px-5 sm:text-[14px]"
             disabled={isSubmitting}
             type="submit"
           >
             Ask
           </button>
+          </div>
         </div>
       </form>
 
-      <p className="mt-4 text-center text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/55">
+      <p className="mt-4 text-center text-[14px] font-normal leading-[1.45] text-[var(--mw-muted)]">
         New users will be asked to create an account before opening the
         dashboard.
       </p>

@@ -64,7 +64,7 @@ export function StudentSidebar({
   return (
     <aside
       className={cn(
-        "sticky top-0 z-20 flex h-dvh shrink-0 flex-col border-r border-white/18 bg-white/12 px-2 py-4 shadow-[inset_-1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-[28px] transition-[width] duration-300 sm:px-3 sm:py-5",
+        "sticky top-0 z-20 flex h-dvh shrink-0 flex-col border-r border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-2 py-4 transition-[width] duration-300 sm:px-3 sm:py-5",
         expanded ? "w-[60px] sm:w-[72px] lg:w-[228px]" : "w-[60px] sm:w-[72px]",
         className,
       )}
@@ -77,7 +77,7 @@ export function StudentSidebar({
       >
         <Link
           className={cn(
-            "min-w-0 truncate font-normal leading-none tracking-[-0.03em] text-white",
+            "min-w-0 truncate font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]",
             expanded
               ? "hidden text-[20px] lg:block"
               : "block text-[15px] sm:text-[16px]",
@@ -88,7 +88,7 @@ export function StudentSidebar({
         </Link>
         <button
           aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-          className="hidden size-9 shrink-0 place-items-center rounded-[12px] border border-white/18 bg-white/10 text-white/72 transition-colors hover:bg-white/16 hover:text-white lg:grid"
+          className="hidden size-9 shrink-0 place-items-center rounded-full border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] lg:grid"
           onClick={onToggle}
           type="button"
         >
@@ -109,10 +109,10 @@ export function StudentSidebar({
           return (
             <Link
               className={cn(
-                "flex h-10 items-center justify-center rounded-[12px] border border-transparent px-0 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/76 transition-colors hover:bg-white/14 hover:text-white sm:h-11",
+                "flex h-10 items-center justify-center rounded-full border border-transparent px-0 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)] sm:h-11",
                 "lg:gap-3",
                 expanded && "lg:justify-start lg:px-3",
-                isActive && "border-white/18 bg-white/18 text-white",
+                isActive && "border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]",
               )}
               href={item.href}
               key={item.href}
@@ -125,7 +125,7 @@ export function StudentSidebar({
         })}
       </nav>
 
-      <div className="mt-auto hidden font-mono text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-white/55 lg:block">
+      <div className="mt-auto hidden text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)] lg:block">
         {expanded ? (
           <p className="grid gap-1.5">
             <span className="flex items-center gap-2">

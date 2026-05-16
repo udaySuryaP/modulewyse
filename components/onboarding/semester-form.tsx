@@ -48,10 +48,10 @@ export function SemesterForm() {
         {Array.from({ length: 8 }, (_, index) => index + 1).map((item) => (
           <button
             className={cn(
-              "h-12 rounded-[12px] border font-mono text-[14px]",
+              "h-12 rounded-full border text-[14px] font-medium",
               semester === item
-                ? "border-white bg-white text-black"
-                : "border-white/18 bg-white/10 text-white",
+                ? "border-[var(--mw-primary)] bg-[var(--mw-primary)] text-white"
+                : "border-[var(--mw-hairline)] bg-white text-[var(--mw-ink)]",
             )}
             key={item}
             onClick={() => setSemester(item)}

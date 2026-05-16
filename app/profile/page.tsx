@@ -45,30 +45,22 @@ export default async function ProfilePage() {
   return (
     <StudentPageShell>
       <div className="grid gap-4">
-        <section className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px] sm:p-8">
-          <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
-            Profile
-          </p>
+        <section className="mw-card p-5 sm:p-8">
+          <p className="mw-label">Profile</p>
           <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-[32px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[36px]">
+              <h1 className="mw-display text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
                 Student profile
               </h1>
-              <p className="mt-3 max-w-[620px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+              <p className="mt-3 max-w-[620px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
                 Your ModuleWyse account and academic context.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link
-                className="inline-flex h-11 items-center justify-center rounded-[12px] bg-white px-5 font-mono text-[13px] font-medium uppercase tracking-[0.02em] text-black"
-                href="/settings/account"
-              >
+              <Link className="mw-pill-primary h-11" href="/settings/account">
                 Edit Profile
               </Link>
-              <Link
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/18 bg-white/10 px-5 font-mono text-[13px] font-medium uppercase tracking-[0.02em] text-white"
-                href="/settings"
-              >
+              <Link className="mw-pill-outline h-11" href="/settings">
                 Settings
               </Link>
               <SignoutButton />
@@ -76,33 +68,29 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        <section className="grid gap-3 rounded-[12px] border border-white/18 bg-white/10 p-5 backdrop-blur-[28px] sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+        <section className="mw-card grid gap-3 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
           {usageStats.map(([label, value]) => (
             <div
-              className="rounded-[12px] border border-white/12 bg-white/8 p-4"
+              className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
               key={label}
             >
-              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
-                {label}
-              </p>
-              <p className="mt-3 text-[22px] leading-[1.1] tracking-[-0.02em] text-white">
+              <p className="mw-label text-[11px]">{label}</p>
+              <p className="mt-3 text-[22px] font-medium leading-[1.1] text-[var(--mw-ink)]">
                 {value}
               </p>
             </div>
           ))}
         </section>
 
-        <section className="rounded-[12px] border border-white/18 bg-white/12 p-5 backdrop-blur-[28px] sm:p-6">
+        <section className="mw-card p-5 sm:p-6">
           <div className="grid gap-3 sm:grid-cols-2">
             {profileRows.map(([label, value]) => (
               <div
-                className="min-w-0 rounded-[12px] border border-white/12 bg-white/8 p-4"
+                className="min-w-0 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
                 key={label}
               >
-                <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
-                  {label}
-                </p>
-                <p className="mt-2 truncate text-[16px] leading-[1.45] tracking-[-0.02em] text-white/78">
+                <p className="mw-label text-[11px]">{label}</p>
+                <p className="mt-2 truncate text-[16px] leading-[1.5] text-[var(--mw-body)]">
                   {displayValue(value)}
                 </p>
               </div>

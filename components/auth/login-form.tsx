@@ -107,9 +107,9 @@ export function LoginForm() {
         {isSubmitting ? "Signing In..." : "Login"}
       </SubmitButton>
 
-      <div className="grid gap-2 text-center text-[14px] text-white/55">
+      <div className="grid gap-2 text-center text-[14px] text-[var(--mw-muted)]">
         <Link
-          className="text-white underline-offset-4 hover:underline"
+          className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
           href="/forgot-password"
         >
           Forgot password?
@@ -117,7 +117,7 @@ export function LoginForm() {
         <p>
           New to ModuleWyse?{" "}
           <Link
-            className="text-white underline-offset-4 hover:underline"
+            className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
             href="/signup"
           >
             Get started

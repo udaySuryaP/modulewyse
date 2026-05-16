@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { BackLink } from "@/components/dashboard/back-link";
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { AccountSettingsForm } from "@/components/settings/account-settings-form";
 import { getUserProfile } from "@/lib/auth/get-user-profile";
@@ -13,14 +14,15 @@ export default async function AccountSettingsPage() {
 
   return (
     <StudentPageShell>
-      <div className="mx-auto max-w-[760px] rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px] sm:p-8">
-        <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
+      <BackLink href="/settings" label="Back to settings" />
+      <div className="mw-card mx-auto max-w-[760px] p-5 sm:p-8">
+        <p className="mw-label">
           Settings
         </p>
-        <h1 className="mt-4 text-[32px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[36px]">
+        <h1 className="mw-display mt-4 text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
           Account settings
         </h1>
-        <p className="mt-4 max-w-[620px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+        <p className="mt-4 max-w-[620px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
           Update your profile name. Email is read-only for this MVP.
         </p>
         <div className="mt-8">

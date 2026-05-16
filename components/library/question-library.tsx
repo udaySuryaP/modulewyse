@@ -56,14 +56,14 @@ export function QuestionLibrary() {
 
   return (
     <div className="grid gap-4">
-      <section className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px] sm:p-8">
-        <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
+      <section className="mw-card p-5 sm:p-8">
+        <p className="mw-label">
           Library
         </p>
-        <h1 className="mt-4 text-[32px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[36px]">
+        <h1 className="mw-display mt-4 text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
           Previous-question library
         </h1>
-        <p className="mt-4 max-w-[720px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+        <p className="mt-4 max-w-[720px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
           Browse static sample questions and open supported subjects directly in
           the ModuleWyse mock chat flow.
         </p>
@@ -102,7 +102,7 @@ export function QuestionLibrary() {
             <QuestionCard key={question.id} question={question} />
           ))
         ) : (
-          <div className="rounded-[12px] border border-white/18 bg-white/10 p-5 text-[15px] leading-[1.45] text-white/68 backdrop-blur-[24px]">
+          <div className="mw-card p-5 text-[15px] leading-[1.5] text-[var(--mw-body)]">
             No static questions match these filters.
           </div>
         )}
@@ -124,7 +124,7 @@ function FilterSelect({
 }) {
   return (
     <label className="grid min-w-0 gap-2">
-      <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white/55">
+      <span className="mw-label text-[11px]">
         {label}
       </span>
       <SelectInput
@@ -148,7 +148,7 @@ function QuestionCard({ question }: { question: LibraryQuestion }) {
   return (
     <article
       className={cn(
-        "rounded-[12px] border border-white/18 bg-white/10 p-4 text-white backdrop-blur-[24px] sm:p-5",
+        "mw-card p-4 sm:p-5",
         !canAsk && "opacity-78",
       )}
     >
@@ -156,24 +156,24 @@ function QuestionCard({ question }: { question: LibraryQuestion }) {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             {subject ? <StatusBadge status={subject.status} /> : null}
-            <span className="rounded-[12px] border border-white/14 bg-white/10 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-white/72">
+            <span className="mw-badge">
               {question.answerType}
             </span>
-            <span className="rounded-[12px] border border-white/14 bg-white/10 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-white/72">
+            <span className="mw-badge">
               {question.year}
             </span>
           </div>
 
-          <h2 className="mt-4 text-[22px] font-normal leading-[1.18] tracking-[-0.02em] text-white sm:text-[24px]">
+          <h2 className="mt-4 text-[22px] font-medium leading-[1.25] text-[var(--mw-ink)] sm:text-[24px]">
             {question.question}
           </h2>
 
-          <p className="mt-3 truncate text-[14px] leading-[1.45] tracking-[-0.01em] text-white/62">
+          <p className="mt-3 truncate text-[14px] leading-[1.5] text-[var(--mw-muted)]">
             {question.subjectLabel} / {subjectModuleLabel(question.module)}
           </p>
 
           {!canAsk ? (
-            <p className="mt-3 text-[14px] leading-[1.45] tracking-[-0.01em] text-white/55">
+            <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
               Subject coming soon. This question is visible for preview, but
               chat is not enabled for this subject yet.
             </p>
@@ -182,14 +182,14 @@ function QuestionCard({ question }: { question: LibraryQuestion }) {
 
         {canAsk ? (
           <Link
-            className="inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-white px-5 font-mono text-[13px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 lg:w-auto"
+            className="mw-pill-primary w-full lg:w-auto"
             href={chatHref}
           >
             Ask AI
           </Link>
         ) : (
           <button
-            className="h-11 w-full rounded-[12px] border border-white/14 bg-white/8 px-5 font-mono text-[13px] font-medium uppercase tracking-[0.02em] text-white/45 lg:w-auto"
+            className="h-11 w-full rounded-full border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-5 text-[13px] font-medium text-[var(--mw-muted)] lg:w-auto"
             disabled
             type="button"
           >

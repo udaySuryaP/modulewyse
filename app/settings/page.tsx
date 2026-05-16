@@ -28,16 +28,16 @@ export default function SettingsPage() {
   return (
     <StudentPageShell>
       <div className="grid gap-4">
-        <section className="rounded-[12px] border border-white/18 bg-white/12 p-5 backdrop-blur-[28px] sm:p-8">
-          <p className="text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
+        <section className="mw-card p-5 sm:p-8">
+          <p className="mw-label">
             Settings
           </p>
           <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-[32px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[36px]">
+              <h1 className="mw-display text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
                 Student settings
               </h1>
-              <p className="mt-3 max-w-[620px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+              <p className="mt-3 max-w-[620px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
                 Manage your account, academic setup, and local study
                 preferences.
               </p>
@@ -49,17 +49,17 @@ export default function SettingsPage() {
         <section className="grid gap-3 lg:grid-cols-3">
           {settingsCards.map((card) => (
             <Link
-              className="rounded-[12px] border border-white/18 bg-white/10 p-5 text-white backdrop-blur-[28px] transition-colors hover:bg-white/14"
+              className="mw-card mw-card-hover p-5"
               href={card.href}
               key={card.href}
             >
-              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
+              <p className="mw-label text-[11px]">
                 {card.label}
               </p>
-              <h2 className="mt-4 text-[22px] font-normal leading-[1.15] tracking-[-0.03em]">
+              <h2 className="mt-4 text-[22px] font-medium leading-[1.2] text-[var(--mw-ink)]">
                 {card.title}
               </h2>
-              <p className="mt-3 text-[14px] leading-[1.45] tracking-[-0.01em] text-white/68">
+              <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-body)]">
                 {card.body}
               </p>
             </Link>
