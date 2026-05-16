@@ -328,7 +328,7 @@ This file is updated at the end of each working session.
 ### Completed
 - Changed the landing ask-box enter CTA from an arrow icon to `ASK`.
 - Changed the `/chat` draft composer enter CTA from an arrow icon to `ASK`.
-- Set both ask CTAs to `12px` border radius.
+- Aligned both ask CTAs with the current editorial pill/button radius system.
 - Re-ran `npm run lint`; passed.
 - Re-ran `npm run build`; passed.
 
@@ -357,7 +357,7 @@ This file is updated at the end of each working session.
 ## 2026-05-14 - Landing Input Radius Update
 
 ### Completed
-- Changed the landing ask input shell to `12px` border radius.
+- Changed the landing ask input shell to use the current editorial input/card radius system.
 - Added a thin white border to the landing ask input shell.
 - Changed the landing ask submit button from circular to square with `4px` border radius.
 - Re-ran `npm run lint`; passed.
@@ -1649,3 +1649,58 @@ create table if not exists public.message_feedback (
 - Complete the requested Profile and Settings merge as a focused follow-up.
 - Apply Supabase content schema and seed if not already applied.
 - Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Unified Account Settings Section
+
+### Completed
+- Merged the separate Profile concept into `/settings` as the single canonical account/settings area.
+- Removed Profile from protected student navigation:
+  - desktop sidebar
+  - shared mobile dashboard menu
+  - chat mobile expanded menu
+- Replaced `/profile` with a compatibility redirect:
+  - logged-out users are sent to `/login?next=/profile` by the protected route guard/page fallback
+  - logged-in users are redirected to `/settings`
+- Updated the app route constant so Profile-style callers resolve to `/settings`.
+- Expanded `/settings` into a unified account home with:
+  - profile summary
+  - academic profile summary
+  - account summary
+  - local preferences summary
+  - usage snapshot placeholders
+  - signout/session action
+- Preserved `/settings/account`, `/settings/academic`, and `/settings/preferences` as the focused editing pages.
+- Preserved existing Supabase auth, profile update flows, protected routing, signout behavior, and visual system.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Route-checked logged-out behavior:
+  - `/profile` redirects to `/login?next=%2Fprofile`
+  - `/settings` redirects to `/login?next=%2Fsettings`
+
+### Issues / Notes
+- Usage stats remain placeholders until conversation/message persistence is connected.
+- Preferences remain localStorage-only and are summarized from the current browser device.
+- `/profile` remains in the protected route list intentionally so old logged-out links still require auth before redirecting.
+- Logged-in browser route checks were not completed in this session because no authenticated browser session was used.
+
+### Next
+- Apply Supabase content schema and seed if not already applied.
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Editorial Radius Cleanup
+
+### Completed
+- Removed explicit old `12px` border-radius references from current code and progress notes.
+- Updated shared button variants to inherit the editorial pill radius instead of using capped fixed-radius overrides.
+- Confirmed remaining `12px` text matches are non-radius values such as font sizes, viewport notes, or shadow offsets.
+
+### Issues / Notes
+- The current editorial radius system remains:
+  - pill radius for CTAs and badges
+  - `1rem` / 16px for cards
+  - `1.5rem` / 24px for large decorative surfaces
+  - `0.5rem` / 8px for inputs
+
+### Next
+- Re-run visual QA on shared buttons in auth, settings, and dashboard screens.

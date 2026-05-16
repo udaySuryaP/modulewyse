@@ -13,7 +13,6 @@ import {
   Settings,
   ThumbsDown,
   ThumbsUp,
-  User,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -44,7 +43,6 @@ const mobileNavItems = [
   { href: "/chat", icon: MessageSquare, label: "Chat" },
   { href: "/subjects", icon: BookOpen, label: "Subjects" },
   { href: "/library", icon: Library, label: "Library" },
-  { href: "/profile", icon: User, label: "Profile" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
