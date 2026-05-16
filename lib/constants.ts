@@ -31,7 +31,7 @@ export const ROUTES = {
   SUBJECTS: "/subjects",
   SUBJECT_DETAIL: (id: string) => `/subjects/${id}` as const,
   LIBRARY: "/library",
-  PROFILE: "/profile",
+  PROFILE: "/settings",
   SETTINGS: "/settings",
   SETTINGS_ACCOUNT: "/settings/account",
   SETTINGS_ACADEMIC: "/settings/academic",

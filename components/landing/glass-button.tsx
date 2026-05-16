@@ -20,10 +20,10 @@ export function GlassButton({
   onClick,
 }: GlassButtonProps) {
   const classes = cn(
-    "inline-flex h-11 items-center justify-center rounded-[12px] px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60",
+    "inline-flex h-10 items-center justify-center rounded-full px-5 text-[15px] font-medium leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20",
     variant === "primary"
-      ? "bg-white text-black hover:bg-white/88"
-      : "border border-white/18 bg-white/10 text-white hover:bg-white/16",
+      ? "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)]"
+      : "border border-[var(--mw-hairline-strong)] bg-transparent text-[var(--mw-ink)] hover:bg-[var(--mw-surface-strong)]",
     className,
   );
 

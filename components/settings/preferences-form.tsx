@@ -128,13 +128,13 @@ function ToggleRow({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-4 rounded-[12px] border border-white/14 bg-white/8 px-4 py-3">
-      <span className="text-[15px] leading-[1.45] text-white/72">{label}</span>
+    <label className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3">
+      <span className="text-[15px] leading-[1.45] text-[var(--mw-body)]">{label}</span>
       <button
         aria-pressed={checked}
         className={cn(
-          "h-8 w-[58px] rounded-[12px] border border-white/18 p-1 transition-colors",
-          checked ? "bg-white" : "bg-white/10",
+          "h-8 w-[58px] rounded-full border border-[var(--mw-hairline-strong)] p-1 transition-colors",
+          checked ? "bg-[var(--mw-primary)]" : "bg-white",
         )}
         onClick={() => onChange(!checked)}
         type="button"
@@ -142,7 +142,7 @@ function ToggleRow({
         <span
           className={cn(
             "block size-6 rounded-[8px] transition-transform",
-            checked ? "translate-x-6 bg-black" : "translate-x-0 bg-white/70",
+            checked ? "translate-x-6 bg-white" : "translate-x-0 bg-[var(--mw-surface-strong)]",
           )}
         />
       </button>

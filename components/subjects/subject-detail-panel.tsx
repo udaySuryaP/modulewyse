@@ -23,14 +23,14 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px] sm:p-8">
+      <section className="mw-card p-5 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="font-mono text-[12px] font-medium uppercase leading-[1.4] tracking-[0.08em] text-white/55">
+            <p className="mw-label">
               {subject.semester} / {subject.code}
             </p>
             <h1
-              className="mt-4 max-w-full text-[32px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[36px]"
+              className="mw-display mt-4 max-w-full text-[42px] leading-[1.05] text-[var(--mw-ink)] sm:text-[56px]"
               title={subject.name}
             >
               {subject.name}
@@ -39,12 +39,12 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           <StatusBadge status={subject.status} />
         </div>
 
-        <p className="mt-5 max-w-[760px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+        <p className="mt-5 max-w-[760px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
           {subject.description}
         </p>
 
         {subject.status === "beta" ? (
-          <div className="mt-6 rounded-[12px] border border-white/14 bg-[rgba(215,160,119,0.14)] p-4 text-[14px] leading-[1.45] text-white/72">
+          <div className="mt-6 rounded-2xl border border-[var(--mw-hairline)] bg-[rgba(244,197,168,0.22)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
             This subject is in beta. Answers may be less complete until the
             curated content set is expanded.
           </div>
@@ -53,16 +53,16 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         {chatEnabled ? (
           <>
             <div className="mt-8">
-              <p className="font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/55">
+              <p className="mw-label">
                 Select module
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {subject.modules.map((module) => (
                   <button
                     className={cn(
-                      "h-10 rounded-[12px] border border-white/18 bg-white/10 px-4 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-white/72 transition-colors hover:bg-white/16 hover:text-white",
+                      "h-10 rounded-full border border-[var(--mw-hairline)] bg-white px-4 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
                       selectedModule === module.value &&
-                        "bg-white text-black hover:bg-white hover:text-black",
+                        "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
                     )}
                     key={module.value}
                     onClick={() => setSelectedModule(module.value)}
@@ -75,23 +75,23 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
             </div>
 
             <Link
-              className="mt-8 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-white px-5 font-mono text-[13px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 sm:w-auto"
+              className="mw-pill-primary mt-8 w-full sm:w-auto"
               href={chatHref}
             >
               Start Chat
             </Link>
           </>
         ) : (
-          <div className="mt-8 rounded-[12px] border border-white/14 bg-white/8 p-5">
-            <h2 className="text-[24px] font-normal leading-[1.1] tracking-[-0.03em] text-white">
+          <div className="mt-8 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-5">
+            <h2 className="mw-display text-[32px] leading-[1.05] text-[var(--mw-ink)]">
               This subject is being prepared.
             </h2>
-            <p className="mt-3 text-[15px] leading-[1.45] text-white/68">
+            <p className="mt-3 text-[15px] leading-[1.55] text-[var(--mw-body)]">
               ModuleWyse will open this subject after the curated academic
               content is ready.
             </p>
             <Link
-              className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-white px-5 font-mono text-[13px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 sm:w-auto"
+              className="mw-pill-primary mt-5 w-full sm:w-auto"
               href="/subjects"
             >
               View Available Subjects
@@ -100,30 +100,30 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         )}
       </section>
 
-      <aside className="rounded-[12px] border border-white/18 bg-white/10 p-5 text-white backdrop-blur-[28px] sm:p-6 xl:self-start">
-        <p className="font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/55">
+      <aside className="mw-card p-5 sm:p-6 xl:self-start">
+        <p className="mw-label">
           Topic preview
         </p>
         <div className="mt-4 grid gap-2">
           {subject.topicSamples.length > 0 ? subject.topicSamples.map((topic) => (
             <div
-              className="rounded-[12px] border border-white/12 bg-white/8 px-4 py-3 text-[14px] leading-[1.4] text-white/72"
+              className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-body)]"
               key={topic}
             >
               {topic}
             </div>
           )) : (
-            <div className="rounded-[12px] border border-white/12 bg-white/8 px-4 py-3 text-[14px] leading-[1.4] text-white/55">
+            <div className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-muted)]">
               Topic previews will appear after content is synced.
             </div>
           )}
         </div>
 
-        <div className="mt-6 grid gap-1 text-[14px] leading-[1.45] text-white/68">
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
+        <div className="mt-6 grid gap-1 text-[14px] leading-[1.45] text-[var(--mw-body)]">
+          <span className="mw-label text-[11px]">
             Status
           </span>
-          <span className="text-white/78">{subjectStatusLabel(subject.status)}</span>
+          <span className="text-[var(--mw-ink)]">{subjectStatusLabel(subject.status)}</span>
         </div>
       </aside>
     </div>

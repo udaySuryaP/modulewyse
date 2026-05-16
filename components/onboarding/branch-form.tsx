@@ -44,15 +44,15 @@ export function BranchForm() {
   return (
     <form className="grid gap-4" onSubmit={handleSubmit}>
       <button
-        className="rounded-[12px] border border-white/24 bg-white/16 p-4 text-left text-white"
+        className="rounded-2xl border border-[var(--mw-hairline-strong)] bg-white p-4 text-left text-[var(--mw-ink)]"
         onClick={() => setBranch("CSE")}
         type="button"
       >
         <span className="block text-[18px]">Computer Science Engineering</span>
-        <span className="mt-1 block text-[14px] text-white/55">Available</span>
+        <span className="mt-1 block text-[14px] text-[var(--mw-muted)]">Available</span>
       </button>
       <button
-        className="rounded-[12px] border border-white/12 bg-white/8 p-4 text-left text-white/45"
+        className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4 text-left text-[var(--mw-muted)]"
         disabled
         type="button"
       >

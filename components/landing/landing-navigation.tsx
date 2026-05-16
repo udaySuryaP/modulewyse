@@ -15,9 +15,9 @@ export function LandingNavigation() {
   }
 
   return (
-    <header className="relative z-10 flex w-full items-center justify-between px-5 py-4 sm:px-8 lg:px-14">
+    <header className="relative z-10 mx-auto flex w-full max-w-[1200px] items-center justify-between px-5 py-5 sm:px-8 lg:px-14">
       <Link
-        className="text-[20px] font-normal leading-none tracking-[-0.03em] text-white sm:text-[24px]"
+        className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)] sm:text-[24px]"
         href={ROUTES.HOME}
       >
         ModuleWyse
@@ -25,14 +25,14 @@ export function LandingNavigation() {
 
       <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">
         <GlassButton
-          className="hidden h-10 px-3 text-[12px] sm:inline-flex sm:h-11 sm:px-5 sm:text-[14px]"
+          className="hidden sm:inline-flex"
           onClick={() => handleAuthAction(ROUTES.LOGIN)}
           variant="secondary"
         >
           Login
         </GlassButton>
         <GlassButton
-          className="h-10 px-3 text-[12px] sm:h-11 sm:px-5 sm:text-[14px]"
+          className="px-4 text-[14px] sm:px-5 sm:text-[15px]"
           onClick={() => handleAuthAction(ROUTES.SIGNUP)}
         >
           Get Started

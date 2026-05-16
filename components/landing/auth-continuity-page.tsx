@@ -28,21 +28,21 @@ export function AuthContinuityPage({
       <VideoBackground />
       <PageOverlay />
       <main className="grid min-h-dvh place-items-center px-5 py-10 sm:px-8 lg:px-14">
-        <section className="w-full max-w-[460px] rounded-[12px] border border-white/18 bg-white/12 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[28px] sm:p-8">
+        <section className="mw-card w-full max-w-[460px] p-6 text-center shadow-[0_24px_80px_rgba(12,10,9,0.06)] sm:p-8">
           <Link
-            className="text-[24px] font-normal leading-none tracking-[-0.03em] text-white"
+            className="text-[24px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]"
             href="/"
           >
             ModuleWyse
           </Link>
 
-          <p className="mt-10 text-[14px] font-normal uppercase leading-[1.4] tracking-[0.02em] text-white/55">
+          <p className="mw-label mt-10">
             {eyebrow}
           </p>
-          <h1 className="mt-4 text-[36px] font-normal leading-[1.1] tracking-[-0.03em] text-white">
+          <h1 className="mw-display mt-4 text-[42px] leading-[1.05] text-[var(--mw-ink)]">
             {title}
           </h1>
-          <p className="mt-4 text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+          <p className="mt-4 text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
             {body}
           </p>
 

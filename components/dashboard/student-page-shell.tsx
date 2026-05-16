@@ -8,7 +8,6 @@ import {
   Menu,
   MessageSquare,
   Settings,
-  User,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -22,7 +21,6 @@ const mobileNavItems = [
   { href: "/chat", icon: MessageSquare, label: "Chat" },
   { href: "/subjects", icon: BookOpen, label: "Subjects" },
   { href: "/library", icon: Library, label: "Library" },
-  { href: "/profile", icon: User, label: "Profile" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -42,7 +40,7 @@ export function StudentPageShell({ children }: StudentPageShellProps) {
     <>
       <VideoBackground />
       <PageOverlay />
-      <main className="min-h-dvh text-white md:flex">
+      <main className="min-h-dvh text-[var(--mw-ink)] md:flex">
         <MobileStudentTopbar
           isOpen={mobileMenuOpen}
           onToggle={() => setMobileMenuOpen((current) => !current)}
@@ -94,10 +92,10 @@ function MobileStudentTopbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/18 bg-white/12 px-3 py-3 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.08)] backdrop-blur-[28px] md:hidden">
+    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
-          className="text-[20px] font-normal leading-none tracking-[-0.03em] text-white"
+          className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]"
           href="/chat"
         >
           modulewyse
@@ -105,7 +103,7 @@ function MobileStudentTopbar({
         <button
           aria-expanded={isOpen}
           aria-label={isOpen ? "Collapse menu" : "Expand menu"}
-          className="grid size-10 place-items-center rounded-[12px] border border-white/18 bg-white/12 text-white/78"
+          className="grid size-10 place-items-center rounded-full border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]"
           onClick={onToggle}
           type="button"
         >
@@ -121,7 +119,7 @@ function MobileStudentTopbar({
 
               return (
                 <Link
-                  className="flex h-10 items-center gap-3 rounded-[12px] border border-white/14 bg-white/10 px-3 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/76"
+                  className="flex h-10 items-center gap-3 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
                   href={item.href}
                   key={item.href}
                 >
@@ -132,7 +130,7 @@ function MobileStudentTopbar({
             })}
           </nav>
 
-          <div className="grid gap-1.5 font-mono text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-white/55">
+          <div className="grid gap-1.5 text-[12px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)]">
             <span className="flex items-center gap-2">
               <Clock className="size-3.5 shrink-0" />
               <span>{dateTime.time}</span>

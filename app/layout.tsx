@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Inter } from "next/font/google";
+import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,6 +12,13 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["500"],
+  display: "swap",
+});
+
+const displaySerif = Cormorant_Garamond({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["300"],
   display: "swap",
 });
 
@@ -41,16 +48,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${ibmPlexMono.variable} dark`}
+      className={`${inter.variable} ${ibmPlexMono.variable} ${displaySerif.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh font-sans antialiased">
-        {/* Global cinematic background - fixed behind all pages */}
-        <div
-          className="fixed inset-x-0 top-0 -z-10 h-[100lvh] min-h-dvh w-screen bg-cover bg-center bg-no-repeat will-change-transform"
-          style={{ backgroundImage: "url('/images/bgImage.png')" }}
-          aria-hidden="true"
-        />
         {children}
       </body>
     </html>

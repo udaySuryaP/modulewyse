@@ -67,9 +67,9 @@ export function ForgotPasswordForm() {
         {isSubmitting ? "Sending..." : "Send Reset Link"}
       </SubmitButton>
 
-      <p className="text-center text-[14px] text-white/55">
+      <p className="text-center text-[14px] text-[var(--mw-muted)]">
         Remembered it?{" "}
-        <Link className="text-white underline-offset-4 hover:underline" href="/login">
+        <Link className="text-[var(--mw-ink)] underline-offset-4 hover:underline" href="/login">
           Back to login
         </Link>
       </p>

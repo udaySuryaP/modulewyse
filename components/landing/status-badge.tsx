@@ -10,12 +10,12 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "rounded-[12px] px-3 py-1.5 text-[12px] font-normal uppercase leading-none tracking-[0.02em]",
+        "rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase leading-none tracking-[0.08em]",
         normalizedStatus === "available" &&
-          "bg-[rgba(90,225,76,0.16)] text-[#A8F5A0]",
+          "bg-[var(--mw-surface-strong)] text-[var(--mw-ink)]",
         normalizedStatus === "beta" &&
-          "bg-[rgba(215,160,119,0.18)] text-[#F8D1B1]",
-        normalizedStatus === "coming soon" && "bg-white/12 text-white/55",
+          "bg-[rgba(244,197,168,0.36)] text-[var(--mw-primary)]",
+        normalizedStatus === "coming soon" && "bg-[var(--mw-surface-strong)] text-[var(--mw-muted)]",
       )}
     >
       {normalizedStatus}

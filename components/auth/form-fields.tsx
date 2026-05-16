@@ -1,12 +1,12 @@
 "use client";
 
-import { Eye, EyeOff } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
 const inputClassName =
-  "h-10 rounded-[12px] border border-white/22 bg-white/10 px-4 text-[15px] font-normal text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] placeholder:text-white/45 focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24 sm:h-12 sm:text-[16px]";
+  "mw-input h-10 px-4 text-[15px] font-normal sm:h-12 sm:text-[16px]";
 
 export function Field({
   label,
@@ -17,7 +17,7 @@ export function Field({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[14px] font-normal leading-[1.4] tracking-[-0.01em] text-white/72">
+      <span className="text-[14px] font-normal leading-[1.4] text-[var(--mw-body)]">
         {label}
       </span>
       {children}
@@ -43,7 +43,7 @@ export function TextInput({
         />
         <button
           aria-label={showPassword ? "Hide password" : "Show password"}
-          className="absolute right-3 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-[12px] border border-white/14 bg-white/8 text-white/72 transition-colors hover:bg-white/14 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/24"
+          className="absolute right-3 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20"
           onClick={() => setShowPassword((current) => !current)}
           type="button"
         >
@@ -72,15 +72,23 @@ export function SelectInput({
   ...props
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select
-      className={cn(
-        "h-10 rounded-[12px] border border-white/22 bg-white/10 px-4 text-[15px] font-normal text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] outline-none backdrop-blur-[18px] focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/24 sm:h-12 sm:text-[16px] [&>option]:bg-[#101111] [&>option]:text-white",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </select>
+    <span className="relative block">
+      <select
+        className={cn(
+          "mw-input h-11 w-full min-w-0 appearance-none py-0 pl-4 pr-10 text-[14px] font-normal [&>option]:bg-white [&>option]:text-[var(--mw-ink)]",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </select>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--mw-muted)]"
+      >
+        <ChevronDown className="size-4" />
+      </span>
+    </span>
   );
 }
 
@@ -95,9 +103,9 @@ export function FormMessage({
     <p
       className={cn(
         "text-center text-[14px] font-normal leading-[1.4] tracking-[-0.01em]",
-        tone === "error" && "text-red-200",
-        tone === "success" && "text-[#A8F5A0]",
-        tone === "muted" && "text-white/55",
+        tone === "error" && "text-red-700",
+        tone === "success" && "text-green-700",
+        tone === "muted" && "text-[var(--mw-muted)]",
       )}
     >
       {children}

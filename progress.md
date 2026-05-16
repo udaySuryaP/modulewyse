@@ -328,7 +328,7 @@ This file is updated at the end of each working session.
 ### Completed
 - Changed the landing ask-box enter CTA from an arrow icon to `ASK`.
 - Changed the `/chat` draft composer enter CTA from an arrow icon to `ASK`.
-- Set both ask CTAs to `12px` border radius.
+- Aligned both ask CTAs with the current editorial pill/button radius system.
 - Re-ran `npm run lint`; passed.
 - Re-ran `npm run build`; passed.
 
@@ -357,7 +357,7 @@ This file is updated at the end of each working session.
 ## 2026-05-14 - Landing Input Radius Update
 
 ### Completed
-- Changed the landing ask input shell to `12px` border radius.
+- Changed the landing ask input shell to use the current editorial input/card radius system.
 - Added a thin white border to the landing ask input shell.
 - Changed the landing ask submit button from circular to square with `4px` border radius.
 - Re-ran `npm run lint`; passed.
@@ -1578,4 +1578,193 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Apply `supabase/migrations/20260516000538_add_student_content_foundation.sql` and `supabase/seed.sql` to Supabase.
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Editorial Off-White UI Design Migration
+
+### Completed
+- Switched the visual foundation from the previous warm dark/glassmorphic image-backed style to an editorial off-white ModuleWyse system inspired by the provided ElevenLabs-style design reference.
+- Added global tokens and reusable utilities in `app/globals.css`:
+  - off-white canvas and canvas-soft
+  - white card surfaces
+  - warm ink/primary text
+  - body and muted neutrals
+  - hairline borders
+  - surface-strong badges/controls
+  - soft pastel atmospheric background washes
+  - `mw-display`, `mw-card`, `mw-card-hover`, `mw-pill-primary`, `mw-pill-outline`, `mw-badge`, `mw-label`, `mw-input`, and `mw-section`
+- Updated `app/layout.tsx` to remove the old global fixed background image and add a lightweight serif display font fallback with Inter UI text.
+- Reworked shared background components:
+  - `VideoBackground` now provides the neutral canvas.
+  - `PageOverlay` now provides subtle editorial atmospheric background treatment.
+- Redesigned the landing page visually while preserving existing behavior:
+  - editorial serif hero
+  - ink pill CTAs
+  - white question input card
+  - neutral subject status panel
+  - clean feature cards
+  - existing Get Started/Login/question flow unchanged
+- Updated auth, onboarding, and continuity screens to use white cards, neutral inputs, ink pill CTAs, and editorial display headings.
+- Updated the protected student shell/sidebar/mobile nav to use off-white surfaces, neutral text, and subtle active states.
+- Updated chat workspace styling to white panels, neutral controls, editorial empty state, clean user/assistant cards, and ink CTA behavior without changing mock chat logic.
+- Updated subjects, subject detail, library, profile, settings, and preferences surfaces to white cards, hairline borders, neutral copy, and pill badges/actions.
+- Preserved Supabase/auth/routing/database behavior, mock chat behavior, static fallback subjects, profile/settings logic, and all existing route structure.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Browser smoke-checked:
+  - desktop landing page
+  - mobile landing page at 390px width
+  - mobile login page at 412px width
+
+### Issues / Notes
+- The repository did not contain a `design.md`; the design reference was taken from the provided pasted markdown file.
+- I used broad soft atmospheric pastel washes rather than discrete decorative orbs to keep the implementation restrained and consistent with the app UI rules.
+- The app still intentionally uses existing product logic and data flows; no admin UI, OpenAI, RAG, embeddings, vector search, content ingestion, payment, student uploads, migrations, or schema changes were added.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Review the redesigned protected dashboard pages with a logged-in Supabase test account.
+- Apply the content database migration and seed to Supabase if not already done.
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Editorial UI Refinement Pass
+
+### Completed
+- Added thin external input frames around the landing ask input and fixed chat composer input.
+- Standardized shared select/dropdown visuals to match the chat context selector spacing, padding, border, and chevron treatment.
+- Removed visible text from chat answer thumbs up/down actions while keeping accessible labels and icons.
+- Added reusable back navigation and applied it to nested settings pages and subject detail pages.
+- Preserved existing route behavior, auth behavior, Supabase integration, mock chat flow, and profile/settings separation.
+- Restored the interrupted `/profile` merge edits so the route and navigation remain intact until the dedicated merge task is completed.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- The Profile and Settings merge task is not complete in this pass because the user redirected the work to the input-frame refinement and push.
+- Usage stats remain placeholders.
+- Preferences remain localStorage-only.
+
+### Next
+- Complete the requested Profile and Settings merge as a focused follow-up.
+- Apply Supabase content schema and seed if not already applied.
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Unified Account Settings Section
+
+### Completed
+- Merged the separate Profile concept into `/settings` as the single canonical account/settings area.
+- Removed Profile from protected student navigation:
+  - desktop sidebar
+  - shared mobile dashboard menu
+  - chat mobile expanded menu
+- Replaced `/profile` with a compatibility redirect:
+  - logged-out users are sent to `/login?next=/profile` by the protected route guard/page fallback
+  - logged-in users are redirected to `/settings`
+- Updated the app route constant so Profile-style callers resolve to `/settings`.
+- Expanded `/settings` into a unified account home with:
+  - profile summary
+  - academic profile summary
+  - account summary
+  - local preferences summary
+  - usage snapshot placeholders
+  - signout/session action
+- Preserved `/settings/account`, `/settings/academic`, and `/settings/preferences` as the focused editing pages.
+- Preserved existing Supabase auth, profile update flows, protected routing, signout behavior, and visual system.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Route-checked logged-out behavior:
+  - `/profile` redirects to `/login?next=%2Fprofile`
+  - `/settings` redirects to `/login?next=%2Fsettings`
+
+### Issues / Notes
+- Usage stats remain placeholders until conversation/message persistence is connected.
+- Preferences remain localStorage-only and are summarized from the current browser device.
+- `/profile` remains in the protected route list intentionally so old logged-out links still require auth before redirecting.
+- Logged-in browser route checks were not completed in this session because no authenticated browser session was used.
+
+### Next
+- Apply Supabase content schema and seed if not already applied.
+- Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Editorial Radius Cleanup
+
+### Completed
+- Removed explicit old `12px` border-radius references from current code and progress notes.
+- Updated shared button variants to inherit the editorial pill radius instead of using capped fixed-radius overrides.
+- Confirmed remaining `12px` text matches are non-radius values such as font sizes, viewport notes, or shadow offsets.
+
+### Issues / Notes
+- The current editorial radius system remains:
+  - pill radius for CTAs and badges
+  - `1rem` / 16px for cards
+  - `1.5rem` / 24px for large decorative surfaces
+  - `0.5rem` / 8px for inputs
+
+### Next
+- Re-run visual QA on shared buttons in auth, settings, and dashboard screens.
+
+## 2026-05-16 - Supabase Content Schema Applied And Seeded
+
+### Completed
+- Inspected the local content database artifacts and subject data layer:
+  - `supabase/schema.sql`
+  - `supabase/migrations/20260516000538_add_student_content_foundation.sql`
+  - `supabase/seed.sql`
+  - `lib/data/subjects.ts`
+  - `lib/mock-subjects.ts`
+  - `types/database.ts`
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/chat`
+  - Supabase client/server helpers
+  - `proxy.ts`
+- Used the Supabase project `frcdrjfupoqnlgqiwffy` for live verification.
+- Confirmed the content tables were missing before migration.
+- Applied the existing content foundation migration through Supabase `apply_migration`.
+- Applied the existing idempotent seed SQL.
+- Verified these live tables now exist with RLS enabled:
+  - `public.subjects`
+  - `public.modules`
+  - `public.topics`
+  - `public.conversations`
+  - `public.messages`
+  - `public.message_feedback`
+- Verified seed data:
+  - 5 subjects exist.
+  - `oop` is `available`.
+  - `dbms` is `beta`.
+  - `os`, `cn`, and `ds` are `coming-soon`.
+  - OOP has 5 modules.
+  - OOP has 8 starter topics.
+  - DBMS has 5 starter topics.
+- Verified authenticated-role read access through SQL role simulation:
+  - visible subjects: 5
+  - visible modules: 25
+  - visible topics: 13
+- Verified no student write policies exist for subjects, modules, or topics.
+- Verified conversation/message/feedback policy counts are present for own-user access patterns:
+  - conversations: select/insert/update/delete own rows
+  - messages: select/insert in owned conversations
+  - feedback: select/insert/update own feedback on owned conversation messages
+- Verified anon REST behavior:
+  - anon subject reads return 0 rows
+  - anon subject insert is rejected with 401
+- Confirmed static fallback code remains in `lib/data/subjects.ts` and is still used when Supabase public env is missing, queries fail, or no subjects return.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Route-checked logged-out behavior:
+  - `/subjects` redirects to `/login?next=%2Fsubjects`
+  - `/subjects/oop` redirects to `/login?next=%2Fsubjects%2Foop`
+
+### Issues / Notes
+- Full authenticated browser route checks were not completed in this session because no logged-in browser session/test credentials were used.
+- `/subjects` should use DB-backed data for authenticated users now that the live content tables and seed exist; logged-out route checks still redirect before rendering by design.
+- The chat workspace selector options still use the static subject list internally; route-level subject/module initialization already supports the Supabase/fallback subject lookup.
+- No OpenAI, RAG, embeddings, vector search, admin UI, upload UI, payment, student uploads, or chat persistence were added.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
 - Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.

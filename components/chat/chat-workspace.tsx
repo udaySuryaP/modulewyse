@@ -13,7 +13,6 @@ import {
   Settings,
   ThumbsDown,
   ThumbsUp,
-  User,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -44,7 +43,6 @@ const mobileNavItems = [
   { href: "/chat", icon: MessageSquare, label: "Chat" },
   { href: "/subjects", icon: BookOpen, label: "Subjects" },
   { href: "/library", icon: Library, label: "Library" },
-  { href: "/profile", icon: User, label: "Profile" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -376,7 +374,7 @@ export function ChatWorkspace({
   return (
     <div
       className={cn(
-        "flex min-h-dvh text-white [--chat-sidebar-width:0px] md:[--chat-sidebar-width:72px]",
+        "flex min-h-dvh text-[var(--mw-ink)] [--chat-sidebar-width:0px] md:[--chat-sidebar-width:72px]",
         sidebarExpanded && "lg:[--chat-sidebar-width:228px]",
       )}
     >
@@ -413,7 +411,7 @@ export function ChatWorkspace({
 
           <div
             className={cn(
-              "min-h-[390px] rounded-[12px] border border-white/18 bg-white/10 p-3 text-white backdrop-blur-[24px] sm:min-h-[520px] sm:p-5",
+              "mw-card min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -451,7 +449,7 @@ export function ChatWorkspace({
       </div>
 
       {toast ? (
-        <div className="fixed bottom-[106px] left-1/2 z-50 -translate-x-1/2 rounded-[12px] border border-white/18 bg-[#101111]/84 px-4 py-3 text-[14px] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[24px] sm:bottom-[116px]">
+        <div className="fixed bottom-[106px] left-1/2 z-50 -translate-x-1/2 rounded-full border border-[var(--mw-hairline)] bg-white px-4 py-3 text-[14px] text-[var(--mw-ink)] shadow-[0_12px_40px_rgba(12,10,9,0.12)] sm:bottom-[116px]">
           {toast}
         </div>
       ) : null}
@@ -499,10 +497,10 @@ function MobileChatTopbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/18 bg-white/12 px-3 py-3 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.08)] backdrop-blur-[28px] md:hidden">
+    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
-          className="text-[20px] font-normal leading-none tracking-[-0.03em] text-white"
+          className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]"
           href="/chat"
         >
           modulewyse
@@ -510,7 +508,7 @@ function MobileChatTopbar({
         <button
           aria-expanded={isOpen}
           aria-label={isOpen ? "Collapse menu" : "Expand menu"}
-          className="grid size-10 place-items-center rounded-[12px] border border-white/18 bg-white/12 text-white/78"
+          className="grid size-10 place-items-center rounded-full border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]"
           onClick={onToggle}
           type="button"
         >
@@ -521,15 +519,15 @@ function MobileChatTopbar({
       {isOpen ? (
         <div className="mt-4 grid gap-4 pb-3">
           <div>
-            <p className="text-[12px] font-normal uppercase leading-[1.4] tracking-[0.08em] text-white/55">
+            <p className="mw-label">
               Answer type
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {answerTypes.map((type) => (
                 <button
                   className={cn(
-                    "h-9 rounded-[12px] border border-white/18 bg-white/10 px-3 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-white/72",
-                    answerType === type && "bg-white text-black",
+                    "h-9 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
+                    answerType === type && "bg-[var(--mw-primary)] text-white",
                   )}
                   key={type}
                   onClick={() => onAnswerTypeChange(type)}
@@ -574,7 +572,7 @@ function MobileChatTopbar({
 
               return (
                 <Link
-                  className="flex h-10 items-center gap-3 rounded-[12px] border border-white/14 bg-white/10 px-3 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-white/76"
+                  className="flex h-10 items-center gap-3 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
                   href={item.href}
                   key={item.href}
                 >
@@ -585,7 +583,7 @@ function MobileChatTopbar({
             })}
           </nav>
 
-          <div className="grid gap-1.5 font-mono text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-white/55">
+          <div className="grid gap-1.5 text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)]">
             <span className="flex items-center gap-2">
               <Clock className="size-3.5 shrink-0" />
               <span>{dateTime.time}</span>
@@ -617,7 +615,7 @@ function ContextControls({
   return (
     <div
       className={cn(
-        "rounded-[12px] border border-white/18 bg-white/12 px-4 py-4 text-white backdrop-blur-[28px] sm:px-5 sm:py-4",
+        "mw-card px-4 py-4 sm:px-5 sm:py-4",
         className,
       )}
     >
@@ -649,15 +647,15 @@ function ContextControls({
       </div>
 
       <div className="mt-4">
-        <p className="text-[12px] font-normal uppercase leading-[1.4] tracking-[0.08em] text-white/55">
+        <p className="mw-label">
           Answer type
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
           {answerTypes.map((type) => (
             <button
               className={cn(
-                "h-9 rounded-[12px] border border-white/18 bg-white/10 px-4 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-white/72 transition-colors hover:bg-white/16 hover:text-white",
-                answerType === type && "bg-white text-black hover:bg-white hover:text-black",
+                "h-9 rounded-full border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+                answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
               )}
               key={type}
               onClick={() => onAnswerTypeChange(type)}
@@ -685,12 +683,12 @@ function ContextSelect({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[12px] font-normal uppercase leading-[1.4] tracking-[0.08em] text-white/55">
+      <span className="mw-label">
         {label}
       </span>
       <span className="relative block">
         <select
-          className="h-11 w-full min-w-0 appearance-none rounded-[12px] border border-white/18 bg-white/10 py-0 pl-4 pr-10 text-[14px] font-normal text-white outline-none backdrop-blur-[18px] focus-visible:ring-2 focus-visible:ring-white/24 [&>option]:bg-[#101111]"
+          className="mw-input h-11 w-full min-w-0 appearance-none py-0 pl-4 pr-10 text-[14px] font-normal [&>option]:bg-white"
           onChange={(event) => onChange(event.target.value)}
           value={value}
         >
@@ -700,7 +698,7 @@ function ContextSelect({
         </select>
         <ChevronDown
           aria-hidden="true"
-          className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-white/72"
+          className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-[var(--mw-muted)]"
         />
       </span>
     </label>
@@ -711,21 +709,21 @@ function SetupPrompt({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-[12px] border border-white/18 bg-white/14 p-5 text-white backdrop-blur-[28px] sm:flex sm:items-center sm:justify-between sm:gap-6",
+        "mw-card p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
         className,
       )}
     >
       <div>
-        <h2 className="text-[24px] font-normal leading-[1.1] tracking-[-0.03em]">
+        <h2 className="mw-display text-[30px] leading-[1.05]">
           Complete your academic setup
         </h2>
-        <p className="mt-3 max-w-[640px] text-[16px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72">
+        <p className="mt-3 max-w-[640px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
           Add your college, branch, semester, and focus subject to personalize
           ModuleWyse.
         </p>
       </div>
       <Link
-        className="mt-5 inline-flex h-11 items-center justify-center rounded-[12px] bg-white px-5 font-mono text-[14px] font-medium uppercase tracking-[0.02em] text-black sm:mt-0"
+        className="mw-pill-primary mt-5 sm:mt-0"
         href="/onboarding/academic-profile"
       >
         Continue Setup
@@ -754,9 +752,10 @@ function Composer({
       className="fixed bottom-5 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 sm:bottom-6 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
       onSubmit={onSubmit}
     >
-      <div className="flex min-h-[52px] items-end gap-2 rounded-[12px] border border-white/24 bg-white/14 py-1.5 pl-2.5 pr-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-[18px] sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
+      <div className="rounded-2xl border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
+        <div className="flex min-h-[52px] items-end gap-2 rounded-xl border border-[var(--mw-hairline)] bg-white py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
         <textarea
-          className="max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden bg-transparent py-2 text-[15px] font-normal leading-[1.45] tracking-[-0.02em] text-white outline-none placeholder:text-white/45 sm:min-h-[40px] sm:text-[16px]"
+          className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={onKeyDown}
           placeholder="Ask from selected subject..."
@@ -765,12 +764,13 @@ function Composer({
           value={draft}
         />
         <button
-          className="grid h-9 shrink-0 place-items-center rounded-[12px] bg-white px-4 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-black transition-colors hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:pointer-events-none disabled:opacity-45 sm:h-10 sm:px-[18px]"
+          className="grid h-10 shrink-0 place-items-center rounded-full bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
           disabled={!canSend}
           type="submit"
         >
           Ask
         </button>
+        </div>
       </div>
     </form>
   );
@@ -784,16 +784,16 @@ function EmptyConversation({
   return (
     <div className="grid min-h-[330px] place-items-center sm:min-h-[360px]">
       <div className="w-full text-center">
-        <h2 className="text-[26px] font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-[32px]">
+        <h2 className="mw-display text-[34px] leading-[1.05] text-[var(--mw-ink)] sm:text-[44px]">
           What do you want to prepare today?
         </h2>
-        <p className="mt-3 text-[15px] font-normal leading-[1.45] tracking-[-0.02em] text-white/72 sm:mt-4 sm:text-[18px]">
+        <p className="mt-3 text-[15px] font-normal leading-[1.55] text-[var(--mw-body)] sm:mt-4 sm:text-[18px]">
           Select a subject and ask from available curated notes.
         </p>
         <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
           {suggestedPrompts.map((prompt) => (
             <button
-              className="rounded-[12px] border border-white/16 bg-white/8 p-3 text-left text-[13px] leading-[1.4] text-white/72 transition-colors hover:bg-white/14 sm:p-4 sm:text-[14px]"
+              className="rounded-2xl border border-[var(--mw-hairline)] bg-white p-3 text-left text-[13px] leading-[1.45] text-[var(--mw-body)] transition-colors hover:border-[var(--mw-hairline-strong)] hover:bg-[var(--mw-surface-strong)] sm:p-4 sm:text-[14px]"
               key={prompt}
               onClick={() => onPickPrompt(prompt)}
               type="button"
@@ -809,8 +809,8 @@ function EmptyConversation({
 
 function UserMessage({ message }: { message: Message }) {
   return (
-    <div className="ml-auto w-fit max-w-[min(860px,88%)] rounded-[12px] border border-white/18 bg-white/12 p-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[20px]">
-      <p className="whitespace-pre-wrap text-[16px] leading-[1.45] tracking-[-0.02em] text-white/86">
+    <div className="ml-auto w-fit max-w-[min(860px,88%)] rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
+      <p className="whitespace-pre-wrap text-[16px] leading-[1.5] text-[var(--mw-ink)]">
         {message.content}
       </p>
     </div>
@@ -866,17 +866,17 @@ function AssistantMessage({
   }
 
   return (
-    <article className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px]">
+    <article className="mw-card p-5">
       <div className="flex flex-wrap items-center gap-2">
         <Badge>Based on available notes</Badge>
         <Badge>{message.answerType ?? "Default"}</Badge>
-        <span className="text-[14px] leading-[1.4] text-white/55">
+        <span className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
           {message.context?.subject ?? "Object Oriented Programming"} /{" "}
           {message.context?.module ?? "Module 3"}
         </span>
       </div>
 
-      <div className="mt-5 whitespace-pre-wrap text-[15px] leading-[1.55] tracking-[-0.01em] text-white/78">
+      <div className="mt-5 whitespace-pre-wrap text-[15px] leading-[1.6] text-[var(--mw-body)]">
         {message.content}
       </div>
 
@@ -900,18 +900,18 @@ function AssistantMessage({
           Regenerate
         </ActionButton>
         <ActionButton
+          ariaLabel="Thumbs up"
           active={message.feedback === "up"}
           onClick={() => onFeedback(message.id, "up")}
         >
           <ThumbsUp className="size-3.5" />
-          Thumbs Up
         </ActionButton>
         <ActionButton
+          ariaLabel="Thumbs down"
           active={message.feedback === "down"}
           onClick={() => onFeedback(message.id, "down")}
         >
           <ThumbsDown className="size-3.5" />
-          Thumbs Down
         </ActionButton>
       </div>
     </article>
@@ -920,14 +920,14 @@ function AssistantMessage({
 
 function LoadingAnswer() {
   return (
-    <div className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px]">
-      <p className="text-[14px] font-normal uppercase tracking-[0.02em] text-white/55">
+    <div className="mw-card p-5">
+      <p className="mw-label">
         Generating from selected notes...
       </p>
       <div className="mt-5 grid gap-3">
-        <div className="h-4 w-2/3 animate-pulse rounded-[12px] bg-white/14" />
-        <div className="h-4 w-full animate-pulse rounded-[12px] bg-white/10" />
-        <div className="h-4 w-5/6 animate-pulse rounded-[12px] bg-white/10" />
+        <div className="h-4 w-2/3 animate-pulse rounded-full bg-[var(--mw-surface-strong)]" />
+        <div className="h-4 w-full animate-pulse rounded-full bg-[var(--mw-surface-strong)]" />
+        <div className="h-4 w-5/6 animate-pulse rounded-full bg-[var(--mw-surface-strong)]" />
       </div>
     </div>
   );
@@ -945,13 +945,13 @@ function EdgeCard({
   onAction: () => void;
 }) {
   return (
-    <div className="rounded-[12px] border border-white/18 bg-white/12 p-5 text-white backdrop-blur-[28px]">
-      <h3 className="text-[20px] font-normal leading-[1.2] tracking-[-0.02em]">
+    <div className="mw-card p-5">
+      <h3 className="text-[20px] font-medium leading-[1.2]">
         {title}
       </h3>
-      <p className="mt-3 text-[14px] leading-[1.45] text-white/72">{body}</p>
+      <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-body)]">{body}</p>
       <button
-        className="mt-5 inline-flex h-10 items-center justify-center rounded-[12px] bg-white px-4 font-mono text-[12px] font-medium uppercase tracking-[0.02em] text-black"
+        className="mw-pill-primary mt-5"
         onClick={onAction}
         type="button"
       >
@@ -963,7 +963,7 @@ function EdgeCard({
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-[12px] border border-white/14 bg-white/10 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-white/72">
+    <span className="mw-badge">
       {children}
     </span>
   );
@@ -971,18 +971,21 @@ function Badge({ children }: { children: React.ReactNode }) {
 
 function ActionButton({
   children,
+  ariaLabel,
   active,
   onClick,
 }: {
   children: React.ReactNode;
+  ariaLabel?: string;
   active?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
+      aria-label={ariaLabel}
       className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-[12px] border border-white/18 bg-white/10 px-3 font-mono text-[11px] font-medium uppercase tracking-[0.02em] text-white/72 transition-colors hover:bg-white/16 hover:text-white",
-        active && "bg-white text-black hover:bg-white hover:text-black",
+        "inline-flex h-9 items-center gap-2 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+        active && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
       )}
       onClick={onClick}
       type="button"

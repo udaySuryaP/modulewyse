@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { BackLink } from "@/components/dashboard/back-link";
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { SubjectDetailPanel } from "@/components/subjects/subject-detail-panel";
 import { getSubjectWithModulesAndFallback } from "@/lib/data/subjects";
@@ -20,6 +21,7 @@ export default async function SubjectDetailPage({
 
   return (
     <StudentPageShell>
+      <BackLink href="/subjects" label="Back to subjects" />
       <SubjectDetailPanel subject={subject} />
     </StudentPageShell>
   );
