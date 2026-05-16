@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -84,8 +84,10 @@ export function SelectInput({
       </select>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-4 top-1/2 size-2.5 -translate-y-1/2 rotate-45 border-b border-r border-[var(--mw-muted)]"
-      />
+        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--mw-muted)]"
+      >
+        <ChevronDown className="size-4" />
+      </span>
     </span>
   );
 }

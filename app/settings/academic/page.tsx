@@ -14,11 +14,11 @@ export default async function AcademicSettingsPage() {
 
   return (
     <StudentPageShell>
-      <BackLink href="/settings" label="Back to settings" />
       <div className="mw-card mx-auto max-w-[760px] p-5 sm:p-8">
-        <p className="mw-label">
-          Settings
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <BackLink href="/settings" label="Back" />
+          <p className="mw-label">Settings</p>
+        </div>
         <h1 className="mw-display mt-4 text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
           Academic settings
         </h1>
