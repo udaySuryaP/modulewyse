@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { cn } from "@/lib/utils";
 
 type GlassButtonProps = {
@@ -29,9 +27,9 @@ export function GlassButton({
 
   if (href) {
     return (
-      <Link className={classes} href={href}>
+      <a className={classes} href={href}>
         {children}
-      </Link>
+      </a>
     );
   }
 

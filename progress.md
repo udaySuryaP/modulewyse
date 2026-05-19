@@ -1942,3 +1942,176 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Use `design.md` as the canonical reference for future design-system adjustments.
+
+## 2026-05-19 - Chat Persistence Verification And Regenerate Append Fix
+
+### Completed
+- Re-inspected the existing mock chat persistence implementation against the requested persistence prompt.
+- Confirmed `lib/data/chat.ts` exists and uses the Supabase browser client under RLS for:
+  - `createConversation`
+  - `getUserConversations`
+  - `getConversationWithMessages`
+  - `insertMessage`
+  - `updateConversationTitle`
+  - `saveMessageFeedback`
+  - `deleteConversation`
+- Confirmed `/chat?conversation=<id>` loading is implemented and hydrates persisted messages plus feedback state.
+- Confirmed first-send conversation creation persists:
+  - conversation row
+  - user message row
+  - mock assistant message row
+  - subject/module metadata
+- Confirmed Recent chats are shown in the expanded desktop sidebar and link to `/chat?conversation=<id>`.
+- Confirmed feedback persistence uses `message_feedback` upsert when the assistant message has a persisted id, with local fallback when persistence is unavailable.
+- Fixed regenerate behavior so the previous answer remains visible and the regenerated answer is appended after a loading state instead of replacing the old visible answer.
+- Verified live Supabase persistence tables exist:
+  - `public.conversations`
+  - `public.messages`
+  - `public.message_feedback`
+- Verified live policy counts:
+  - conversations: 4 policies
+  - messages: 2 policies
+  - message_feedback: 3 policies
+- Verified live row counts currently exist:
+  - conversations: 7
+  - messages: 26
+  - feedback: 0
+- Verified RLS rollback inserts:
+  - conversation insert for an authenticated user succeeds.
+  - message insert into an owned existing conversation succeeds.
+  - feedback upsert for an owned assistant message succeeds.
+- Route-checked logged-out behavior:
+  - `/chat` redirects to `/login?next=%2Fchat`
+  - `/chat?conversation=invalid` redirects to `/login?next=%2Fchat%3Fconversation%3Dinvalid`
+  - `/chat?subject=oop&module=3&q=Explain%20inheritance` preserves query params in `next`.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- Mock answers remain generated locally in the browser; no AI, RAG, retrieval, embeddings, admin UI, upload UI, payment, or student uploads were added.
+- Full browser click-through with a confirmed student login was not repeated in this pass; live database checks were performed through Supabase SQL role simulation and rollback-safe inserts.
+- A single-statement CTE test that created a conversation and message in the same SQL statement failed message RLS, but the app performs these as separate awaited client calls; separate rollback tests for conversation, message, and feedback succeeded.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Prepare OOP content schema and ingestion structure without OpenAI/RAG yet.
+
+## 2026-05-19 - Landing And Protected User Flow Audit
+
+### Completed
+- Audited the current landing-to-auth-to-dashboard user flow after the reported Login/Get Started dead-click issue.
+- Fixed landing auth CTAs by removing the async client auth check from the buttons:
+  - `Login` now navigates directly to `/login`.
+  - `Get Started` now navigates directly to `/signup`.
+  - logged-in users are still redirected away from `/login` and `/signup` to `/chat` by `proxy.ts`.
+- Updated `GlassButton` link rendering from Next `Link` to a native anchor for public CTA reliability.
+- Updated `View Subjects` on the landing page to use a normal `/subjects` link instead of client `router.push`.
+- Hardened the landing question flow:
+  - trims the question before routing
+  - blocks empty submits
+  - disables `Ask` until a question is present
+  - treats Supabase client auth lookup failures or slow lookups as logged-out after a short timeout, so the landing action does not hang
+- Verified logged-out route mapping:
+  - `/`, `/login`, `/signup`, `/forgot-password` return 200
+  - `/chat`, `/subjects`, `/subjects/oop`, `/library`, `/profile`, `/settings`, nested settings routes, and onboarding routes redirect to `/login?next=...`
+- Browser-checked the landing CTAs:
+  - `/` -> `Login` -> `/login`
+  - `/` -> `Get Started` -> `/signup`
+  - `/` -> `View Subjects` -> `/login?next=/subjects` while logged out
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- The in-app browser automation could not type into the question input because its virtual clipboard bridge was unavailable, but the page exposes the input and the `Ask` button state updates are covered by code/build checks.
+- `/` intentionally remains public for logged-in users after the earlier landing visibility fix; authenticated `/login` and `/signup` still map to `/chat`.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced breaking audit fix was run.
+
+### Next
+- Browser-check the landing question submit flow in the user's normal Chrome profile if the clipboard bridge is available there.
+- Continue with OOP content schema and ingestion structure without OpenAI/RAG yet.
+
+## 2026-05-19 - Preferences Button Radius Alignment
+
+### Completed
+- Checked the Preferences section controls against `design.md`.
+- Confirmed CTA-style buttons already use the design-system pill radius token.
+- Updated the Preferences toggle thumb from the form-input radius token to the pill radius token so the toggle button geometry matches the new design-system button guidance.
+- Ran `npm run lint`; passed.
+
+### Issues / Notes
+- No product logic, preferences storage behavior, routing, or Supabase code was changed.
+
+### Next
+- Continue visual consistency checks as new UI issues are found.
+
+## 2026-05-19 - Auth Flow Audit And Proxy Cookie Preservation
+
+### Completed
+- Audited the current Supabase auth flow:
+  - public landing, login, signup, forgot-password, and auth callback routes
+  - protected dashboard routes
+  - onboarding route protection
+  - profile compatibility redirect
+  - login/signup redirect decisions
+  - pending-question and pending-destination handling
+  - signout implementation
+- Updated `proxy.ts` auth redirects so they preserve cookies written by the Supabase SSR proxy client.
+  - This prevents refreshed or cleared auth cookies from being dropped when redirecting protected routes to `/login?next=...`.
+  - This also preserves refreshed cookies when authenticated users are redirected away from `/login` or `/signup` to `/chat`.
+- Verified logged-out route behavior:
+  - `/`, `/login`, `/signup`, and `/forgot-password` return 200.
+  - `/auth/callback` without a code redirects to `/login?error=callback`.
+  - `/chat`, `/subjects`, `/subjects/oop`, `/library`, `/profile`, `/settings`, nested settings routes, and onboarding routes redirect to `/login?next=...`.
+- Confirmed no client code imports the service role key and no `auth.getSession()` server-side authorization use exists.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Full successful login/signup QA still requires a confirmed Supabase test student account or the user's logged-in browser session.
+- The app intentionally keeps `/` public even for authenticated users; `/login` and `/signup` still redirect authenticated users to `/chat`.
+- Onboarding remains non-blocking; authenticated users may access onboarding pages, and incomplete profiles are prompted inside `/chat`.
+
+### Next
+- Run full browser QA with a confirmed test account:
+  - signup or email-confirmed login
+  - `/login?next=...` continuation
+  - pending landing question to `/chat?q=...`
+  - signout from `/settings`
+
+## 2026-05-19 - Chat Answer Metadata Simplification
+
+### Completed
+- Simplified generated assistant answer cards in `/chat`.
+- Removed the visible metadata badges from generated answers:
+  - `Based on available notes`
+  - answer type badge such as `Default`
+  - source chips such as `OOP`, `All modules`, and `Notes`
+- Kept only the readable subject/module context line above the generated answer body.
+- Removed the now-unused chat `Badge` helper.
+- Ran `npm run lint`; passed.
+
+### Issues / Notes
+- Persistence metadata is still saved internally for future retrieval/history use; only the visible answer-card badges were removed.
+- No chat persistence, routing, auth, or mock answer generation behavior was changed.
+
+### Next
+- Browser-check a generated answer card after login to confirm the simplified header matches the intended visual.
+
+## 2026-05-19 - Recent Chats New Chat Option
+
+### Completed
+- Added a `New chat` option row inside the `/chat` sidebar Recent chats section.
+- Kept the option visible even when there are no recent conversations yet.
+- Styled the option consistently with the recent-chat rows and current editorial design system.
+- Ran `npm run lint`; passed.
+
+### Issues / Notes
+- No chat persistence, auth, routing, or message-generation behavior was changed.
+
+### Next
+- Browser-check the sidebar in an authenticated session to confirm the row placement with real recent chats.
