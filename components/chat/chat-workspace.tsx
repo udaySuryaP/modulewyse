@@ -34,6 +34,12 @@ import {
   subjectModuleLabel,
   type SubjectModule,
 } from "@/lib/mock-subjects";
+import {
+  answerTypeOptions,
+  readStudentPreferences,
+  type StudentPreferences,
+  useStudentPreferences,
+} from "@/lib/preferences/student-preferences";
 import { cn } from "@/lib/utils";
 import type {
   Conversation,
@@ -44,7 +50,7 @@ import type {
 const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"];
 const subjects = mockSubjects.map((subject) => subject.name);
 const moduleOptions = subjectModules.map(subjectModuleLabel);
-const answerTypes = ["Default", "Short", "Medium", "Long", "Part A", "Part B", "Part C"];
+const answerTypes = answerTypeOptions;
 const suggestedPrompts = [
   "Explain inheritance in OOP",
   "Give a Part C answer on normalization",
@@ -105,11 +111,11 @@ function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function mockAnswer(question: string, answerType: string) {
+function mockAnswer(question: string, answerType: string, examMode: string) {
   return [
     "Mock exam-ready answer",
     "",
-    "This is a placeholder answer showing how ModuleWyse will structure responses from curated academic content.",
+    `This is a placeholder answer showing how ModuleWyse will structure ${examMode.toLowerCase()} responses from curated academic content.`,
     "",
     "Definition / introduction",
     `${question} can be answered by first defining the core concept, then connecting it to the selected module context.`,
@@ -124,7 +130,7 @@ function mockAnswer(question: string, answerType: string) {
     "For OOP questions, relate the concept to a class, object, method, or real-world model where possible.",
     "",
     "Exam writing tip",
-    `For ${answerType} answers, keep the structure direct: definition, points, example, and conclusion.`,
+    `For ${answerType} answers in ${examMode} mode, keep the structure direct: definition, points, example, and conclusion.`,
     "",
     "Conclusion",
     "This local mock answer previews the response format. Real answers will later come from verified ModuleWyse academic content.",
@@ -226,10 +232,12 @@ function metadataForMessage(
   status: AssistantStatus,
   contextSnapshot: ChatContext,
   answerTypeSnapshot: string,
+  examModeSnapshot: string,
 ) {
   return {
     answerType: answerTypeSnapshot,
     assistantStatus: status,
+    examMode: examModeSnapshot,
     isMock: true,
     moduleLabel: contextSnapshot.module,
     moduleValue: moduleValueForContext(contextSnapshot),
@@ -313,8 +321,11 @@ export function ChatWorkspace({
     "idle" | "loading" | "missing"
   >(initialConversationId ? "loading" : "idle");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [answerType, setAnswerType] = useState("Default");
+  const [answerType, setAnswerType] = useState(
+    () => readStudentPreferences().defaultAnswerType,
+  );
   const [context, setContext] = useState(() => contextFromProps(initialContext));
+  const [preferences] = useStudentPreferences();
   const [toast, setToast] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -430,13 +441,14 @@ export function ChatWorkspace({
     status: AssistantStatus = "complete",
     contextSnapshot: ChatContext = context,
     answerTypeSnapshot: string = answerType,
+    examModeSnapshot: string = preferences.examModeDefault,
   ): Message {
     return {
       id: newId("assistant"),
       role: "assistant",
       content:
         status === "complete"
-          ? mockAnswer(question, answerTypeSnapshot)
+          ? mockAnswer(question, answerTypeSnapshot, examModeSnapshot)
           : status === "insufficient"
             ? "I do not have enough verified material for this answer yet."
             : status === "rate-limited"
@@ -454,6 +466,7 @@ export function ChatWorkspace({
     question: string,
     contextSnapshot: ChatContext,
     answerTypeSnapshot: string,
+    examModeSnapshot: string,
     conversationId: string | null,
   ) {
     const forcedState = shouldTriggerState(question);
@@ -462,6 +475,7 @@ export function ChatWorkspace({
       forcedState ?? "complete",
       contextSnapshot,
       answerTypeSnapshot,
+      examModeSnapshot,
     );
 
     setMessages((current) => [
@@ -476,6 +490,7 @@ export function ChatWorkspace({
         forcedState ?? "complete",
         contextSnapshot,
         answerTypeSnapshot,
+        examModeSnapshot,
       );
     }
 
@@ -510,13 +525,19 @@ export function ChatWorkspace({
     status: AssistantStatus,
     contextSnapshot: ChatContext,
     answerTypeSnapshot: string,
+    examModeSnapshot: string,
   ) {
     try {
       const persisted = await insertMessage({
         answerType: answerTypeSnapshot,
         content: message.content,
         conversationId,
-        metadata: metadataForMessage(status, contextSnapshot, answerTypeSnapshot),
+        metadata: metadataForMessage(
+          status,
+          contextSnapshot,
+          answerTypeSnapshot,
+          examModeSnapshot,
+        ),
         role: "assistant",
         userId,
       });
@@ -544,6 +565,7 @@ export function ChatWorkspace({
     setDraft("");
     const contextSnapshot = context;
     const answerTypeSnapshot = answerType;
+    const examModeSnapshot = preferences.examModeDefault;
     const sourceChips = sourceChipsForContext(contextSnapshot);
 
     const localUserMessage: Message = {
@@ -611,6 +633,7 @@ export function ChatWorkspace({
           trimmedQuestion,
           contextSnapshot,
           answerTypeSnapshot,
+          examModeSnapshot,
           conversationId,
         ),
       delay,
@@ -679,6 +702,7 @@ export function ChatWorkspace({
     const targetMessage = messages[index];
     const contextSnapshot = targetMessage?.context ?? context;
     const answerTypeSnapshot = targetMessage?.answerType ?? answerType;
+    const examModeSnapshot = preferences.examModeDefault;
     const loadingMessage: Message = {
       id: newId("assistant-regenerating"),
       role: "assistant",
@@ -699,6 +723,7 @@ export function ChatWorkspace({
         "complete",
         contextSnapshot,
         answerTypeSnapshot,
+        examModeSnapshot,
       );
 
       setMessages((current) =>
@@ -714,6 +739,7 @@ export function ChatWorkspace({
           "complete",
           contextSnapshot,
           answerTypeSnapshot,
+          examModeSnapshot,
         );
       }
 
@@ -744,11 +770,14 @@ export function ChatWorkspace({
 
       <div className="min-w-0 flex-1">
         <MobileChatTopbar
+          activeConversationId={activeConversationId}
           answerType={answerType}
           context={context}
+          conversations={recentConversations}
           isOpen={mobileMenuOpen}
           onAnswerTypeChange={setAnswerType}
           onContextChange={setContext}
+          onNavigate={() => setMobileMenuOpen(false)}
           onToggle={() => setMobileMenuOpen((current) => !current)}
         />
 
@@ -778,7 +807,10 @@ export function ChatWorkspace({
             ) : conversationLoadState === "missing" ? (
               <ConversationNotFound />
             ) : messages.length === 0 ? (
-              <EmptyConversation onPickPrompt={setDraft} />
+              <EmptyConversation
+                onPickPrompt={setDraft}
+                showSuggestedPrompts={preferences.showSuggestedPrompts}
+              />
             ) : (
               <div className="grid gap-4">
                 {messages.map((message) =>
@@ -788,6 +820,7 @@ export function ChatWorkspace({
                     <AssistantMessage
                       key={message.id}
                       message={message}
+                      preferences={preferences}
                       onCopy={handleCopy}
                       onFeedback={handleFeedback}
                       onRegenerate={regenerate}
@@ -820,18 +853,24 @@ export function ChatWorkspace({
 }
 
 function MobileChatTopbar({
+  activeConversationId,
   answerType,
   context,
+  conversations,
   isOpen,
   onAnswerTypeChange,
   onContextChange,
+  onNavigate,
   onToggle,
 }: {
+  activeConversationId: string;
   answerType: string;
   context: ChatContext;
+  conversations: Conversation[];
   isOpen: boolean;
   onAnswerTypeChange: (value: string) => void;
   onContextChange: React.Dispatch<React.SetStateAction<ChatContext>>;
+  onNavigate: () => void;
   onToggle: () => void;
 }) {
   const [dateTime, setDateTime] = useState({ date: "", time: "" });
@@ -937,6 +976,7 @@ function MobileChatTopbar({
                   className="flex h-10 items-center gap-3 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
                   href={item.href}
                   key={item.href}
+                  onClick={onNavigate}
                 >
                   <Icon className="size-4 shrink-0" />
                   <span>{item.label}</span>
@@ -944,6 +984,14 @@ function MobileChatTopbar({
               );
             })}
           </nav>
+
+          <SidebarRecentConversations
+            activeConversationId={activeConversationId}
+            className="border-t border-[var(--mw-hairline)] pt-4"
+            conversations={conversations}
+            listClassName="max-h-[220px]"
+            onNavigate={onNavigate}
+          />
 
           <div className="grid gap-1.5 text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)]">
             <span className="flex items-center gap-2">
@@ -1034,24 +1082,36 @@ function ContextControls({
 
 function SidebarRecentConversations({
   activeConversationId,
+  className,
   conversations,
+  listClassName,
+  onNavigate,
 }: {
   activeConversationId: string;
+  className?: string;
   conversations: Conversation[];
+  listClassName?: string;
+  onNavigate?: () => void;
 }) {
   return (
-    <section className="grid min-w-0 gap-3">
+    <section className={cn("grid min-w-0 gap-3", className)}>
       <div className="px-2">
         <p className="mw-label text-[11px]">Recent chats</p>
       </div>
 
-      <div className="grid max-h-[calc(100dvh-390px)] gap-1.5 overflow-y-auto pr-1">
+      <div
+        className={cn(
+          "grid max-h-[calc(100dvh-390px)] gap-1.5 overflow-y-auto pr-1",
+          listClassName,
+        )}
+      >
         <Link
           className={cn(
             "flex min-w-0 items-center gap-2 mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-surface-strong)] px-3 py-2.5 text-[12px] font-medium text-[var(--mw-ink)] transition-colors hover:bg-white",
             !activeConversationId && "border-[var(--mw-primary)] bg-white",
           )}
           href="/chat"
+          onClick={onNavigate}
         >
           <Plus className="size-3.5 shrink-0" />
           <span className="truncate">New chat</span>
@@ -1079,6 +1139,7 @@ function SidebarRecentConversations({
               )}
               href={`/chat?conversation=${conversation.id}`}
               key={conversation.id}
+              onClick={onNavigate}
             >
               <p className="truncate text-[12px] font-medium leading-[1.35] text-[var(--mw-ink)]">
                 {conversation.title}
@@ -1202,8 +1263,10 @@ function Composer({
 
 function EmptyConversation({
   onPickPrompt,
+  showSuggestedPrompts,
 }: {
   onPickPrompt: (prompt: string) => void;
+  showSuggestedPrompts: boolean;
 }) {
   return (
     <div className="grid min-h-[330px] place-items-center sm:min-h-[360px]">
@@ -1214,18 +1277,20 @@ function EmptyConversation({
         <p className="mt-3 text-[15px] font-normal leading-[1.55] text-[var(--mw-body)] sm:mt-4 sm:text-[18px]">
           Select a subject and ask from available curated notes.
         </p>
-        <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
-          {suggestedPrompts.map((prompt) => (
-            <button
-              className="mw-radius-card border border-[var(--mw-hairline)] bg-white p-3 text-left text-[13px] leading-[1.45] text-[var(--mw-body)] transition-colors hover:border-[var(--mw-hairline-strong)] hover:bg-[var(--mw-surface-strong)] sm:p-4 sm:text-[14px]"
-              key={prompt}
-              onClick={() => onPickPrompt(prompt)}
-              type="button"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
+        {showSuggestedPrompts ? (
+          <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
+            {suggestedPrompts.map((prompt) => (
+              <button
+                className="mw-radius-card border border-[var(--mw-hairline)] bg-white p-3 text-left text-[13px] leading-[1.45] text-[var(--mw-body)] transition-colors hover:border-[var(--mw-hairline-strong)] hover:bg-[var(--mw-surface-strong)] sm:p-4 sm:text-[14px]"
+                key={prompt}
+                onClick={() => onPickPrompt(prompt)}
+                type="button"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -1264,11 +1329,13 @@ function AssistantMessage({
   onCopy,
   onFeedback,
   onRegenerate,
+  preferences,
 }: {
   message: Message;
   onCopy: (message: Message) => void;
   onFeedback: (messageId: string, feedback: Feedback) => void;
   onRegenerate: (messageId: string) => void;
+  preferences: StudentPreferences;
 }) {
   if (message.status === "loading") {
     return <LoadingAnswer />;
@@ -1308,17 +1375,27 @@ function AssistantMessage({
   }
 
   return (
-    <article className="mw-card p-5">
-      <div className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
-        {message.context?.subject ?? "Object Oriented Programming"} /{" "}
-        {message.context?.module ?? "Module 3"}
-      </div>
+    <article className={cn("mw-card", preferences.compactAnswerCards ? "p-4" : "p-5")}>
+      {preferences.showSourceChips ? (
+        <div className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
+          {message.context?.subject ?? "Object Oriented Programming"} /{" "}
+          {message.context?.module ?? "Module 3"}
+        </div>
+      ) : null}
 
-      <div className="mt-5 whitespace-pre-wrap text-[15px] leading-[1.6] text-[var(--mw-body)]">
+      <div
+        className={cn(
+          "whitespace-pre-wrap text-[var(--mw-body)]",
+          preferences.showSourceChips && "mt-5",
+          preferences.compactAnswerCards
+            ? "text-[14px] leading-[1.5]"
+            : "text-[15px] leading-[1.6]",
+        )}
+      >
         {message.content}
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className={cn("flex flex-wrap gap-2", preferences.compactAnswerCards ? "mt-4" : "mt-5")}>
         <ActionButton onClick={() => onCopy(message)}>
           <Clipboard className="size-3.5" />
           Copy

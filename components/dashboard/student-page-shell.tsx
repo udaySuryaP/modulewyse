@@ -52,7 +52,7 @@ export function StudentPageShell({ children }: StudentPageShellProps) {
           onToggle={() => setSidebarExpanded((current) => !current)}
         />
 
-        <section className="min-w-0 flex-1 px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <section className="min-w-0 flex-1 overflow-x-hidden px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
           {children}
         </section>
       </main>
