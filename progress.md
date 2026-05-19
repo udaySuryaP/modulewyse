@@ -1928,3 +1928,17 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Push the landing visibility fix after review.
+
+## 2026-05-19 - Added Project Design Reference
+
+### Completed
+- Added the provided ElevenLabs-style design reference as the project-root `design.md`.
+- Confirmed there was no existing project-root `design.md`; only an unrelated dependency document existed under `node_modules`.
+- Preserved the design reference as UTF-8 markdown so punctuation and token notation render correctly.
+- Kept this as a documentation/design-system source update only; no app logic, routes, Supabase code, or UI implementation files were changed for this step.
+
+### Issues / Notes
+- The new `design.md` is copied from the provided markdown file at `C:\Users\udays\Downloads\Pasted markdown.md`.
+
+### Next
+- Use `design.md` as the canonical reference for future design-system adjustments.
