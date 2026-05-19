@@ -19,13 +19,26 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { StudentSidebar } from "@/components/dashboard/student-sidebar";
+import {
+  createConversation,
+  getConversationWithMessages,
+  getUserConversations,
+  insertMessage,
+  saveMessageFeedback,
+} from "@/lib/data/chat";
 import { clearPendingQuestion, readPendingQuestion } from "@/lib/landing-flow";
 import {
   mockSubjects,
   subjectModules,
   subjectModuleLabel,
+  type SubjectModule,
 } from "@/lib/mock-subjects";
 import { cn } from "@/lib/utils";
+import type {
+  Conversation,
+  Message as PersistedMessage,
+  MessageFeedback,
+} from "@/types/database";
 
 const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"];
 const subjects = mockSubjects.map((subject) => subject.name);
@@ -68,12 +81,15 @@ type Message = {
   sources?: SourceChip[];
   context?: ChatContext;
   feedback?: Feedback;
+  persistedId?: string;
 };
 
 type ChatWorkspaceProps = {
+  initialConversationId: string;
   initialQuestion: string;
   initialContext: ChatContext;
   isProfileIncomplete: boolean;
+  userId: string;
 };
 
 function normalizeOption(value: string, options: string[], fallback: string) {
@@ -160,35 +176,228 @@ function sourceChipsForContext(context: ChatContext): SourceChip[] {
   return [subjectChip, moduleChip, "NOTES"];
 }
 
+function subjectSlugForContext(context: ChatContext) {
+  return (
+    mockSubjects.find(
+      (subject) => subject.name.toLowerCase() === context.subject.toLowerCase(),
+    )?.slug ?? null
+  );
+}
+
+function moduleValueForContext(context: ChatContext): SubjectModule {
+  const normalized = context.module.toLowerCase().replace(/^module\s+/, "");
+
+  if (subjectModules.includes(normalized as SubjectModule)) {
+    return normalized as SubjectModule;
+  }
+
+  return "all";
+}
+
+function contextFromConversation(conversation: Conversation, fallback: ChatContext) {
+  const subject = conversation.subject_slug
+    ? mockSubjects.find((item) => item.slug === conversation.subject_slug)
+    : undefined;
+  const moduleValue = conversation.module_value ?? "all";
+
+  return {
+    semester: subject?.semester ?? fallback.semester,
+    subject: subject?.name ?? fallback.subject,
+    module: subjectModuleLabel(
+      subjectModules.includes(moduleValue as SubjectModule)
+        ? (moduleValue as SubjectModule)
+        : "all",
+    ),
+  };
+}
+
+function titleFromQuestion(question: string) {
+  const normalized = question.replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return "New chat";
+  }
+
+  return normalized.length > 64 ? `${normalized.slice(0, 61)}...` : normalized;
+}
+
+function metadataForMessage(
+  status: AssistantStatus,
+  contextSnapshot: ChatContext,
+  answerTypeSnapshot: string,
+) {
+  return {
+    answerType: answerTypeSnapshot,
+    assistantStatus: status,
+    isMock: true,
+    moduleLabel: contextSnapshot.module,
+    moduleValue: moduleValueForContext(contextSnapshot),
+    sourceChips: sourceChipsForContext(contextSnapshot),
+    status: "BASED_ON_AVAILABLE_NOTES",
+    subjectLabel: contextSnapshot.subject,
+    subjectSlug: subjectSlugForContext(contextSnapshot),
+  };
+}
+
+function stringFromMetadata(
+  metadata: Record<string, unknown>,
+  key: string,
+  fallback: string,
+) {
+  const value = metadata[key];
+  return typeof value === "string" ? value : fallback;
+}
+
+function sourceChipsFromMetadata(
+  metadata: Record<string, unknown>,
+  fallback: SourceChip[],
+) {
+  const value = metadata.sourceChips;
+
+  if (Array.isArray(value) && value.every((chip) => typeof chip === "string")) {
+    return value as SourceChip[];
+  }
+
+  return fallback;
+}
+
+function messageFromPersisted(
+  message: PersistedMessage,
+  conversationContext: ChatContext,
+  feedback?: MessageFeedback,
+): Message {
+  const metadata = message.metadata ?? {};
+  const contextSnapshot = {
+    semester: conversationContext.semester,
+    subject: stringFromMetadata(metadata, "subjectLabel", conversationContext.subject),
+    module: stringFromMetadata(metadata, "moduleLabel", conversationContext.module),
+  };
+  const status = stringFromMetadata(metadata, "assistantStatus", "complete");
+
+  return {
+    answerType: message.answer_type ?? stringFromMetadata(metadata, "answerType", "Default"),
+    content: message.content,
+    context: contextSnapshot,
+    createdAt: new Date(message.created_at),
+    id: message.id,
+    persistedId: message.id,
+    role: message.role,
+    feedback: feedback?.rating,
+    sources: sourceChipsFromMetadata(metadata, sourceChipsForContext(contextSnapshot)),
+    status:
+      message.role === "assistant" &&
+      ["complete", "failed", "insufficient", "rate-limited"].includes(status)
+        ? (status as AssistantStatus)
+        : undefined,
+  };
+}
+
 export function ChatWorkspace({
+  initialConversationId,
   initialQuestion,
   initialContext,
   isProfileIncomplete,
+  userId,
 }: ChatWorkspaceProps) {
   const resolvedInitialQuestion = useMemo(
     () => initialQuestion.trim() || readPendingQuestion(),
     [initialQuestion],
   );
   const [draft, setDraft] = useState(resolvedInitialQuestion);
+  const [activeConversationId, setActiveConversationId] = useState(
+    initialConversationId,
+  );
+  const [recentConversations, setRecentConversations] = useState<Conversation[]>([]);
+  const [conversationLoadState, setConversationLoadState] = useState<
+    "idle" | "loading" | "missing"
+  >(initialConversationId ? "loading" : "idle");
   const [messages, setMessages] = useState<Message[]>([]);
   const [answerType, setAnswerType] = useState("Default");
   const [context, setContext] = useState(() => contextFromProps(initialContext));
   const [toast, setToast] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [sidebarExpanded, setSidebarExpanded] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1024px)").matches,
-  );
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    const syncSidebarState = () => setSidebarExpanded(desktopQuery.matches);
+    const animationFrame = window.requestAnimationFrame(syncSidebarState);
+
+    desktopQuery.addEventListener("change", syncSidebarState);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      desktopQuery.removeEventListener("change", syncSidebarState);
+    };
+  }, []);
 
   useEffect(() => {
     if (resolvedInitialQuestion) {
       clearPendingQuestion();
     }
   }, [resolvedInitialQuestion]);
+
+  useEffect(() => {
+    refreshRecentConversations();
+  }, []);
+
+  useEffect(() => {
+    if (!initialConversationId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadConversation() {
+      setConversationLoadState("loading");
+
+      try {
+        const result = await getConversationWithMessages(initialConversationId);
+
+        if (cancelled) {
+          return;
+        }
+
+        if (!result) {
+          setMessages([]);
+          setConversationLoadState("missing");
+          return;
+        }
+
+        const nextContext = contextFromConversation(result.conversation, initialContext);
+        setContext(contextFromProps(nextContext));
+        const feedbackByMessageId = new Map(
+          result.feedback.map((feedback) => [feedback.message_id, feedback]),
+        );
+        setMessages(
+          result.messages.map((message) =>
+            messageFromPersisted(
+              message,
+              nextContext,
+              feedbackByMessageId.get(message.id),
+            ),
+          ),
+        );
+        setActiveConversationId(result.conversation.id);
+        setConversationLoadState("idle");
+      } catch {
+        if (!cancelled) {
+          setMessages([]);
+          setConversationLoadState("missing");
+          setToast("Conversation could not be loaded.");
+        }
+      }
+    }
+
+    loadConversation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [initialConversationId, initialContext]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -205,6 +414,14 @@ export function ChatWorkspace({
 
   function focusComposer() {
     window.setTimeout(() => inputRef.current?.focus(), 0);
+  }
+
+  async function refreshRecentConversations() {
+    try {
+      setRecentConversations(await getUserConversations());
+    } catch {
+      setRecentConversations([]);
+    }
   }
 
   function assistantMessage(
@@ -236,23 +453,87 @@ export function ChatWorkspace({
     question: string,
     contextSnapshot: ChatContext,
     answerTypeSnapshot: string,
+    conversationId: string | null,
   ) {
     const forcedState = shouldTriggerState(question);
+    const nextAssistantMessage = assistantMessage(
+      question,
+      forcedState ?? "complete",
+      contextSnapshot,
+      answerTypeSnapshot,
+    );
 
     setMessages((current) => [
       ...current.filter((message) => message.status !== "loading"),
-      assistantMessage(
-        question,
+      nextAssistantMessage,
+    ]);
+
+    if (conversationId) {
+      persistAssistantMessage(
+        conversationId,
+        nextAssistantMessage,
         forcedState ?? "complete",
         contextSnapshot,
         answerTypeSnapshot,
-      ),
-    ]);
+      );
+    }
+
     setIsGenerating(false);
     focusComposer();
   }
 
-  function sendMessage(question: string) {
+  async function ensureConversation(
+    question: string,
+    contextSnapshot: ChatContext,
+  ) {
+    if (activeConversationId) {
+      return activeConversationId;
+    }
+
+    const conversation = await createConversation({
+      moduleValue: moduleValueForContext(contextSnapshot),
+      subjectSlug: subjectSlugForContext(contextSnapshot),
+      title: titleFromQuestion(question),
+      userId,
+    });
+
+    setActiveConversationId(conversation.id);
+    window.history.replaceState(null, "", `/chat?conversation=${conversation.id}`);
+    refreshRecentConversations();
+    return conversation.id;
+  }
+
+  async function persistAssistantMessage(
+    conversationId: string,
+    message: Message,
+    status: AssistantStatus,
+    contextSnapshot: ChatContext,
+    answerTypeSnapshot: string,
+  ) {
+    try {
+      const persisted = await insertMessage({
+        answerType: answerTypeSnapshot,
+        content: message.content,
+        conversationId,
+        metadata: metadataForMessage(status, contextSnapshot, answerTypeSnapshot),
+        role: "assistant",
+        userId,
+      });
+
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === message.id
+            ? { ...item, id: persisted.id, persistedId: persisted.id }
+            : item,
+        ),
+      );
+      refreshRecentConversations();
+    } catch {
+      setToast("Answer kept locally. Persistence failed.");
+    }
+  }
+
+  async function sendMessage(question: string) {
     const trimmedQuestion = question.trim();
 
     if (!trimmedQuestion || isGenerating) {
@@ -264,30 +545,73 @@ export function ChatWorkspace({
     const answerTypeSnapshot = answerType;
     const sourceChips = sourceChipsForContext(contextSnapshot);
 
+    const localUserMessage: Message = {
+      id: newId("user"),
+      role: "user",
+      content: trimmedQuestion,
+      createdAt: new Date(),
+    };
+    const loadingMessage: Message = {
+      id: newId("assistant-loading"),
+      role: "assistant",
+      content: "Generating from selected notes...",
+      createdAt: new Date(),
+      answerType: answerTypeSnapshot,
+      context: contextSnapshot,
+      status: "loading",
+      sources: sourceChips,
+    };
+
     setMessages((current) => [
       ...current,
-      {
-        id: newId("user"),
-        role: "user",
-        content: trimmedQuestion,
-        createdAt: new Date(),
-      },
-      {
-        id: newId("assistant-loading"),
-        role: "assistant",
-        content: "Generating from selected notes...",
-        createdAt: new Date(),
-        answerType: answerTypeSnapshot,
-        context: contextSnapshot,
-        status: "loading",
-        sources: sourceChips,
-      },
+      localUserMessage,
+      loadingMessage,
     ]);
     setIsGenerating(true);
 
+    let conversationId: string | null = activeConversationId || null;
+
+    try {
+      conversationId = await ensureConversation(trimmedQuestion, contextSnapshot);
+      const persistedUserMessage = await insertMessage({
+        answerType: null,
+        content: trimmedQuestion,
+        conversationId,
+        metadata: {
+          moduleLabel: contextSnapshot.module,
+          moduleValue: moduleValueForContext(contextSnapshot),
+          subjectLabel: contextSnapshot.subject,
+          subjectSlug: subjectSlugForContext(contextSnapshot),
+        },
+        role: "user",
+        userId,
+      });
+
+      setMessages((current) =>
+        current.map((message) =>
+          message.id === localUserMessage.id
+            ? {
+                ...message,
+                id: persistedUserMessage.id,
+                persistedId: persistedUserMessage.id,
+              }
+            : message,
+        ),
+      );
+    } catch {
+      conversationId = null;
+      setToast("Chat is continuing locally. Persistence failed.");
+    }
+
     const delay = 700 + Math.round(Math.random() * 500);
     window.setTimeout(
-      () => finishMockAnswer(trimmedQuestion, contextSnapshot, answerTypeSnapshot),
+      () =>
+        finishMockAnswer(
+          trimmedQuestion,
+          contextSnapshot,
+          answerTypeSnapshot,
+          conversationId,
+        ),
       delay,
     );
   }
@@ -313,13 +637,31 @@ export function ChatWorkspace({
     }
   }
 
-  function handleFeedback(messageId: string, feedback: Feedback) {
+  async function handleFeedback(messageId: string, feedback: Feedback) {
     setMessages((current) =>
       current.map((message) =>
         message.id === messageId ? { ...message, feedback } : message,
       ),
     );
-    setToast("Feedback submitted.");
+
+    const targetMessage = messages.find((message) => message.id === messageId);
+    const persistedId = targetMessage?.persistedId;
+
+    if (!persistedId || targetMessage?.status === "loading") {
+      setToast("Feedback saved locally for this session.");
+      return;
+    }
+
+    try {
+      await saveMessageFeedback({
+        messageId: persistedId,
+        rating: feedback,
+        userId,
+      });
+      setToast("Feedback submitted.");
+    } catch {
+      setToast("Feedback saved locally for this session.");
+    }
   }
 
   function regenerate(messageId: string) {
@@ -352,18 +694,29 @@ export function ChatWorkspace({
     setIsGenerating(true);
 
     window.setTimeout(() => {
+      const regeneratedMessage = assistantMessage(
+        previousQuestion,
+        "complete",
+        contextSnapshot,
+        answerTypeSnapshot,
+      );
+
       setMessages((current) =>
         current.map((message) =>
-          message.id === messageId
-            ? assistantMessage(
-                previousQuestion,
-                "complete",
-                contextSnapshot,
-                answerTypeSnapshot,
-              )
-            : message,
+          message.id === messageId ? regeneratedMessage : message,
         ),
       );
+
+      if (activeConversationId) {
+        persistAssistantMessage(
+          activeConversationId,
+          regeneratedMessage,
+          "complete",
+          contextSnapshot,
+          answerTypeSnapshot,
+        );
+      }
+
       setIsGenerating(false);
       setToast("Answer regenerated.");
     }, 850);
@@ -382,7 +735,12 @@ export function ChatWorkspace({
         className="hidden md:flex"
         expanded={sidebarExpanded}
         onToggle={() => setSidebarExpanded((current) => !current)}
-      />
+      >
+        <SidebarRecentConversations
+          activeConversationId={activeConversationId}
+          conversations={recentConversations}
+        />
+      </StudentSidebar>
 
       <div className="min-w-0 flex-1">
         <MobileChatTopbar
@@ -415,7 +773,11 @@ export function ChatWorkspace({
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
-            {messages.length === 0 ? (
+            {conversationLoadState === "loading" ? (
+              <LoadingAnswer />
+            ) : conversationLoadState === "missing" ? (
+              <ConversationNotFound />
+            ) : messages.length === 0 ? (
               <EmptyConversation onPickPrompt={setDraft} />
             ) : (
               <div className="grid gap-4">
@@ -449,7 +811,7 @@ export function ChatWorkspace({
       </div>
 
       {toast ? (
-        <div className="fixed bottom-[106px] left-1/2 z-50 -translate-x-1/2 rounded-full border border-[var(--mw-hairline)] bg-white px-4 py-3 text-[14px] text-[var(--mw-ink)] shadow-[0_12px_40px_rgba(12,10,9,0.12)] sm:bottom-[116px]">
+        <div className="fixed bottom-[106px] left-1/2 z-50 -translate-x-1/2 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 py-3 text-[14px] text-[var(--mw-ink)] shadow-[0_12px_40px_rgba(12,10,9,0.12)] sm:bottom-[116px]">
           {toast}
         </div>
       ) : null}
@@ -508,7 +870,7 @@ function MobileChatTopbar({
         <button
           aria-expanded={isOpen}
           aria-label={isOpen ? "Collapse menu" : "Expand menu"}
-          className="grid size-10 place-items-center rounded-full border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]"
+          className="grid size-10 place-items-center mw-radius-pill border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]"
           onClick={onToggle}
           type="button"
         >
@@ -526,7 +888,7 @@ function MobileChatTopbar({
               {answerTypes.map((type) => (
                 <button
                   className={cn(
-                    "h-9 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
+                    "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
                     answerType === type && "bg-[var(--mw-primary)] text-white",
                   )}
                   key={type}
@@ -572,7 +934,7 @@ function MobileChatTopbar({
 
               return (
                 <Link
-                  className="flex h-10 items-center gap-3 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
+                  className="flex h-10 items-center gap-3 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
                   href={item.href}
                   key={item.href}
                 >
@@ -654,7 +1016,7 @@ function ContextControls({
           {answerTypes.map((type) => (
             <button
               className={cn(
-                "h-9 rounded-full border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+                "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
                 answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
               )}
               key={type}
@@ -667,6 +1029,68 @@ function ContextControls({
         </div>
       </div>
     </div>
+  );
+}
+
+function SidebarRecentConversations({
+  activeConversationId,
+  conversations,
+}: {
+  activeConversationId: string;
+  conversations: Conversation[];
+}) {
+  if (conversations.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="grid min-w-0 gap-3">
+      <div className="flex items-center justify-between gap-2 px-2">
+        <p className="mw-label text-[11px]">Recent chats</p>
+        <Link
+          className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)]"
+          href="/chat"
+        >
+          New
+        </Link>
+      </div>
+
+      <div className="grid max-h-[calc(100dvh-390px)] gap-1.5 overflow-y-auto pr-1">
+        {conversations.slice(0, 8).map((conversation) => {
+          const isActive = conversation.id === activeConversationId;
+          const subject = conversation.subject_slug?.toUpperCase() ?? "CHAT";
+          const moduleLabel =
+            conversation.module_value && conversation.module_value !== "all"
+              ? `Module ${conversation.module_value}`
+              : "All modules";
+          const updatedAt = new Intl.DateTimeFormat(undefined, {
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          }).format(new Date(conversation.updated_at));
+
+          return (
+            <Link
+              className={cn(
+                "min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-white px-3 py-2.5 transition-colors hover:bg-[var(--mw-surface-strong)]",
+                isActive && "border-[var(--mw-hairline-strong)] bg-[var(--mw-surface-strong)]",
+              )}
+              href={`/chat?conversation=${conversation.id}`}
+              key={conversation.id}
+            >
+              <p className="truncate text-[12px] font-medium leading-[1.35] text-[var(--mw-ink)]">
+                {conversation.title}
+              </p>
+              <p className="mt-1.5 truncate text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--mw-muted)]">
+                {subject} / {moduleLabel}
+              </p>
+              <p className="mt-1 text-[11px] text-[var(--mw-muted)]">{updatedAt}</p>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -718,8 +1142,7 @@ function SetupPrompt({ className }: { className?: string }) {
           Complete your academic setup
         </h2>
         <p className="mt-3 max-w-[640px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
-          Add your college, branch, semester, and focus subject to personalize
-          ModuleWyse.
+          Add your college, branch, and semester to personalize ModuleWyse.
         </p>
       </div>
       <Link
@@ -752,8 +1175,8 @@ function Composer({
       className="fixed bottom-5 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 sm:bottom-6 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
       onSubmit={onSubmit}
     >
-      <div className="rounded-2xl border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
-        <div className="flex min-h-[52px] items-end gap-2 rounded-xl border border-[var(--mw-hairline)] bg-white py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
+      <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
+        <div className="flex min-h-[52px] items-end gap-2 mw-radius-input border border-[var(--mw-hairline)] bg-white py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
         <textarea
           className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
           onChange={(event) => onChange(event.target.value)}
@@ -764,7 +1187,7 @@ function Composer({
           value={draft}
         />
         <button
-          className="grid h-10 shrink-0 place-items-center rounded-full bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
+          className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
           disabled={!canSend}
           type="submit"
         >
@@ -793,7 +1216,7 @@ function EmptyConversation({
         <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
           {suggestedPrompts.map((prompt) => (
             <button
-              className="rounded-2xl border border-[var(--mw-hairline)] bg-white p-3 text-left text-[13px] leading-[1.45] text-[var(--mw-body)] transition-colors hover:border-[var(--mw-hairline-strong)] hover:bg-[var(--mw-surface-strong)] sm:p-4 sm:text-[14px]"
+              className="mw-radius-card border border-[var(--mw-hairline)] bg-white p-3 text-left text-[13px] leading-[1.45] text-[var(--mw-body)] transition-colors hover:border-[var(--mw-hairline-strong)] hover:bg-[var(--mw-surface-strong)] sm:p-4 sm:text-[14px]"
               key={prompt}
               onClick={() => onPickPrompt(prompt)}
               type="button"
@@ -807,9 +1230,27 @@ function EmptyConversation({
   );
 }
 
+function ConversationNotFound() {
+  return (
+    <div className="grid min-h-[330px] place-items-center text-center sm:min-h-[360px]">
+      <div>
+        <h2 className="mw-display text-[34px] leading-[1.05] text-[var(--mw-ink)] sm:text-[44px]">
+          Conversation not found.
+        </h2>
+        <p className="mt-3 max-w-[520px] text-[15px] leading-[1.55] text-[var(--mw-body)]">
+          This chat may have been deleted, or it may not belong to your account.
+        </p>
+        <Link className="mw-pill-primary mt-6" href="/chat">
+          Start New Chat
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function UserMessage({ message }: { message: Message }) {
   return (
-    <div className="ml-auto w-fit max-w-[min(860px,88%)] rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
+    <div className="ml-auto w-fit max-w-[min(860px,88%)] mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
       <p className="whitespace-pre-wrap text-[16px] leading-[1.5] text-[var(--mw-ink)]">
         {message.content}
       </p>
@@ -925,9 +1366,9 @@ function LoadingAnswer() {
         Generating from selected notes...
       </p>
       <div className="mt-5 grid gap-3">
-        <div className="h-4 w-2/3 animate-pulse rounded-full bg-[var(--mw-surface-strong)]" />
-        <div className="h-4 w-full animate-pulse rounded-full bg-[var(--mw-surface-strong)]" />
-        <div className="h-4 w-5/6 animate-pulse rounded-full bg-[var(--mw-surface-strong)]" />
+        <div className="h-4 w-2/3 animate-pulse mw-radius-pill bg-[var(--mw-surface-strong)]" />
+        <div className="h-4 w-full animate-pulse mw-radius-pill bg-[var(--mw-surface-strong)]" />
+        <div className="h-4 w-5/6 animate-pulse mw-radius-pill bg-[var(--mw-surface-strong)]" />
       </div>
     </div>
   );
@@ -984,7 +1425,7 @@ function ActionButton({
     <button
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+        "inline-flex h-9 items-center gap-2 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
         active && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
       )}
       onClick={onClick}

@@ -26,7 +26,7 @@ export function SubjectStatusPanel() {
       <div className="mt-5 grid gap-3">
         {mockSubjects.map((subject) => (
           <div
-            className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3"
+            className="flex items-center justify-between gap-3 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3"
             key={subject.slug}
           >
             <span

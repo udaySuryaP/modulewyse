@@ -58,7 +58,7 @@ export function PreferencesSummary() {
     <div className="grid gap-3 sm:grid-cols-2">
       {rows.map(([label, value]) => (
         <div
-          className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
+          className="mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
           key={label}
         >
           <p className="mw-label text-[11px]">{label}</p>

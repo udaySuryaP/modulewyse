@@ -189,7 +189,7 @@ function QuestionCard({ question }: { question: LibraryQuestion }) {
           </Link>
         ) : (
           <button
-            className="h-11 w-full rounded-full border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-5 text-[13px] font-medium text-[var(--mw-muted)] lg:w-auto"
+            className="h-11 w-full mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-5 text-[13px] font-medium text-[var(--mw-muted)] lg:w-auto"
             disabled
             type="button"
           >

@@ -30,7 +30,7 @@ function SummaryRows({
     <div className="grid gap-3 sm:grid-cols-2">
       {rows.map(([label, value]) => (
         <div
-          className="min-w-0 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
+          className="min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
           key={label}
         >
           <p className="mw-label text-[11px]">{label}</p>
@@ -69,7 +69,6 @@ export default async function SettingsPage() {
     ["Graduation year", profile.graduation_year],
     ["Branch", profile.branch],
     ["Semester", profile.semester ? `S${profile.semester}` : null],
-    ["Focus subject", profile.focus_subject],
   ] as const;
 
   return (
@@ -174,7 +173,7 @@ export default async function SettingsPage() {
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
               {usageStats.map(([label, value]) => (
                 <div
-                  className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
+                  className="mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4"
                   key={label}
                 >
                   <p className="mw-label text-[11px]">{label}</p>

@@ -47,7 +47,7 @@ export function HeroAskBox() {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5">
+        <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5">
           <div className="mw-input flex min-h-[42px] items-center gap-2 px-2 py-1 min-[380px]:min-h-[46px] min-[380px]:gap-3 min-[380px]:px-3 sm:min-h-[58px] sm:py-2">
           <input
             aria-label="Ask a question from your syllabus"
@@ -59,7 +59,7 @@ export function HeroAskBox() {
           />
           <button
             aria-label="Ask ModuleWyse"
-            className="grid h-8 shrink-0 place-items-center rounded-full bg-[var(--mw-primary)] px-[16px] text-[12px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 sm:h-10 sm:px-5 sm:text-[14px]"
+            className="grid h-8 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-[16px] text-[12px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 sm:h-10 sm:px-5 sm:text-[14px]"
             disabled={isSubmitting}
             type="submit"
           >

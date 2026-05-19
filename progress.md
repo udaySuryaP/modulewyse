@@ -1768,3 +1768,177 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Add conversation/message/feedback persistence for the existing mock chat flow without AI/RAG.
+
+## 2026-05-16 - Mock Chat Persistence Foundation
+
+### Completed
+- Inspected the existing chat implementation, content schema, database types, Supabase client/server helpers, and protected route behavior.
+- Confirmed the previous `/chat` flow was local-only:
+  - React state stored messages.
+  - mock answers were generated client-side.
+  - feedback was local only.
+  - reloads did not restore conversations.
+- Added `lib/data/chat.ts` as a client-side Supabase data layer under RLS:
+  - `createConversation`
+  - `getUserConversations`
+  - `getConversationWithMessages`
+  - `insertMessage`
+  - `updateConversationTitle`
+  - `saveMessageFeedback`
+  - `deleteConversation`
+- Added `/chat?conversation=<id>` URL support.
+- Updated `/chat` to pass the current user id and optional conversation id into the chat workspace.
+- Updated the chat workspace to:
+  - create a conversation on first send
+  - update the URL to `/chat?conversation=<id>`
+  - persist user messages
+  - persist mock assistant messages
+  - store assistant metadata including mock status, answer type, subject/module labels, source chips, and `isMock`
+  - load existing conversations and messages from Supabase
+  - restore feedback state from `message_feedback`
+  - persist thumbs up/down feedback with upsert
+  - keep local-only fallback behavior if persistence fails
+  - keep copy behavior local
+  - persist regenerated mock answers as new assistant message rows while preserving the current replacement-style UI
+- Added a compact Recent chats card to `/chat` showing latest conversations and linking to `/chat?conversation=<id>`.
+- Moved Recent chats from the main chat column into the expanded desktop sidebar under a dedicated “Recent chats” section.
+- Added friendly missing-conversation state with a Start New Chat CTA.
+- Preserved:
+  - pending question restore
+  - subject/module query initialization
+  - mock answer generation
+  - copy/feedback/regenerate UX
+  - setup prompt
+  - protected routing
+  - DB-backed subjects fallback
+  - Profile/Settings merge
+- Verified RLS persistence paths in a rollback SQL smoke test:
+  - conversation insert/read visible: 1
+  - message insert/read visible: 2
+  - feedback insert/read visible: 1
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+- Route-checked logged-out behavior:
+  - `/chat` redirects to `/login?next=%2Fchat`
+  - `/chat?conversation=invalid` redirects to `/login?next=%2Fchat%3Fconversation%3Dinvalid`
+
+### Issues / Notes
+- Mock answers remain local/generated in the browser; no AI, RAG, retrieval, embeddings, content ingestion, admin UI, upload UI, payment, or student uploads were added.
+- Full authenticated browser QA was not completed in this session because no logged-in browser session was used.
+- RLS write verification was completed through SQL role simulation with rollback, not through a browser click test.
+- Recent chats are intentionally minimal and do not include delete UI yet.
+- Usage stats remain placeholders.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced audit fix was run.
+
+### Next
+- Prepare OOP content structure and `content_sources` / `content_chunks` schema for future retrieval.
+- Do not start OpenAI integration until content ingestion and retrieval foundations exist.
+
+## 2026-05-19 - Removed Focus Subject From App UI
+
+### Completed
+- Removed the Focus subject field from onboarding final setup.
+- Removed the Focus subject field from academic settings.
+- Removed Focus subject from the unified `/settings` academic profile summary.
+- Updated the incomplete profile setup prompt copy to mention only college, branch, and semester.
+- Removed `focus_subject` from app-level profile and onboarding draft TypeScript types.
+- Left the existing Supabase `profiles.focus_subject` column in place for compatibility; no destructive database migration was run.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Historical `progress.md` entries still mention focus subject because they document older completed work.
+- The database column still exists and can be removed later with an explicit migration if desired.
+
+### Next
+- Continue with OOP content schema and ingestion structure before AI/RAG work.
+
+## 2026-05-19 - Radius Token Cleanup
+
+### Completed
+- Centralized active radius usage around the ModuleWyse editorial radius tokens:
+  - `--mw-radius-input`
+  - `--mw-radius-card`
+  - `--mw-radius-large`
+  - `--mw-radius-pill`
+- Updated Tailwind theme radius aliases to reference the same ModuleWyse radius variables instead of independent hardcoded values.
+- Replaced hardcoded Tailwind radius utilities in active app/components with semantic utilities:
+  - `mw-radius-input`
+  - `mw-radius-card`
+  - `mw-radius-large`
+  - `mw-radius-pill`
+- Removed remaining active `rounded-full`, `rounded-2xl`, `rounded-xl`, `rounded-[8px]`, and button-group `rounded-lg` usages from app/component code.
+- Verified no direct active `border-radius` literals remain outside the centralized design token definitions.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- No project-root `design.md` file was found during inspection, so the cleanup uses the current editorial ModuleWyse radius tokens already established in `app/globals.css`.
+- Radius values remain intentionally centralized in CSS variables so the design system can be changed from one place later.
+
+### Next
+- Continue with OOP content structure and retrieval-ready content schema before AI/RAG work.
+
+## 2026-05-19 - Chat First-Send Blank State Fix
+
+### Completed
+- Fixed the first-send chat blank state that happened when starting a new conversation from a suggested prompt or manual chat input.
+- Replaced the first-conversation URL update from Next router navigation to `window.history.replaceState`, so `/chat?conversation=<id>` is reflected in the address bar without remounting the chat workspace.
+- Preserved existing behavior for:
+  - suggested prompts
+  - manual message send
+  - persisted conversation creation
+  - persisted user and assistant messages
+  - recent chats
+  - loading and mock answer states
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- The fix prevents the local first-send UI from being cleared by a route remount while persistence is still in progress.
+- Existing conversation links still use normal `/chat?conversation=<id>` navigation and loading behavior.
+
+### Next
+- Browser-check the first-send flow with a logged-in account before the next push.
+
+## 2026-05-19 - Landing Page Visibility and Redirect Fix
+
+### Completed
+- Reproduced the reported "dead landing page" behavior in the logged-in Chrome profile.
+- Found two causes:
+  - `/` was redirecting authenticated users directly to `/chat`, so the public landing page was not visible for logged-in sessions.
+  - the motion reveal wrapper initially rendered important page content with `opacity: 0` and blur, making the page look blank if hydration or animation was delayed.
+- Updated `proxy.ts` so `/` always remains the public landing page.
+- Kept authenticated redirects for `/login` and `/signup` to `/chat`.
+- Kept protected route behavior unchanged for `/chat`, `/subjects`, `/library`, `/profile`, and `/settings`.
+- Updated `LiquidReveal`, `LiquidGroup`, and `LiquidItem` so content paints visible by default and no longer depends on reveal animation completion.
+- Fixed a `/chat` hydration mismatch by making the sidebar expansion state match server/client on first render, then syncing the desktop expanded state after hydration.
+- Verified in Chrome that `http://localhost:3000/` stays on `/` and renders the landing content.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Chrome reported a hydration warning caused by a browser extension adding `fdprocessedid` attributes to form controls. This is external to the app and did not block rendering.
+
+### Next
+- Push the landing visibility fix after review.
+
+## 2026-05-19 - Added Project Design Reference
+
+### Completed
+- Added the provided ElevenLabs-style design reference as the project-root `design.md`.
+- Confirmed there was no existing project-root `design.md`; only an unrelated dependency document existed under `node_modules`.
+- Preserved the design reference as UTF-8 markdown so punctuation and token notation render correctly.
+- Kept this as a documentation/design-system source update only; no app logic, routes, Supabase code, or UI implementation files were changed for this step.
+
+### Issues / Notes
+- The new `design.md` is copied from the provided markdown file at `C:\Users\udays\Downloads\Pasted markdown.md`.
+
+### Next
+- Use `design.md` as the canonical reference for future design-system adjustments.

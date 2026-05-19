@@ -44,7 +44,7 @@ export function BranchForm() {
   return (
     <form className="grid gap-4" onSubmit={handleSubmit}>
       <button
-        className="rounded-2xl border border-[var(--mw-hairline-strong)] bg-white p-4 text-left text-[var(--mw-ink)]"
+        className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-white p-4 text-left text-[var(--mw-ink)]"
         onClick={() => setBranch("CSE")}
         type="button"
       >
@@ -52,7 +52,7 @@ export function BranchForm() {
         <span className="mt-1 block text-[14px] text-[var(--mw-muted)]">Available</span>
       </button>
       <button
-        className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4 text-left text-[var(--mw-muted)]"
+        className="mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4 text-left text-[var(--mw-muted)]"
         disabled
         type="button"
       >

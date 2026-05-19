@@ -43,7 +43,7 @@ export function TextInput({
         />
         <button
           aria-label={showPassword ? "Hide password" : "Show password"}
-          className="absolute right-3 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20"
+          className="absolute right-3 top-1/2 grid size-8 -translate-y-1/2 place-items-center mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20"
           onClick={() => setShowPassword((current) => !current)}
           type="button"
         >

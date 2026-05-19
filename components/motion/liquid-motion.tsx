@@ -19,9 +19,9 @@ export function LiquidReveal({ children, className, delay = 0 }: MotionProps) {
 
   return (
     <motion.div
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      animate={{ opacity: 1, y: 0 }}
       className={className}
-      initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+      initial={false}
       transition={{
         damping: 24,
         delay,
@@ -47,7 +47,7 @@ export function LiquidGroup({ children, className }: MotionProps) {
     <motion.div
       animate="show"
       className={className}
-      initial="hidden"
+      initial={false}
       variants={{
         hidden: {},
         show: {
@@ -73,11 +73,10 @@ export function LiquidItem({ children, className }: MotionProps) {
     <motion.div
       className={cn("will-change-transform", className)}
       variants={{
-        hidden: { opacity: 0, y: 16, filter: "blur(8px)" },
+        hidden: { opacity: 1, y: 0 },
         show: {
           opacity: 1,
           y: 0,
-          filter: "blur(0px)",
           transition: {
             damping: 22,
             duration: 0.58,

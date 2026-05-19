@@ -24,7 +24,7 @@ export default async function SubjectsPage() {
         </p>
 
         {source === "fallback" && process.env.NODE_ENV === "development" ? (
-          <p className="mt-4 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[13px] leading-[1.4] text-[var(--mw-muted)]">
+          <p className="mt-4 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[13px] leading-[1.4] text-[var(--mw-muted)]">
             Using fallback subject data.
           </p>
         ) : null}

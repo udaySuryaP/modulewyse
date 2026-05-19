@@ -13,7 +13,7 @@ export function BackLink({ className, href, label }: BackLinkProps) {
   return (
     <Link
       className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-full border border-[var(--mw-hairline-strong)] bg-white px-4 text-[14px] font-medium text-[var(--mw-ink)] transition-colors hover:bg-[var(--mw-surface-strong)]",
+        "inline-flex h-10 items-center gap-2 mw-radius-pill border border-[var(--mw-hairline-strong)] bg-white px-4 text-[14px] font-medium text-[var(--mw-ink)] transition-colors hover:bg-[var(--mw-surface-strong)]",
         className,
       )}
       href={href}
