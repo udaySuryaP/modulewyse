@@ -44,14 +44,23 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const isPublic = publicRoutes.has(pathname);
+  const isOnboarding = onboardingRoutes.has(pathname);
+  const isProtected = isProtectedRoute(pathname);
+  const shouldCheckSession =
+    isProtected ||
+    isOnboarding ||
+    pathname === "/login" ||
+    pathname === "/signup";
+
+  if (!shouldCheckSession) {
+    return NextResponse.next();
+  }
+
   const { supabase, getResponse } = createMiddlewareClient(request);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const isPublic = publicRoutes.has(pathname);
-  const isOnboarding = onboardingRoutes.has(pathname);
-  const isProtected = isProtectedRoute(pathname);
 
   if (!user) {
     if (isProtected || isOnboarding) {
@@ -61,7 +70,7 @@ export async function proxy(request: NextRequest) {
     return getResponse();
   }
 
-  if ((pathname === "/" || pathname === "/login" || pathname === "/signup") && user) {
+  if ((pathname === "/login" || pathname === "/signup") && user) {
     return redirect(request, "/chat");
   }
 

@@ -317,13 +317,22 @@ export function ChatWorkspace({
   const [toast, setToast] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [sidebarExpanded, setSidebarExpanded] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1024px)").matches,
-  );
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    const syncSidebarState = () => setSidebarExpanded(desktopQuery.matches);
+    const animationFrame = window.requestAnimationFrame(syncSidebarState);
+
+    desktopQuery.addEventListener("change", syncSidebarState);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      desktopQuery.removeEventListener("change", syncSidebarState);
+    };
+  }, []);
 
   useEffect(() => {
     if (resolvedInitialQuestion) {

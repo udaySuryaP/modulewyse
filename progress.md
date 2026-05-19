@@ -1905,3 +1905,26 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Browser-check the first-send flow with a logged-in account before the next push.
+
+## 2026-05-19 - Landing Page Visibility and Redirect Fix
+
+### Completed
+- Reproduced the reported "dead landing page" behavior in the logged-in Chrome profile.
+- Found two causes:
+  - `/` was redirecting authenticated users directly to `/chat`, so the public landing page was not visible for logged-in sessions.
+  - the motion reveal wrapper initially rendered important page content with `opacity: 0` and blur, making the page look blank if hydration or animation was delayed.
+- Updated `proxy.ts` so `/` always remains the public landing page.
+- Kept authenticated redirects for `/login` and `/signup` to `/chat`.
+- Kept protected route behavior unchanged for `/chat`, `/subjects`, `/library`, `/profile`, and `/settings`.
+- Updated `LiquidReveal`, `LiquidGroup`, and `LiquidItem` so content paints visible by default and no longer depends on reveal animation completion.
+- Fixed a `/chat` hydration mismatch by making the sidebar expansion state match server/client on first render, then syncing the desktop expanded state after hydration.
+- Verified in Chrome that `http://localhost:3000/` stays on `/` and renders the landing content.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+
+### Issues / Notes
+- Chrome reported a hydration warning caused by a browser extension adding `fdprocessedid` attributes to form controls. This is external to the app and did not block rendering.
+
+### Next
+- Push the landing visibility fix after review.
