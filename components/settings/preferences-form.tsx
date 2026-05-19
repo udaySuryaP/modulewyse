@@ -4,58 +4,29 @@ import { useState } from "react";
 
 import { Field, FormMessage, SelectInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
+import {
+  answerTypeOptions,
+  examModeOptions,
+  saveStudentPreferences,
+  type StudentPreferences,
+  useStudentPreferences,
+} from "@/lib/preferences/student-preferences";
 import { cn } from "@/lib/utils";
 
-type Preferences = {
-  defaultAnswerType: string;
-  examModeDefault: string;
-  showSourceChips: boolean;
-  showSuggestedPrompts: boolean;
-  compactAnswerCards: boolean;
-};
-
-const preferencesKey = "modulewyse.studentPreferences";
-const defaultPreferences: Preferences = {
-  defaultAnswerType: "Default",
-  examModeDefault: "Exam-ready",
-  showSourceChips: true,
-  showSuggestedPrompts: true,
-  compactAnswerCards: false,
-};
-
 export function PreferencesForm() {
-  const [preferences, setPreferences] = useState<Preferences>(() => {
-    if (typeof window === "undefined") {
-      return defaultPreferences;
-    }
-
-    try {
-      const stored = window.localStorage.getItem(preferencesKey);
-
-      if (!stored) {
-        return defaultPreferences;
-      }
-
-      return {
-        ...defaultPreferences,
-        ...JSON.parse(stored),
-      };
-    } catch {
-      return defaultPreferences;
-    }
-  });
+  const [preferences, setPreferences] = useStudentPreferences();
   const [message, setMessage] = useState("");
 
-  function updatePreference<Key extends keyof Preferences>(
+  function updatePreference<Key extends keyof StudentPreferences>(
     key: Key,
-    value: Preferences[Key],
+    value: StudentPreferences[Key],
   ) {
     setPreferences((current) => ({ ...current, [key]: value }));
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    window.localStorage.setItem(preferencesKey, JSON.stringify(preferences));
+    setPreferences(saveStudentPreferences(preferences));
     setMessage("Preferences saved.");
   }
 
@@ -69,11 +40,9 @@ export function PreferencesForm() {
           }
           value={preferences.defaultAnswerType}
         >
-          {["Default", "Short", "Medium", "Long", "Part A", "Part B", "Part C"].map(
-            (type) => (
-              <option key={type}>{type}</option>
-            ),
-          )}
+          {answerTypeOptions.map((type) => (
+            <option key={type}>{type}</option>
+          ))}
         </SelectInput>
       </Field>
 
@@ -85,9 +54,9 @@ export function PreferencesForm() {
           }
           value={preferences.examModeDefault}
         >
-          <option>Exam-ready</option>
-          <option>Revision</option>
-          <option>Practice</option>
+          {examModeOptions.map((mode) => (
+            <option key={mode}>{mode}</option>
+          ))}
         </SelectInput>
       </Field>
 

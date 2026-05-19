@@ -72,6 +72,51 @@ export type MessageFeedback = {
   created_at: string;
 };
 
+export type ContentSourceType =
+  | "notes"
+  | "syllabus"
+  | "answer_key"
+  | "previous_question"
+  | "manual"
+  | "other";
+
+export type ContentStatus = "draft" | "ready" | "archived";
+export type ContentChunkStatus = ContentStatus;
+
+export type ContentSource = {
+  id: string;
+  subject_id: string;
+  module_id: string | null;
+  topic_id: string | null;
+  title: string;
+  source_type: ContentSourceType;
+  status: ContentStatus;
+  origin: string | null;
+  file_name: string | null;
+  source_url: string | null;
+  content_hash: string | null;
+  description: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ContentChunk = {
+  id: string;
+  source_id: string;
+  subject_id: string;
+  module_id: string | null;
+  topic_id: string | null;
+  chunk_index: number;
+  title: string | null;
+  content: string;
+  token_count: number | null;
+  status: ContentChunkStatus;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
 export type SubjectWithModules = Subject & {
   modules: Module[];
 };

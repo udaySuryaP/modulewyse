@@ -10,7 +10,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "mw-radius-pill px-3 py-1.5 text-[11px] font-semibold uppercase leading-none tracking-[0.08em]",
+        "inline-flex max-w-full shrink-0 whitespace-nowrap mw-radius-pill px-3 py-1.5 text-[11px] font-semibold uppercase leading-none tracking-[0.08em]",
         normalizedStatus === "available" &&
           "bg-[var(--mw-surface-strong)] text-[var(--mw-ink)]",
         normalizedStatus === "beta" &&

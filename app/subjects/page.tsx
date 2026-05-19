@@ -1,21 +1,29 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { StatusBadge } from "@/components/landing/status-badge";
+import { getUserProfile } from "@/lib/auth/get-user-profile";
 import { getSubjectListWithFallback } from "@/lib/data/subjects";
 import { subjectStatusLabel } from "@/lib/mock-subjects";
 import { cn } from "@/lib/utils";
 
 export default async function SubjectsPage() {
+  const { user } = await getUserProfile();
+
+  if (!user) {
+    redirect("/login?next=/subjects");
+  }
+
   const { source, subjects } = await getSubjectListWithFallback();
 
   return (
     <StudentPageShell>
-      <div className="mw-card p-5 sm:p-8">
+      <div className="mw-card min-w-0 overflow-hidden p-4 sm:p-8">
         <p className="mw-label">
           Subjects
         </p>
-        <h1 className="mw-display mt-4 text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
+        <h1 className="mw-display mt-4 max-w-[980px] text-[32px] leading-[1.08] text-[var(--mw-ink)] sm:text-[44px] lg:text-[52px]">
           Browse available and upcoming ModuleWyse subjects.
         </h1>
         <p className="mt-4 max-w-[760px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
@@ -29,25 +37,25 @@ export default async function SubjectsPage() {
           </p>
         ) : null}
 
-        <div className="mt-8 grid gap-3 lg:grid-cols-2">
+        <div className="mt-7 grid min-w-0 gap-3 sm:mt-8 lg:grid-cols-2">
           {subjects.map((subject) => {
             const enabled = subject.status === "available" || subject.status === "beta";
             const card = (
               <article
                 className={cn(
-                  "mw-card mw-card-hover min-h-[188px] p-4 sm:p-5",
+                  "mw-card mw-card-hover flex h-full min-h-[188px] min-w-0 flex-col p-4 sm:p-5",
                   enabled
                     ? ""
                     : "opacity-70",
                 )}
               >
-                <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
                   <div className="min-w-0">
                     <p className="mw-label text-[11px]">
                       {subject.semester} / {subject.code}
                     </p>
                     <h2
-                      className="mt-3 truncate text-[20px] font-medium leading-[1.25] text-[var(--mw-ink)]"
+                      className="mt-3 line-clamp-2 text-[19px] font-medium leading-[1.25] text-[var(--mw-ink)] sm:text-[20px]"
                       title={subject.name}
                     >
                       {subject.name}
@@ -62,7 +70,7 @@ export default async function SubjectsPage() {
                   {subject.description}
                 </p>
 
-                <div className="mt-5 flex items-center justify-between gap-3">
+                <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
                   <p className="mw-label text-[11px]">
                     {enabled
                       ? `${Math.max(subject.modules.length - 1, 0)} modules`
@@ -76,11 +84,11 @@ export default async function SubjectsPage() {
             );
 
             return enabled ? (
-              <Link href={`/subjects/${subject.slug}`} key={subject.slug}>
+              <Link className="block min-w-0" href={`/subjects/${subject.slug}`} key={subject.slug}>
                 {card}
               </Link>
             ) : (
-              <div key={subject.slug}>{card}</div>
+              <div className="min-w-0" key={subject.slug}>{card}</div>
             );
           })}
         </div>

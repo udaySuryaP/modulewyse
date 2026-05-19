@@ -22,15 +22,15 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
   );
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="mw-card p-5 sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <section className="mw-card min-w-0 overflow-hidden p-4 sm:p-8">
+        <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:justify-between">
           <div className="min-w-0">
             <p className="mw-label">
               {subject.semester} / {subject.code}
             </p>
             <h1
-              className="mw-display mt-4 max-w-full text-[42px] leading-[1.05] text-[var(--mw-ink)] sm:text-[56px]"
+              className="mw-display mt-4 max-w-full break-words text-[34px] leading-[1.08] text-[var(--mw-ink)] sm:text-[48px] lg:text-[56px]"
               title={subject.name}
             >
               {subject.name}
@@ -56,11 +56,11 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
               <p className="mw-label">
                 Select module
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 flex min-w-0 flex-wrap gap-2">
                 {subject.modules.map((module) => (
                   <button
                     className={cn(
-                      "h-10 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+                      "min-h-10 max-w-full mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 py-2 text-[13px] font-medium leading-none text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
                       selectedModule === module.value &&
                         "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
                     )}
@@ -68,7 +68,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
                     onClick={() => setSelectedModule(module.value)}
                     type="button"
                   >
-                    {module.label}
+                    <span className="block truncate">{module.label}</span>
                   </button>
                 ))}
               </div>
@@ -83,7 +83,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           </>
         ) : (
           <div className="mt-8 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-5">
-            <h2 className="mw-display text-[32px] leading-[1.05] text-[var(--mw-ink)]">
+            <h2 className="mw-display text-[28px] leading-[1.08] text-[var(--mw-ink)] sm:text-[32px]">
               This subject is being prepared.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.55] text-[var(--mw-body)]">
@@ -100,14 +100,14 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         )}
       </section>
 
-      <aside className="mw-card p-5 sm:p-6 xl:self-start">
+      <aside className="mw-card min-w-0 p-4 sm:p-6 xl:self-start">
         <p className="mw-label">
           Topic preview
         </p>
         <div className="mt-4 grid gap-2">
           {subject.topicSamples.length > 0 ? subject.topicSamples.map((topic) => (
             <div
-              className="mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-body)]"
+              className="mw-radius-card min-w-0 break-words border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-body)]"
               key={topic}
             >
               {topic}

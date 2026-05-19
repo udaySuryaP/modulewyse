@@ -5,13 +5,7 @@ import { SignoutButton } from "@/components/auth/signout-button";
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { PreferencesSummary } from "@/components/settings/preferences-summary";
 import { getUserProfile } from "@/lib/auth/get-user-profile";
-
-const usageStats = [
-  ["Questions asked", "0"],
-  ["Subjects used", "Static/mock"],
-  ["Answers copied", "0"],
-  ["Feedback given", "0"],
-] as const;
+import { getStudentActivityStats } from "@/lib/data/activity";
 
 function displayValue(value: string | number | null | undefined) {
   if (value === null || value === undefined || value === "") {
@@ -52,6 +46,7 @@ export default async function SettingsPage() {
 
   const email = profile.email || user.email || "";
   const onboardingState = profile.onboarding_completed ? "Complete" : "Incomplete";
+  const activityStats = await getStudentActivityStats(user.id);
 
   const profileRows = [
     ["Full name", profile.full_name],
@@ -69,6 +64,14 @@ export default async function SettingsPage() {
     ["Graduation year", profile.graduation_year],
     ["Branch", profile.branch],
     ["Semester", profile.semester ? `S${profile.semester}` : null],
+  ] as const;
+
+  const usageStats = [
+    ["Conversations", activityStats.conversations],
+    ["Questions asked", activityStats.questionsAsked],
+    ["Answers generated", activityStats.answersGenerated],
+    ["Subjects used", activityStats.subjectsUsed],
+    ["Feedback given", activityStats.feedbackGiven],
   ] as const;
 
   return (
@@ -167,8 +170,8 @@ export default async function SettingsPage() {
               Basic activity
             </h2>
             <p className="mt-2 text-[14px] leading-[1.55] text-[var(--mw-body)]">
-              Usage counters are placeholders until conversation persistence is
-              connected.
+              These counters update from your saved conversations, messages,
+              and feedback.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
               {usageStats.map(([label, value]) => (

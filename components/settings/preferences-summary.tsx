@@ -1,50 +1,13 @@
 "use client";
 
-import { useState } from "react";
-
-type Preferences = {
-  defaultAnswerType: string;
-  examModeDefault: string;
-  showSourceChips: boolean;
-  showSuggestedPrompts: boolean;
-  compactAnswerCards: boolean;
-};
-
-const preferencesKey = "modulewyse.studentPreferences";
-
-const defaultPreferences: Preferences = {
-  defaultAnswerType: "Default",
-  examModeDefault: "Exam-ready",
-  showSourceChips: true,
-  showSuggestedPrompts: true,
-  compactAnswerCards: false,
-};
+import { useStudentPreferences } from "@/lib/preferences/student-preferences";
 
 function status(value: boolean) {
   return value ? "On" : "Off";
 }
 
 export function PreferencesSummary() {
-  const [preferences] = useState<Preferences>(() => {
-    try {
-      if (typeof window === "undefined") {
-        return defaultPreferences;
-      }
-
-      const stored = window.localStorage.getItem(preferencesKey);
-
-      if (stored) {
-        return {
-          ...defaultPreferences,
-          ...JSON.parse(stored),
-        };
-      }
-    } catch {
-      return defaultPreferences;
-    }
-
-    return defaultPreferences;
-  });
+  const [preferences] = useStudentPreferences();
 
   const rows = [
     ["Default answer type", preferences.defaultAnswerType],

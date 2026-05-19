@@ -1,8 +1,17 @@
+import { redirect } from "next/navigation";
+
 import { BackLink } from "@/components/dashboard/back-link";
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { PreferencesForm } from "@/components/settings/preferences-form";
+import { getUserProfile } from "@/lib/auth/get-user-profile";
 
-export default function PreferencesPage() {
+export default async function PreferencesPage() {
+  const { user } = await getUserProfile();
+
+  if (!user) {
+    redirect("/login?next=/settings/preferences");
+  }
+
   return (
     <StudentPageShell>
       <div className="mw-card mx-auto max-w-[760px] p-5 sm:p-8">
