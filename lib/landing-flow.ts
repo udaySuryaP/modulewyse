@@ -94,20 +94,31 @@ async function getClientAuthState() {
     };
   }
 
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = createClient();
+    const authResult = await Promise.race([
+      supabase.auth.getUser(),
+      new Promise<null>((resolve) => {
+        window.setTimeout(() => resolve(null), 1500);
+      }),
+    ]);
 
-  if (!user) {
+    const user = authResult?.data.user;
+
+    if (!user) {
+      return {
+        isAuthenticated: false,
+      };
+    }
+
+    return {
+      isAuthenticated: true,
+    };
+  } catch {
     return {
       isAuthenticated: false,
     };
   }
-
-  return {
-    isAuthenticated: true,
-  };
 }
 
 export async function nextRouteForQuestion(question: string) {

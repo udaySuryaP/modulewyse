@@ -141,7 +141,7 @@ function ToggleRow({
       >
         <span
           className={cn(
-            "block size-6 mw-radius-input transition-transform",
+            "block size-6 mw-radius-pill transition-transform",
             checked ? "translate-x-6 bg-white" : "translate-x-0 bg-[var(--mw-surface-strong)]",
           )}
         />

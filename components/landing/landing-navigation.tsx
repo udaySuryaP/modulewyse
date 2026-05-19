@@ -1,19 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { GlassButton } from "@/components/landing/glass-button";
 import { ROUTES } from "@/lib/constants";
-import { nextRouteForAuthAction } from "@/lib/landing-flow";
 
 export function LandingNavigation() {
-  const router = useRouter();
-
-  async function handleAuthAction(route: "/login" | "/signup") {
-    router.push(await nextRouteForAuthAction(route));
-  }
-
   return (
     <header className="relative z-10 mx-auto flex w-full max-w-[1200px] items-center justify-between px-5 py-5 sm:px-8 lg:px-14">
       <Link
@@ -26,14 +18,14 @@ export function LandingNavigation() {
       <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">
         <GlassButton
           className="hidden sm:inline-flex"
-          onClick={() => handleAuthAction(ROUTES.LOGIN)}
+          href={ROUTES.LOGIN}
           variant="secondary"
         >
           Login
         </GlassButton>
         <GlassButton
           className="px-4 text-[14px] sm:px-5 sm:text-[15px]"
-          onClick={() => handleAuthAction(ROUTES.SIGNUP)}
+          href={ROUTES.SIGNUP}
         >
           Get Started
         </GlassButton>

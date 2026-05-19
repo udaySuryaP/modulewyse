@@ -14,11 +14,16 @@ export function HeroAskBox() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const trimmedQuestion = question.trim();
+
+    if (!trimmedQuestion || isSubmitting) {
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
-      const route = await nextRouteForQuestion(question);
+      const route = await nextRouteForQuestion(trimmedQuestion);
       router.push(route);
     } finally {
       setIsSubmitting(false);
@@ -60,7 +65,7 @@ export function HeroAskBox() {
           <button
             aria-label="Ask ModuleWyse"
             className="grid h-8 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-[16px] text-[12px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 sm:h-10 sm:px-5 sm:text-[14px]"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !question.trim()}
             type="submit"
           >
             Ask

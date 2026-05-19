@@ -9,6 +9,7 @@ import {
   Library,
   Menu,
   MessageSquare,
+  Plus,
   RefreshCcw,
   Settings,
   ThumbsDown,
@@ -678,19 +679,18 @@ export function ChatWorkspace({
     const targetMessage = messages[index];
     const contextSnapshot = targetMessage?.context ?? context;
     const answerTypeSnapshot = targetMessage?.answerType ?? answerType;
+    const loadingMessage: Message = {
+      id: newId("assistant-regenerating"),
+      role: "assistant",
+      content: "Generating from selected notes...",
+      createdAt: new Date(),
+      answerType: answerTypeSnapshot,
+      context: contextSnapshot,
+      status: "loading",
+      sources: sourceChipsForContext(contextSnapshot),
+    };
 
-    setMessages((current) =>
-      current.map((message) =>
-        message.id === messageId
-          ? {
-              ...message,
-              content: "Generating from selected notes...",
-              status: "loading",
-              createdAt: new Date(),
-            }
-          : message,
-      ),
-    );
+    setMessages((current) => [...current, loadingMessage]);
     setIsGenerating(true);
 
     window.setTimeout(() => {
@@ -703,7 +703,7 @@ export function ChatWorkspace({
 
       setMessages((current) =>
         current.map((message) =>
-          message.id === messageId ? regeneratedMessage : message,
+          message.id === loadingMessage.id ? regeneratedMessage : message,
         ),
       );
 
@@ -1039,23 +1039,24 @@ function SidebarRecentConversations({
   activeConversationId: string;
   conversations: Conversation[];
 }) {
-  if (conversations.length === 0) {
-    return null;
-  }
-
   return (
     <section className="grid min-w-0 gap-3">
-      <div className="flex items-center justify-between gap-2 px-2">
+      <div className="px-2">
         <p className="mw-label text-[11px]">Recent chats</p>
-        <Link
-          className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)]"
-          href="/chat"
-        >
-          New
-        </Link>
       </div>
 
       <div className="grid max-h-[calc(100dvh-390px)] gap-1.5 overflow-y-auto pr-1">
+        <Link
+          className={cn(
+            "flex min-w-0 items-center gap-2 mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-surface-strong)] px-3 py-2.5 text-[12px] font-medium text-[var(--mw-ink)] transition-colors hover:bg-white",
+            !activeConversationId && "border-[var(--mw-primary)] bg-white",
+          )}
+          href="/chat"
+        >
+          <Plus className="size-3.5 shrink-0" />
+          <span className="truncate">New chat</span>
+        </Link>
+
         {conversations.slice(0, 8).map((conversation) => {
           const isActive = conversation.id === activeConversationId;
           const subject = conversation.subject_slug?.toUpperCase() ?? "CHAT";
@@ -1308,27 +1309,13 @@ function AssistantMessage({
 
   return (
     <article className="mw-card p-5">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge>Based on available notes</Badge>
-        <Badge>{message.answerType ?? "Default"}</Badge>
-        <span className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
-          {message.context?.subject ?? "Object Oriented Programming"} /{" "}
-          {message.context?.module ?? "Module 3"}
-        </span>
+      <div className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
+        {message.context?.subject ?? "Object Oriented Programming"} /{" "}
+        {message.context?.module ?? "Module 3"}
       </div>
 
       <div className="mt-5 whitespace-pre-wrap text-[15px] leading-[1.6] text-[var(--mw-body)]">
         {message.content}
-      </div>
-
-      <div className="mt-5 flex flex-wrap gap-2">
-        {(message.sources ?? sourceChipsForContext(message.context ?? {
-          semester: "S4",
-          subject: "Object Oriented Programming",
-          module: "All modules",
-        })).map((source) => (
-          <Badge key={source}>{source}</Badge>
-        ))}
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
@@ -1399,14 +1386,6 @@ function EdgeCard({
         {action}
       </button>
     </div>
-  );
-}
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="mw-badge">
-      {children}
-    </span>
   );
 }
 

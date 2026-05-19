@@ -1,7 +1,3 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
 import { GlassButton } from "@/components/landing/glass-button";
 import { StatusBadge } from "@/components/landing/status-badge";
 import { mockSubjects } from "@/lib/mock-subjects";
@@ -15,8 +11,6 @@ function trimSubjectName(name: string) {
 }
 
 export function SubjectStatusPanel() {
-  const router = useRouter();
-
   return (
     <aside className="mw-card mx-auto w-full p-5 sm:p-6">
       <h2 className="mw-label">
@@ -44,7 +38,7 @@ export function SubjectStatusPanel() {
 
       <GlassButton
         className="mt-5 w-full"
-        onClick={() => router.push("/subjects")}
+        href="/subjects"
         variant="primary"
       >
         View Subjects

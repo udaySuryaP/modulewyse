@@ -33,8 +33,18 @@ function isProtectedRoute(pathname: string) {
   );
 }
 
-function redirect(request: NextRequest, pathname: string) {
-  return NextResponse.redirect(new URL(pathname, request.url));
+function redirect(
+  request: NextRequest,
+  pathname: string,
+  cookieSource?: NextResponse,
+) {
+  const response = NextResponse.redirect(new URL(pathname, request.url));
+
+  cookieSource?.cookies.getAll().forEach((cookie) => {
+    response.cookies.set(cookie);
+  });
+
+  return response;
 }
 
 export async function proxy(request: NextRequest) {
@@ -64,14 +74,14 @@ export async function proxy(request: NextRequest) {
 
   if (!user) {
     if (isProtected || isOnboarding) {
-      return redirect(request, loginUrlWithNext(pathname, search));
+      return redirect(request, loginUrlWithNext(pathname, search), getResponse());
     }
 
     return getResponse();
   }
 
   if ((pathname === "/login" || pathname === "/signup") && user) {
-    return redirect(request, "/chat");
+    return redirect(request, "/chat", getResponse());
   }
 
   if (isPublic || isOnboarding || isProtected) {
