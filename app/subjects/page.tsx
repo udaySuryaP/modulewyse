@@ -1,12 +1,20 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { StatusBadge } from "@/components/landing/status-badge";
+import { getUserProfile } from "@/lib/auth/get-user-profile";
 import { getSubjectListWithFallback } from "@/lib/data/subjects";
 import { subjectStatusLabel } from "@/lib/mock-subjects";
 import { cn } from "@/lib/utils";
 
 export default async function SubjectsPage() {
+  const { user } = await getUserProfile();
+
+  if (!user) {
+    redirect("/login?next=/subjects");
+  }
+
   const { source, subjects } = await getSubjectListWithFallback();
 
   return (

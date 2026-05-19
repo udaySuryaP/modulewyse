@@ -1,0 +1,236 @@
+{
+  "chunkCount": 8,
+  "generatedAt": "2026-05-19T14:46:08.374Z",
+  "sourceCount": 5,
+  "sources": [
+    {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 1,
+            "sourceFile": "module-1.md",
+            "sourceTitle": "Module 1",
+            "subjectSlug": "oop",
+            "topicTitle": "Classes and objects"
+          },
+          "title": "Classes and objects",
+          "wordCount": 6
+        },
+        {
+          "chunkIndex": 1,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 1,
+            "sourceFile": "module-1.md",
+            "sourceTitle": "Module 1",
+            "subjectSlug": "oop",
+            "topicTitle": "Constructors"
+          },
+          "title": "Constructors",
+          "wordCount": 6
+        }
+      ],
+      "contentHash": "397a1632e6b00cadccadfaa20f83e0daef8adb28649bf621416eac7bb8c784b5",
+      "fileName": "module-1.md",
+      "module": 1,
+      "sourceType": "notes",
+      "status": "draft",
+      "subject": "oop",
+      "title": "Module 1",
+      "topics": [
+        "Classes and objects",
+        "Constructors"
+      ],
+      "warnings": [
+        {
+          "fileName": "module-1.md",
+          "message": "topic \"Classes and objects\" is short (6 words).",
+          "severity": "warning"
+        },
+        {
+          "fileName": "module-1.md",
+          "message": "topic \"Constructors\" is short (6 words).",
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 2,
+            "sourceFile": "module-2.md",
+            "sourceTitle": "Module 2",
+            "subjectSlug": "oop",
+            "topicTitle": "Interfaces"
+          },
+          "title": "Interfaces",
+          "wordCount": 6
+        },
+        {
+          "chunkIndex": 1,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 2,
+            "sourceFile": "module-2.md",
+            "sourceTitle": "Module 2",
+            "subjectSlug": "oop",
+            "topicTitle": "Packages"
+          },
+          "title": "Packages",
+          "wordCount": 6
+        }
+      ],
+      "contentHash": "5b814917e331a5a06b14c4df13346770a4cc4f5acabc5a2c0c57dc76bdee9be2",
+      "fileName": "module-2.md",
+      "module": 2,
+      "sourceType": "notes",
+      "status": "draft",
+      "subject": "oop",
+      "title": "Module 2",
+      "topics": [
+        "Interfaces",
+        "Packages"
+      ],
+      "warnings": [
+        {
+          "fileName": "module-2.md",
+          "message": "topic \"Interfaces\" is short (6 words).",
+          "severity": "warning"
+        },
+        {
+          "fileName": "module-2.md",
+          "message": "topic \"Packages\" is short (6 words).",
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 3,
+            "sourceFile": "module-3.md",
+            "sourceTitle": "Module 3",
+            "subjectSlug": "oop",
+            "topicTitle": "Inheritance"
+          },
+          "title": "Inheritance",
+          "wordCount": 6
+        },
+        {
+          "chunkIndex": 1,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 3,
+            "sourceFile": "module-3.md",
+            "sourceTitle": "Module 3",
+            "subjectSlug": "oop",
+            "topicTitle": "Polymorphism"
+          },
+          "title": "Polymorphism",
+          "wordCount": 6
+        }
+      ],
+      "contentHash": "fcca04126da44323d413d56edfd1ffcc45a1ee1135e01b7cb0d10ca1a873c43a",
+      "fileName": "module-3.md",
+      "module": 3,
+      "sourceType": "notes",
+      "status": "draft",
+      "subject": "oop",
+      "title": "Module 3",
+      "topics": [
+        "Inheritance",
+        "Polymorphism"
+      ],
+      "warnings": [
+        {
+          "fileName": "module-3.md",
+          "message": "topic \"Inheritance\" is short (6 words).",
+          "severity": "warning"
+        },
+        {
+          "fileName": "module-3.md",
+          "message": "topic \"Polymorphism\" is short (6 words).",
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 4,
+            "sourceFile": "module-4.md",
+            "sourceTitle": "Module 4",
+            "subjectSlug": "oop",
+            "topicTitle": "Exception handling"
+          },
+          "title": "Exception handling",
+          "wordCount": 6
+        }
+      ],
+      "contentHash": "cbf246a891bfe35bb2635d7d6dc6eaadc7e20adb111ba6ced42fce1ace9bd948",
+      "fileName": "module-4.md",
+      "module": 4,
+      "sourceType": "notes",
+      "status": "draft",
+      "subject": "oop",
+      "title": "Module 4",
+      "topics": [
+        "Exception handling"
+      ],
+      "warnings": [
+        {
+          "fileName": "module-4.md",
+          "message": "topic \"Exception handling\" is short (6 words).",
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "content": "TODO: Paste cleaned, syllabus-grounded notes here.",
+          "metadata": {
+            "moduleNumber": 5,
+            "sourceFile": "module-5.md",
+            "sourceTitle": "Module 5",
+            "subjectSlug": "oop",
+            "topicTitle": "File handling"
+          },
+          "title": "File handling",
+          "wordCount": 6
+        }
+      ],
+      "contentHash": "a2706e97e9012431ff4a1be59755f10a30d0910a6d5a0af568092b7825ad5504",
+      "fileName": "module-5.md",
+      "module": 5,
+      "sourceType": "notes",
+      "status": "draft",
+      "subject": "oop",
+      "title": "Module 5",
+      "topics": [
+        "File handling"
+      ],
+      "warnings": [
+        {
+          "fileName": "module-5.md",
+          "message": "topic \"File handling\" is short (6 words).",
+          "severity": "warning"
+        }
+      ]
+    }
+  ],
+  "subject": "oop",
+  "warnings": []
+}

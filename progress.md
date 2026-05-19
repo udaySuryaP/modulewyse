@@ -2115,3 +2115,128 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Browser-check the sidebar in an authenticated session to confirm the row placement with real recent chats.
+
+## 2026-05-19 - Full App Flow, Design, Auth, Functionality, And Security Checkup
+
+### Completed
+- Ran a full code-level checkup across the app's visible student-side routes, auth flow, protected screens, navigation, and security posture.
+- Found and fixed a defense-in-depth auth gap:
+  - `/subjects`
+  - `/subjects/[id]`
+  - `/library`
+  - `/settings/preferences`
+  - all onboarding pages
+- These routes were already protected by `proxy.ts`, but now also perform server-side `getUserProfile()` checks before rendering protected content.
+- Preserved existing user-flow behavior:
+  - logged-out protected routes still redirect to `/login?next=...`
+  - onboarding remains non-blocking for authenticated users
+  - `/profile` remains a protected compatibility redirect to `/settings`
+  - `/login` and `/signup` still redirect authenticated users to `/chat` through `proxy.ts`
+- Re-ran logged-out route checks:
+  - public routes returned 200
+  - protected routes redirected to `/login?next=...`
+  - `/auth/callback` without a code redirected to `/login?error=callback`
+- Browser-smoke-tested public flows:
+  - landing page renders
+  - Login CTA navigates to `/login`
+  - Get Started CTA navigates to `/signup`
+  - signup/login form fields render
+  - `/subjects` while logged out redirects to `/login?next=/subjects`
+  - no console errors appeared in the tested public path
+- Checked common security hazards:
+  - no `dangerouslySetInnerHTML`
+  - no `eval`
+  - no `document.cookie` usage
+  - no client import of `SUPABASE_SERVICE_ROLE_KEY`
+  - no server authorization based on `auth.getSession()`
+- Checked visual-system drift for obvious hardcoded radius/color patterns; no blocking issue found in this pass.
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- Authenticated browser QA still requires a confirmed test student session; this pass verified logged-out flows and server-side guard behavior.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced breaking audit fix was run.
+- The build now correctly marks `/library`, onboarding routes, and `/settings/preferences` as dynamic because they validate the user on the server.
+
+### Next
+- Run authenticated QA in Chrome with a confirmed account:
+  - login
+  - `/chat`
+  - `/subjects`
+  - `/subjects/oop`
+  - `/library`
+  - onboarding save
+  - settings/preferences
+  - signout
+
+## 2026-05-19 - OOP Content Foundation And Ingestion Prep
+
+### Completed
+- Added the curated content database foundation:
+  - `public.content_sources`
+  - `public.content_chunks`
+- Added text-only content schema. No embeddings, pgvector, vector columns, OpenAI, RAG, or retrieval logic were added.
+- Added updated-at triggers for both content tables using the existing `public.set_updated_at()` function.
+- Added RLS policies:
+  - authenticated users can select only `ready` content sources for `available` or `beta` subjects
+  - authenticated users can select only `ready` chunks whose source is also `ready` and whose subject is `available` or `beta`
+  - no anon read policy
+  - no student insert/update/delete policies
+- Updated `supabase/schema.sql` and added migration:
+  - `supabase/migrations/20260519120000_add_content_sources_and_chunks.sql`
+- Applied the migration to live Supabase and verified:
+  - `content_sources` exists
+  - `content_chunks` exists
+  - RLS is enabled on both tables
+  - select policies exist for authenticated users only
+- Updated TypeScript data types:
+  - `ContentSource`
+  - `ContentChunk`
+  - `ContentSourceType`
+  - `ContentStatus`
+  - `ContentChunkStatus`
+- Added content-specific types in `types/content.ts`.
+- Added OOP local content workspace:
+  - `content/oop/README.md`
+  - `content/oop/module-1.md`
+  - `content/oop/module-2.md`
+  - `content/oop/module-3.md`
+  - `content/oop/module-4.md`
+  - `content/oop/module-5.md`
+  - `content/generated/.gitkeep`
+- Added `docs/CONTENT_AUTHORING_GUIDE.md`.
+- Added metadata and chunk validation helpers:
+  - `lib/content/validation.ts`
+- Added server-side content read helpers:
+  - `lib/data/content.ts`
+- Added local content tooling:
+  - `scripts/prepare-content-chunks.ts`
+  - `scripts/ingest-content.ts`
+- Added npm scripts:
+  - `npm run content:preview`
+  - `npm run content:ingest`
+- Ran `npm run content:preview`; passed and wrote `content/generated/oop-chunks.preview.json`.
+- Preview result:
+  - sources: 5
+  - chunks: 8
+  - warnings: 8 expected short-template warnings
+- Ran `npm run lint`; passed.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- OOP content files are templates only and remain `draft`.
+- No real curated OOP notes were inserted.
+- Content ingestion was not run because the module files currently contain placeholder `TODO` content.
+- `npm audit` still reports the known moderate `postcss` advisory through `next`; no forced breaking audit fix was run.
+- The ingestion script uses `SUPABASE_SERVICE_ROLE_KEY` only in a Node script and fails clearly if it is missing.
+
+### Next
+- Add curated OOP notes into the module files.
+- Run `npm run content:preview`.
+- Review generated chunks and warnings.
+- Run `npm run content:ingest` only after content has been manually reviewed.
+- After chunks are stable, add embeddings/vector search in a separate phase.
