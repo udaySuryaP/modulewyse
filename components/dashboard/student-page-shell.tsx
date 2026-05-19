@@ -103,7 +103,7 @@ function MobileStudentTopbar({
         <button
           aria-expanded={isOpen}
           aria-label={isOpen ? "Collapse menu" : "Expand menu"}
-          className="grid size-10 place-items-center rounded-full border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]"
+          className="grid size-10 place-items-center mw-radius-pill border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]"
           onClick={onToggle}
           type="button"
         >
@@ -119,7 +119,7 @@ function MobileStudentTopbar({
 
               return (
                 <Link
-                  className="flex h-10 items-center gap-3 rounded-full border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
+                  className="flex h-10 items-center gap-3 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[13px] font-medium text-[var(--mw-body)]"
                   href={item.href}
                   key={item.href}
                 >

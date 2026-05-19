@@ -6,7 +6,6 @@ import { useState } from "react";
 import {
   Field,
   FormMessage,
-  SelectInput,
   TextInput,
 } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
@@ -26,9 +25,6 @@ export function FinalSetupForm() {
   const router = useRouter();
   const updateProfile = useProfileUpdate();
   const draft = readOnboardingDraft();
-  const [focusSubject, setFocusSubject] = useState(
-    draft.focus_subject ?? "Object Oriented Programming",
-  );
   const [referralSource, setReferralSource] = useState(
     draft.referral_source ?? "",
   );
@@ -49,7 +45,6 @@ export function FinalSetupForm() {
     try {
       const values = {
         ...draft,
-        focus_subject: focusSubject.trim(),
         referral_source: referralSource.trim(),
         onboarding_completed: true,
       };
@@ -73,18 +68,6 @@ export function FinalSetupForm() {
 
   return (
     <form className="grid gap-4" onSubmit={handleSubmit}>
-      <Field label="Focus subject">
-        <SelectInput
-          onChange={(event) => setFocusSubject(event.target.value)}
-          value={focusSubject}
-        >
-          <option>Object Oriented Programming</option>
-          <option>DBMS</option>
-          <option>Operating Systems</option>
-          <option>Computer Networks</option>
-          <option>Data Structures</option>
-        </SelectInput>
-      </Field>
       <Field label="How did you hear about ModuleWyse?">
         <TextInput
           onChange={(event) => setReferralSource(event.target.value)}

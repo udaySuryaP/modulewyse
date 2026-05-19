@@ -48,7 +48,7 @@ export function SemesterForm() {
         {Array.from({ length: 8 }, (_, index) => index + 1).map((item) => (
           <button
             className={cn(
-              "h-12 rounded-full border text-[14px] font-medium",
+              "h-12 mw-radius-pill border text-[14px] font-medium",
               semester === item
                 ? "border-[var(--mw-primary)] bg-[var(--mw-primary)] text-white"
                 : "border-[var(--mw-hairline)] bg-white text-[var(--mw-ink)]",

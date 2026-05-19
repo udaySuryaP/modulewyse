@@ -24,12 +24,14 @@ const navItems = [
 ];
 
 type StudentSidebarProps = {
+  children?: React.ReactNode;
   className?: string;
   expanded: boolean;
   onToggle: () => void;
 };
 
 export function StudentSidebar({
+  children,
   className,
   expanded,
   onToggle,
@@ -86,7 +88,7 @@ export function StudentSidebar({
         </Link>
         <button
           aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-          className="hidden size-9 shrink-0 place-items-center rounded-full border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] lg:grid"
+          className="hidden size-9 shrink-0 place-items-center mw-radius-pill border border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] lg:grid"
           onClick={onToggle}
           type="button"
         >
@@ -107,7 +109,7 @@ export function StudentSidebar({
           return (
             <Link
               className={cn(
-                "flex h-10 items-center justify-center rounded-full border border-transparent px-0 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)] sm:h-11",
+                "flex h-10 items-center justify-center mw-radius-pill border border-transparent px-0 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)] sm:h-11",
                 "lg:gap-3",
                 expanded && "lg:justify-start lg:px-3",
                 isActive && "border-[var(--mw-hairline-strong)] bg-white text-[var(--mw-ink)]",
@@ -122,6 +124,10 @@ export function StudentSidebar({
           );
         })}
       </nav>
+
+      {expanded && children ? (
+        <div className="mt-6 hidden min-w-0 lg:block">{children}</div>
+      ) : null}
 
       <div className="mt-auto hidden text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)] lg:block">
         {expanded ? (

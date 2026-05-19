@@ -20,7 +20,7 @@ export function GlassButton({
   onClick,
 }: GlassButtonProps) {
   const classes = cn(
-    "inline-flex h-10 items-center justify-center rounded-full px-5 text-[15px] font-medium leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20",
+    "inline-flex h-10 items-center justify-center mw-radius-pill px-5 text-[15px] font-medium leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20",
     variant === "primary"
       ? "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)]"
       : "border border-[var(--mw-hairline-strong)] bg-transparent text-[var(--mw-ink)] hover:bg-[var(--mw-surface-strong)]",

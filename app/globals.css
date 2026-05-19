@@ -44,13 +44,13 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
-  --radius-4xl: 2.5rem;
+  --radius-sm: var(--mw-radius-input);
+  --radius-md: var(--mw-radius-input);
+  --radius-lg: var(--mw-radius-card);
+  --radius-xl: var(--mw-radius-card);
+  --radius-2xl: var(--mw-radius-large);
+  --radius-3xl: var(--mw-radius-large);
+  --radius-4xl: var(--mw-radius-large);
 }
 
 :root {
@@ -71,6 +71,10 @@
   --mw-gradient-sky: #a8c8e8;
   --mw-gradient-rose: #e8b8c4;
   --mw-shadow-soft: 0 4px 16px rgba(12, 10, 9, 0.04);
+  --mw-radius-input: 0.5rem;
+  --mw-radius-card: 1rem;
+  --mw-radius-large: 1.5rem;
+  --mw-radius-pill: 9999px;
 
   --background: var(--mw-canvas);
   --foreground: var(--mw-ink);
@@ -95,7 +99,7 @@
   --chart-3: var(--mw-gradient-lavender);
   --chart-4: var(--mw-gradient-sky);
   --chart-5: var(--mw-gradient-rose);
-  --radius: 1rem;
+  --radius: var(--mw-radius-card);
   --sidebar: var(--mw-canvas-soft);
   --sidebar-foreground: var(--mw-ink);
   --sidebar-primary: var(--mw-primary);
@@ -181,7 +185,7 @@
 
   .mw-card {
     border: 1px solid var(--mw-hairline);
-    border-radius: 1rem;
+    border-radius: var(--mw-radius-card);
     background: var(--mw-surface-card);
     color: var(--mw-ink);
   }
@@ -204,7 +208,7 @@
     min-height: 2.5rem;
     align-items: center;
     justify-content: center;
-    border-radius: 9999px;
+    border-radius: var(--mw-radius-pill);
     background: var(--mw-primary);
     color: #ffffff;
     padding: 0.625rem 1.25rem;
@@ -224,7 +228,7 @@
     align-items: center;
     justify-content: center;
     border: 1px solid var(--mw-hairline-strong);
-    border-radius: 9999px;
+    border-radius: var(--mw-radius-pill);
     background: transparent;
     color: var(--mw-ink);
     padding: 0.625rem 1.25rem;
@@ -242,7 +246,7 @@
   .mw-badge {
     display: inline-flex;
     align-items: center;
-    border-radius: 9999px;
+    border-radius: var(--mw-radius-pill);
     background: var(--mw-surface-strong);
     color: var(--mw-ink);
     padding: 0.25rem 0.625rem;
@@ -264,11 +268,27 @@
 
   .mw-input {
     border: 1px solid var(--mw-hairline-strong);
-    border-radius: 0.5rem;
+    border-radius: var(--mw-radius-input);
     background: var(--mw-surface-card);
     color: var(--mw-ink);
     outline: none;
     transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .mw-radius-input {
+    border-radius: var(--mw-radius-input);
+  }
+
+  .mw-radius-card {
+    border-radius: var(--mw-radius-card);
+  }
+
+  .mw-radius-large {
+    border-radius: var(--mw-radius-large);
+  }
+
+  .mw-radius-pill {
+    border-radius: var(--mw-radius-pill);
   }
 
   .mw-input::placeholder {

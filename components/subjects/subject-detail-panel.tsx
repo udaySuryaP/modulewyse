@@ -44,7 +44,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         </p>
 
         {subject.status === "beta" ? (
-          <div className="mt-6 rounded-2xl border border-[var(--mw-hairline)] bg-[rgba(244,197,168,0.22)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
+          <div className="mt-6 mw-radius-card border border-[var(--mw-hairline)] bg-[rgba(244,197,168,0.22)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
             This subject is in beta. Answers may be less complete until the
             curated content set is expanded.
           </div>
@@ -60,7 +60,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
                 {subject.modules.map((module) => (
                   <button
                     className={cn(
-                      "h-10 rounded-full border border-[var(--mw-hairline)] bg-white px-4 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+                      "h-10 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[13px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
                       selectedModule === module.value &&
                         "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
                     )}
@@ -82,7 +82,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
             </Link>
           </>
         ) : (
-          <div className="mt-8 rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-5">
+          <div className="mt-8 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-5">
             <h2 className="mw-display text-[32px] leading-[1.05] text-[var(--mw-ink)]">
               This subject is being prepared.
             </h2>
@@ -107,13 +107,13 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         <div className="mt-4 grid gap-2">
           {subject.topicSamples.length > 0 ? subject.topicSamples.map((topic) => (
             <div
-              className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-body)]"
+              className="mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-body)]"
               key={topic}
             >
               {topic}
             </div>
           )) : (
-            <div className="rounded-2xl border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-muted)]">
+            <div className="mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[14px] leading-[1.45] text-[var(--mw-muted)]">
               Topic previews will appear after content is synced.
             </div>
           )}

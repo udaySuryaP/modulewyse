@@ -12,6 +12,7 @@ import {
 type ChatPageProps = {
   searchParams: Promise<{
     module?: string | string[];
+    conversation?: string | string[];
     q?: string | string[];
     semester?: string | string[];
     subject?: string | string[];
@@ -34,6 +35,7 @@ export default async function ChatPage({ searchParams }: ChatPageProps) {
   }
 
   const params = await searchParams;
+  const conversationId = firstParam(params.conversation);
   const pendingQuestion = firstParam(params.q);
   const subjectParam = firstParam(params.subject);
   const { subject: routedSubject } = subjectParam
@@ -58,10 +60,12 @@ export default async function ChatPage({ searchParams }: ChatPageProps) {
       <PageOverlay />
       <main className="min-h-dvh">
         <ChatWorkspace
+          initialConversationId={conversationId}
           initialContext={initialContext}
           initialQuestion={pendingQuestion}
           isProfileIncomplete={isProfileIncomplete}
-          key={pendingQuestion}
+          key={`${conversationId}:${pendingQuestion}`}
+          userId={user.id}
         />
       </main>
     </>

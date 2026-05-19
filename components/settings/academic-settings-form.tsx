@@ -11,14 +11,11 @@ import {
 } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import type { Profile } from "@/lib/auth/types";
-import { mockSubjects } from "@/lib/mock-subjects";
 import { createClient } from "@/lib/supabase/client";
 
 type AcademicSettingsFormProps = {
   profile: Profile;
 };
-
-const subjectOptions = mockSubjects.map((subject) => subject.name);
 
 export function AcademicSettingsForm({ profile }: AcademicSettingsFormProps) {
   const router = useRouter();
@@ -29,9 +26,6 @@ export function AcademicSettingsForm({ profile }: AcademicSettingsFormProps) {
   const [branch, setBranch] = useState(profile.branch ?? "");
   const [semester, setSemester] = useState(
     profile.semester ? String(profile.semester) : "",
-  );
-  const [focusSubject, setFocusSubject] = useState(
-    profile.focus_subject ?? "Object Oriented Programming",
   );
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"error" | "success">("error");
@@ -77,7 +71,6 @@ export function AcademicSettingsForm({ profile }: AcademicSettingsFormProps) {
           graduation_year: parsedGraduationYear,
           branch: branch || null,
           semester: parsedSemester,
-          focus_subject: focusSubject.trim() || null,
         })
         .eq("id", profile.id);
 
@@ -144,18 +137,6 @@ export function AcademicSettingsForm({ profile }: AcademicSettingsFormProps) {
             <option key={item} value={item}>
               S{item}
             </option>
-          ))}
-        </SelectInput>
-      </Field>
-
-      <Field label="Focus subject">
-        <SelectInput
-          className="w-full"
-          onChange={(event) => setFocusSubject(event.target.value)}
-          value={focusSubject}
-        >
-          {subjectOptions.map((subject) => (
-            <option key={subject}>{subject}</option>
           ))}
         </SelectInput>
       </Field>
