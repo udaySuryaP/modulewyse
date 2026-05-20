@@ -2512,3 +2512,129 @@ create table if not exists public.message_feedback (
 - Add pgvector and embedding preparation for ready PBCST304 content chunks.
 - Then build retrieval over ready chunks.
 - Only after retrieval works, add AI answer generation.
+
+## 2026-05-20 - PBCST304 Embedding Foundation Prepared
+
+### Completed
+- Fast-forwarded and pushed the remaining local branches to current `main`:
+  - `contentingestion`
+  - `designupdate`
+  - `onboarding`
+- Created pgvector/embedding migration:
+  - `supabase/migrations/20260520163826_add_content_chunk_embeddings.sql`
+- Added pgvector setup and `content_chunks` embedding fields to schema artifacts:
+  - `embedding vector(1536)`
+  - `embedding_model`
+  - `embedding_status`
+  - `embedding_error`
+  - `embedding_generated_at`
+- Chosen embedding default:
+  - model: `text-embedding-3-small`
+  - dimensions: `1536`
+- Added normal indexes for embedding status/model and an HNSW vector index for embedded chunks.
+- Added server-side/service-role-only retrieval RPC:
+  - `public.match_content_chunks`
+- Kept the retrieval function unavailable to `anon` and `authenticated` roles for now.
+- Added embedding types:
+  - `EmbeddingStatus`
+  - `EmbeddingJobChunk`
+  - `EmbeddingGenerationResult`
+  - `RetrievedChunk`
+  - `RetrievalTestResult`
+- Added server-side embedding data helpers:
+  - `getReadyChunksMissingEmbeddings`
+  - `getReadyChunksWithEmbeddings`
+  - `updateChunkEmbedding`
+  - `markChunkEmbeddingFailed`
+  - `getEmbeddingStats`
+- Added Node-only embedding scripts:
+  - `npm run embeddings:status`
+  - `npm run embeddings:generate`
+  - `npm run retrieval:test`
+- Added embedding env placeholders to `.env.example`.
+- Confirmed secret references remain server/script-only; no `NEXT_PUBLIC` API or service-role secrets were added.
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- Supabase MCP returned a reauthentication-required error, and the Supabase CLI is not installed locally.
+- No direct database connection URL is available locally, so the pgvector migration was written but not applied live in this pass.
+- `npm run embeddings:status` currently stops with: embedding columns are not available yet.
+- Embeddings were not generated because the live `content_chunks` table does not yet have the embedding columns.
+- Retrieval tests were not run because the vector RPC/embedding columns are not live yet.
+- Only ready PBCST304 Module 1-3 note chunks should be embedded after migration application.
+- Module 4 remains draft/review and must not be embedded.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions are not embedded in this phase.
+- No chat answer generation, RAG route, app UI change, admin UI, upload UI, or payment work was added.
+
+### Next
+- Apply `supabase/migrations/20260520163826_add_content_chunk_embeddings.sql` to live Supabase.
+- Run `npm run embeddings:status`.
+- Run `npm run embeddings:generate`.
+- Run `npm run embeddings:status` again and verify embedded count.
+- Run `npm run retrieval:test` and inspect retrieval quality before any chat/RAG integration.
+
+## 2026-05-20 - Embedding Migration Applied Live; Generation Blocked by Missing OpenAI Key
+
+### Completed
+- Confirmed active branch:
+  - `codex/embedding-foundation`
+- Confirmed `.env.local` is ignored and untracked.
+- Verified local embedding foundation files exist:
+  - migration
+  - embedding helpers
+  - embedding types
+  - status/generation/retrieval scripts
+- Verified configuration shape:
+  - default embedding model: `text-embedding-3-small`
+  - embedding dimensions: `1536`
+  - migration uses `vector(1536)`
+- Verified scripts target only ready OOP PBCST304 Module 1-3 notes.
+- Verified Module 4, Module 5, draft content, and previous-year questions are excluded from embedding generation.
+- Applied live migration:
+  - `supabase/migrations/20260520163826_add_content_chunk_embeddings.sql`
+- Verified live Supabase:
+  - `pgvector` extension exists (`0.8.0`)
+  - embedding columns exist on `public.content_chunks`
+  - embedding status/model/HNSW indexes exist
+  - `public.match_content_chunks` exists
+  - `match_content_chunks` is not executable by `anon` or `authenticated`
+  - `match_content_chunks` is executable by `service_role`
+- Verified eligible content:
+  - 242 ready PBCST304 OOP note chunks
+  - Module 4 ready chunks: 0
+  - previous-question content chunks: 0
+- Ran `npm run embeddings:status` before generation:
+  - total ready chunks: 242
+  - embedded: 0
+  - pending: 242
+  - failed: 0
+  - skipped: 0
+  - Module 1: 144 pending
+  - Module 2: 53 pending
+  - Module 3: 45 pending
+- Created retrieval quality report:
+  - `docs/retrieval-quality-report.md`
+
+### Issues / Notes
+- `SUPABASE_SERVICE_ROLE_KEY` is set locally.
+- `OPENAI_API_KEY` is missing or empty locally, so `npm run embeddings:generate` stopped before making an API call.
+- `OPENAI_EMBEDDING_MODEL` and `EMBEDDING_DIMENSIONS` are set locally.
+- No embeddings were generated.
+- Retrieval tests were not run because there are no embeddings yet.
+- Retrieval quality verdict is currently:
+  - `NOT READY - EMBEDDINGS/RETRIEVAL BROKEN`
+- Module 4 remains draft/review and was not embedded.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions are not embedded.
+- No chat/RAG route, answer generation, UI change, admin UI, upload UI, or payment work was added.
+
+### Next
+- Add a local non-empty `OPENAI_API_KEY` in `.env.local` without committing it.
+- Run `npm run embeddings:generate`.
+- Run `npm run embeddings:status`.
+- Run `npm run retrieval:test`.
+- Update `docs/retrieval-quality-report.md` with actual retrieved chunks and relevance judgments.

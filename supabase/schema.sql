@@ -1,6 +1,8 @@
 -- ModuleWyse student auth/profile foundation.
 -- Run this SQL in the Supabase SQL editor for the project.
 
+create extension if not exists vector;
+
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null default '',
@@ -399,6 +401,11 @@ create table if not exists public.content_chunks (
   content text not null,
   token_count integer,
   status text not null default 'draft',
+  embedding vector(1536),
+  embedding_model text,
+  embedding_status text not null default 'pending',
+  embedding_error text,
+  embedding_generated_at timestamptz,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -406,6 +413,8 @@ create table if not exists public.content_chunks (
     check (chunk_index >= 0),
   constraint content_chunks_status_check
     check (status in ('draft', 'ready', 'archived')),
+  constraint content_chunks_embedding_status_check
+    check (embedding_status in ('pending', 'embedded', 'failed', 'skipped')),
   constraint content_chunks_source_index_key
     unique (source_id, chunk_index)
 );
@@ -439,6 +448,18 @@ on public.content_chunks (topic_id);
 
 create index if not exists content_chunks_status_idx
 on public.content_chunks (status);
+
+create index if not exists content_chunks_embedding_status_idx
+on public.content_chunks (embedding_status);
+
+create index if not exists content_chunks_embedding_model_idx
+on public.content_chunks (embedding_model);
+
+create index if not exists content_chunks_embedding_hnsw_idx
+on public.content_chunks
+using hnsw (embedding vector_cosine_ops)
+where embedding is not null
+  and embedding_status = 'embedded';
 
 drop trigger if exists content_sources_set_updated_at on public.content_sources;
 create trigger content_sources_set_updated_at
@@ -603,6 +624,64 @@ using (
       and subjects.status in ('available', 'beta')
   )
 );
+
+-- ---------------------------------------------------------------------------
+-- Vector retrieval function for server-side retrieval testing.
+-- ---------------------------------------------------------------------------
+
+create or replace function public.match_content_chunks(
+  query_embedding vector(1536),
+  match_count integer default 8,
+  filter_subject_slug text default null,
+  filter_module_number integer default null
+)
+returns table (
+  chunk_id uuid,
+  source_id uuid,
+  subject_id uuid,
+  module_id uuid,
+  topic_id uuid,
+  title text,
+  content text,
+  similarity double precision,
+  metadata jsonb
+)
+language sql
+stable
+set search_path = public
+as $$
+  select
+    content_chunks.id as chunk_id,
+    content_chunks.source_id,
+    content_chunks.subject_id,
+    content_chunks.module_id,
+    content_chunks.topic_id,
+    content_chunks.title,
+    content_chunks.content,
+    1 - (content_chunks.embedding <=> query_embedding) as similarity,
+    content_chunks.metadata
+  from public.content_chunks
+  join public.content_sources
+    on content_sources.id = content_chunks.source_id
+  join public.subjects
+    on subjects.id = content_chunks.subject_id
+  left join public.modules
+    on modules.id = content_chunks.module_id
+  where content_chunks.status = 'ready'
+    and content_sources.status = 'ready'
+    and content_chunks.embedding_status = 'embedded'
+    and content_chunks.embedding is not null
+    and subjects.status in ('available', 'beta')
+    and (filter_subject_slug is null or subjects.slug = filter_subject_slug)
+    and (filter_module_number is null or modules.module_number = filter_module_number)
+  order by content_chunks.embedding <=> query_embedding
+  limit least(greatest(match_count, 1), 24);
+$$;
+
+revoke all on function public.match_content_chunks(vector, integer, text, integer) from public;
+revoke all on function public.match_content_chunks(vector, integer, text, integer) from anon;
+revoke all on function public.match_content_chunks(vector, integer, text, integer) from authenticated;
+grant execute on function public.match_content_chunks(vector, integer, text, integer) to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Least-privilege Data API grants.
