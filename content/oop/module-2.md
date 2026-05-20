@@ -165,17 +165,17 @@ topics:
 Polymorphism means “many forms”. In Java, it allows an object to behave in multiple ways depending on the context.
 Example: The method name Add in different forms:
 
-## Topic: Add(x,y) 3+2 Adding Two Numbers
+Add(x,y) 3+2 Adding Two Numbers
 
-## Topic: Add(s1+s2) Ann + Maria Concatenates Two Strings
+Add(s1+s2) Ann + Maria Concatenates Two Strings
 
 3. Add (Image, Doc) ----- Pastes image into document.
 
-## Topic: Add(doc1, Doc2) Merges Two Documents
+Add(doc1, Doc2) Merges Two Documents
 
 Here, all methods are named Add, but they perform different actions based on their parameters. This is method overloading, where the method name is the same, but the parameter list is different.
 
-## Topic: Two Types
+Two Types
 
 ## Topic: Runtime Polymorphism
 
@@ -594,39 +594,39 @@ This program will not compile because the reference to j inside the sum( ) metho
 { int a;
 A()
 
-## Topic: { System.out.println("constructor A");
+{ System.out.println("constructor A");
 
-## Topic: A(int X)
+A(int X)
 
 { a=x;
 
-## Topic: System.out.println("a="+x); Class B Extends A
+System.out.println("a="+x); Class B Extends A
 
 { int b;
 B()
 { //by default, the child class calls the parent class's default constructor
 
-## Topic: System.out.println("constructor B");
+System.out.println("constructor B");
 <!-- page: 18 -->
 
 B(int x, int y)
 { super(x); b=y;
 
-## Topic: System.out.println("b="+y); Public Class Abc
+System.out.println("b="+y); Public Class Abc
 
-## Topic: { System.out.println("obj1:");
+{ System.out.println("obj1:");
 
-## Topic: B Obj1 = New B();
+B Obj1 = New B();
 
-## Topic: System.out.println("\nobj2:");
+System.out.println("\nobj2:");
 
-## Topic: B Obj2 = New B(10,20);
+B Obj2 = New B(10,20);
 
-## Topic: Output: Obj1
+Output: Obj1
 
-## Topic: Constructor A
+Constructor A
 
-## Topic: Constructor B Obj2: A=10 B=20
+## Topic: Superclass Constructor Call Example
 
 Example : super( ) can be called using any form defined by the superclass. The constructor executed will be the one that matches the arguments class Box
 { private double width, height, depth;
@@ -717,32 +717,34 @@ System.out.println("Weight of shipment2 is " + shipment2.weight);
 System.out.println("Shipping cost: $" + shipment2.cost);
 Output : Volume of shipment1 is 3000.0
 
-## Topic: Shipping Cost: $3.41
+Shipping Cost: $3.41
 
-## Topic: Shipping Cost: $1.28
+Shipping Cost: $1.28
+
+## Topic: Calling Order of Constructors
 
 Calling Order of Constructors o "Calling Order of Constructors" refers to the specific sequence in which constructors are invoked when an object is created, o In a class hierarchy, constructors are called in order of derivation, from superclass to subclass. o If super( ) is not used, then the default(parameterless) constructor of each superclass will be executed. class A
 
-## Topic: { A()
+{ A()
 
-## Topic: { System.out.println("inside A's Constructor.");
+{ System.out.println("inside A's Constructor.");
 
-## Topic: Inside A’s Constructor
+Inside A’s Constructor
 <!-- page: 22 -->
 
-## Topic: { B()
+{ B()
 
-## Topic: { System.out.println("inside B's Constructor."); Class C Extends B
+{ System.out.println("inside B's Constructor."); Class C Extends B
 
-## Topic: { C()
+{ C()
 
-## Topic: { System.out.println("inside C's Constructor."); Class Callingcons
+{ System.out.println("inside C's Constructor."); Class Callingcons
 
 { C c = new C();
 
-## Topic: Inside B’s Constructor
+Inside B’s Constructor
 
-## Topic: Inside C’s Constructor
+Inside C’s Constructor
 
 ## Topic: Protected Members
 
@@ -793,9 +795,11 @@ A protected member is accessible in subclasses outside the package only through 
 // Below is NOT allowed: accessing protected members via Parent object
 // Parent p = new Parent();
 
-## Topic: // System.out.println(p.message); // Error
+// System.out.println(p.message); // Error
 
 // p.showMessage(); // Error
+## Topic: Method Overriding
+
 Method Overriding o In a class hierarchy, when a method in a subclass has the same name and type signature as a method in its superclass, then the method in the subclass is said to override the method in the superclass. o When an overridden method is called from within a subcl ass, it will always refer to the subclass version of that method. The version of the method defined by the superclass will be hidden. class A
 { int i, j;
 A(int a, int b)
@@ -832,6 +836,8 @@ B(int a, int b, int c)
 { B subOb = new B(1, 2, 3); subOb.show("This is k: "); // this calls show() in B subOb.show(); // this calls show() in A
 Output: This is k: 3 i and j: 1 2
 The version of show( ) in B takes a string parameter. This makes its type signature different from the one in A, which takes no parameters. Therefore, no overriding takes place.
+## Topic: Dynamic Method Dispatch
+
 Dynamic Method Dispatch o Java implements run-time polymorphism by using Dynamic method dispatch. o In this mechanism, method overridding is resolved at run time, rather than compile time. Hence it is an example for run-time polymorphism. o When superclass reference variable refers to Child class object, it is known as Upcasting. In
 When an overridden method is called through a superclass reference, Java determines which version of that method to execute based upon the type of the object being referred to at the time the call occurs. class A
 { void callme()
@@ -853,11 +859,13 @@ When an overridden method is called through a superclass reference, Java determi
 
 A r; // obtain a reference of type A r = a; // r refers to an A object r.callme(); // calls A's version of callme r = b; // r refers to a B object r.callme(); // calls B's version of callme r = c; // r refers to a C object r.callme(); // calls C's version of callme
 
-## Topic: Output: Inside A’s Callme Method
+Output: Inside A’s Callme Method
 
-## Topic: Inside B’s Callme Method
+Inside B’s Callme Method
 
-## Topic: Inside C’s Callme Method Final Variables
+Inside C’s Callme Method
+
+## Topic: Final Variables
 
 - Final variables are constants. Its value can never be changed.
 - The value of a final variable must be initialized, either when it's declared or in the constructor of the class.
@@ -884,7 +892,9 @@ Example: Can’t modify local final variable inside the method class Demo
 { final int num = 10;
 // num = 20; ❌ Error
 
-## Topic: System.out.println(num); Final Methods
+System.out.println(num);
+
+## Topic: Final Methods
 
 - A final method cannot be overridden in a subclass.
 - If we wish to prevent the subclasses from overriding the members of the super class, we can declare them as final in its super class using the keyword final. class A
@@ -897,6 +907,8 @@ Example: Can’t modify local final variable inside the method class Demo
 {
 // void show() { } // ❌ Error: Cannot override final method
 Because show( ) is declared as final, it cannot be overridden in B. If you attempt to do so, a compile-time error will result.
+## Topic: Late Binding and Early Binding
+
 - Java resolves calls to methods dynamically, at run time. This is called late binding.
 - final methods cannot be overridden. So a call to final method can be resolved at compile time. This is called early binding. final class
 - A final class cannot be inherited. To do this, precede the class declaration with final.

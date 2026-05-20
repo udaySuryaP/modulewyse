@@ -127,13 +127,74 @@ function parseTopics(body: string) {
     const nextMatch = matches[index + 1];
     const start = (match.index ?? 0) + match[0].length;
     const end = nextMatch?.index ?? body.length;
+    const title = match[1].trim();
+    const content = body.slice(start, end).trim();
+
+    if (looksLikeCodeOrOutputHeading(title) && topics.length > 0) {
+      const previous = topics[topics.length - 1];
+      previous.content = `${previous.content}\n\n${title}\n\n${content}`.trim();
+      continue;
+    }
+
     topics.push({
-      content: body.slice(start, end).trim(),
-      title: match[1].trim(),
+      content,
+      title,
     });
   }
 
   return topics;
+}
+
+function looksLikeCodeOrOutputHeading(title: string) {
+  const normalized = title.trim();
+
+  return [
+    /^\/\//,
+    /^System\.out\.println/i,
+    /^Output\b/i,
+    /^Inside\s+/i,
+    /^[{}]/,
+    /^[A-Z]:\\/,
+    /\$\d+(?:\.\d+)?/,
+    /;\s*$/,
+    /\bObj\d?\s*=/i,
+    /\bnew\s+[A-Z][A-Za-z0-9_]*\s*\(/,
+    /\bpublic\s+class\b/i,
+    /\bclass\s+[A-Z][A-Za-z0-9_]*\b/i,
+  ].some((pattern) => pattern.test(normalized));
+}
+
+function inferChunkKind(title: string, content: string) {
+  const combined = `${title}\n${content}`;
+
+  if (looksLikeCodeOrOutputHeading(title)) {
+    return "example";
+  }
+
+  if (
+    /\b(example|program|class\s+[A-Z][A-Za-z0-9_]*)\b/i.test(combined) ||
+    /System\.out\.println|public\s+static\s+void\s+main|void\s+\w+\(/.test(combined)
+  ) {
+    return "example";
+  }
+
+  if (
+    /\b(is|are|means|called|defined|definition|refers to|represents)\b/i.test(content)
+  ) {
+    return "concept";
+  }
+
+  return "concept";
+}
+
+function isLikelyOutlineFragment(title: string, content: string) {
+  const words = wordCount(content);
+  const titleLooksLikeList = /[,;]|\band\b/i.test(title);
+  const contentLooksLikeSyllabus =
+    /;| - |,/.test(content) &&
+    !/\b(is|are|means|called|defined|refers to)\b/i.test(content);
+
+  return words < 45 && titleLooksLikeList && contentLooksLikeSyllabus;
 }
 
 function splitTopicIntoChunks(topic: ParsedContentTopic, maxWords = 700) {
@@ -252,6 +313,16 @@ async function buildPreview() {
 
       for (const content of chunkTexts) {
         const contentWordCount = wordCount(content);
+        const chunkKind = inferChunkKind(topic.title, content);
+
+        if (isLikelyOutlineFragment(topic.title, content)) {
+          sourceWarnings.push({
+            fileName,
+            message: `topic "${topic.title}" was skipped as a syllabus/outline fragment (${contentWordCount} words).`,
+            severity: "warning",
+          });
+          continue;
+        }
 
         if (contentWordCount < minimumReadyChunkWords) {
           sourceWarnings.push({
@@ -277,7 +348,9 @@ async function buildPreview() {
           chunkIndex,
           content,
           metadata: {
+            chunkKind,
             moduleNumber: metadata.module ?? 0,
+            retrievalEligible: true,
             sourceType,
             status,
             subjectCode,

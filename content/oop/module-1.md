@@ -400,19 +400,7 @@ Structure of a simple java program; Java programming Environment and Runtime
 
 Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm; Microservices.
 
-## Topic: Declaring Objects; Object Reference; Introduction To Methods; Constructors; Access
-
-## Topic: Modifiers; This Keyword
-
-## Topic: Polymorphism
-
-## Topic: Method Overloading, Using Objects As Parameters, Returning Objects, Recursion. Static
-
-## Topic: Members, Final Variables, Inner Classes
-
-Inheritance - Super Class, Sub Class, Types of Inheritance, The super keyword, protected Members, Calling Order of Constructors. Method Overriding, Dynamic
-
-## Topic: Method Dispatch, Using Final With Inheritance
+Module outline: Declaring Objects; Object Reference; Introduction To Methods; Constructors; Access Modifiers; This Keyword; Polymorphism; Method Overloading; Using Objects As Parameters; Returning Objects; Recursion; Static Members; Final Variables; Inner Classes; Inheritance; Super Class; Sub Class; Types of Inheritance; The super keyword; protected Members; Calling Order of Constructors; Method Overriding; Dynamic Method Dispatch; Using Final With Inheritance.
 
 ## Topic: Packages And Interfaces –
 
@@ -2208,14 +2196,11 @@ System.out.println("Volume is " + vol);
 
 ## Topic: Volume Is 162.0
 
-## Topic: Constructors
+## Topic: Constructor Definition
 
 It has the same name as the class and no return type, not even void.
-
-## Topic: Syntax: Class Classname
-
-## Topic: { Classname()
-
+Syntax: Class Classname
+{ Classname()
 { // constructor body
 
 ## Topic: Default Constructor
@@ -2223,21 +2208,23 @@ It has the same name as the class and no return type, not even void.
 • Provided by the compiler if no constructor is defined.
 • Initializes objects with default values.
 
-## Topic: Example: Class Car
+Example: Class Car
 
 { Car() // default constructor
 
-## Topic: { System.out.println("default Constructor Called"); Public Class Main
+{ System.out.println("default Constructor Called"); Public Class Main
 
 { public static void main(String[] args)
 { Car c1 = new Car(); // calls default constructor
 
-## Topic: Output: Default Constructor Called
+Output: Default Constructor Called
 <!-- page: 64 -->
+
+## Topic: Parameterized Constructor
 
 • Accepts arguments to initialize object values.
 
-## Topic: Example: Class Student
+Example: Class Student
 
 { String name; int age;
 Student(String n, int a) //Parameterized Constructor
@@ -2251,11 +2238,11 @@ Output: Alice is 20 years old.
 
 • Copies data from one object to another.
 
-## Topic: Example: Class Book
+Example: Class Book
 
-## Topic: { String Title;
+{ String Title;
 
-## Topic: Book(string T)
+Book(string T)
 
 { title = t;
 Book(Book b) // copy constructor
@@ -2263,11 +2250,11 @@ Book(Book b) // copy constructor
 { System.out.println("Title: " + title); public class Main
 { public static void main(String[] args)
 
-## Topic: { Book B1 = New Book("java Programming");
+{ Book B1 = New Book("java Programming");
 
 Book b2 = new Book(b1); // copy object b2.show();
 
-## Topic: Output: Title: Java Programming
+Output: Title: Java Programming
 <!-- page: 65 -->
 
 ## Topic: Access Modifiers
@@ -2327,11 +2314,9 @@ This(int a, int b) // Parameterized constructor
 Output: a = 10 b = 20
 <!-- page: 67 -->
 
-## Topic: Using This() To Invoke Current Class Constructor Class This
+## Topic: Constructor Chaining with this()
 
 { int a; int b;
-
-## Topic: This() // Default Constructor
 
 { this(10, 20);
 System.out.println("Inside default constructor \n");
@@ -2340,13 +2325,11 @@ This(int a, int b) // Parameterized constructor
 System.out.println("Inside parameterized constructor"); public static void main(String[] args)
 { This object = new This();
 
-## Topic: Output: Inside Parameterized Constructor
+Output: Inside Parameterized Constructor
 
-## Topic: Using "this" Keyword To Return The Current Class Instance Class This
+## Topic: Returning Current Object with this
 
 { int a, b;
-
-## Topic: This() // Default Constructor
 
 { a = 10; b = 20;
 This get() // Method that returns current class instance
@@ -2355,12 +2338,10 @@ This get() // Method that returns current class instance
 This object = new This(); object.get().display();
 Output: a = 10 b = 20
 
-## Topic: Using "this" Keyword As A Method Parameter Class This
+## Topic: Passing this as Method Parameter
 
 { int a; int b;
 <!-- page: 68 -->
-
-## Topic: This() // Default Constructor
 
 { a = 10; b = 20; void display(This obj) // Method that receives "this" keyword as parameter
 { System.out.println("a = " + obj.a+ " b = " + obj.b); void get() // Method that returns current class instance
