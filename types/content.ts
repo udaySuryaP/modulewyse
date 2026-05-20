@@ -27,9 +27,12 @@ export type ParsedContentModule = {
 
 export type ContentSourceMetadata = {
   module: number;
+  needs_review?: boolean;
   source_type: ContentSourceType;
   status: ContentStatus;
   subject: string;
+  subject_code?: string;
+  subject_name?: string;
   title: string;
   topics: string[];
 };
@@ -63,6 +66,9 @@ export type ChunkPreview = {
     moduleNumber: number;
     sourceFile: string;
     sourceTitle: string;
+    sourceType: ContentSourceType;
+    status: ContentStatus;
+    subjectCode: string;
     subjectSlug: string;
     topicTitle: string;
   };
@@ -75,9 +81,12 @@ export type SourcePreview = {
   contentHash: string;
   fileName: string;
   module: number;
+  needsReview: boolean;
   sourceType: ContentSourceType;
   status: ContentStatus;
   subject: string;
+  subjectCode: string;
+  subjectName: string;
   title: string;
   topics: string[];
   warnings: ContentValidationIssue[];

@@ -19,6 +19,9 @@ export const allowedContentStatuses = [
   "archived",
 ] as const satisfies readonly ContentStatus[];
 
+export const pbcst304ReadyModules = [1, 2, 3] as const;
+export const pbcst304DraftModules = [4] as const;
+
 export function isAllowedSourceType(value: string): value is ContentSourceType {
   return allowedContentSourceTypes.includes(value as ContentSourceType);
 }
@@ -48,6 +51,14 @@ export function validateSourceMetadata(
     issues.push({ fileName, message: "subject is required.", severity: "error" });
   }
 
+  if (metadata.subject !== "oop") {
+    issues.push({ fileName, message: "subject must be the slug oop.", severity: "error" });
+  }
+
+  if (metadata.subject_code && metadata.subject_code !== "PBCST304") {
+    issues.push({ fileName, message: "subject_code must be PBCST304.", severity: "error" });
+  }
+
   if (!Number.isInteger(metadata.module) || !metadata.module || metadata.module < 1 || metadata.module > 5) {
     issues.push({
       fileName,
@@ -72,6 +83,34 @@ export function validateSourceMetadata(
     issues.push({
       fileName,
       message: "status is required and must be draft, ready, or archived.",
+      severity: "error",
+    });
+  }
+
+  if (metadata.subject_code === "PBCST304" && metadata.module === 5) {
+    issues.push({
+      fileName,
+      message: "Module 5 is not expected for PBCST304.",
+      severity: "error",
+    });
+  }
+
+  if (
+    metadata.subject_code === "PBCST304" &&
+    metadata.status === "ready" &&
+    !pbcst304ReadyModules.includes(metadata.module as 1 | 2 | 3)
+  ) {
+    issues.push({
+      fileName,
+      message: "Only PBCST304 Modules 1, 2, and 3 may be marked ready in this phase.",
+      severity: "error",
+    });
+  }
+
+  if (metadata.status === "ready" && metadata.needs_review) {
+    issues.push({
+      fileName,
+      message: "ready content cannot have needs_review enabled.",
       severity: "error",
     });
   }
@@ -118,7 +157,7 @@ export function validateChunkMetadata({
     issues.push({
       fileName,
       message: `ready topic "${title}" still contains TODO markers.`,
-      severity: "warning",
+      severity: "error",
     });
   }
 

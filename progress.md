@@ -2240,3 +2240,126 @@ create table if not exists public.message_feedback (
 - Review generated chunks and warnings.
 - Run `npm run content:ingest` only after content has been manually reviewed.
 - After chunks are stable, add embeddings/vector search in a separate phase.
+
+## 2026-05-20 - Security Check And Grant Hardening
+
+### Completed
+- Ran a repository security pass across:
+  - tracked secrets and env files
+  - client/server env boundaries
+  - Supabase client usage
+  - auth redirects and protected route checks
+  - RLS policies
+  - database table grants
+  - exposed public functions
+  - dependency audit
+- Verified `.env.local` is ignored and not tracked.
+- Verified no usable secrets are committed; `.env.example` and docs contain placeholders only.
+- Verified `SUPABASE_SERVICE_ROLE_KEY` is not imported by app/client code.
+- Verified service role usage is limited to `scripts/ingest-content.ts`, a Node-only developer ingestion script.
+- Verified all public Supabase tables have RLS enabled.
+- Verified exposed public functions:
+  - `public.handle_new_user()` has fixed `search_path`, is `SECURITY DEFINER`, and is not directly executable by `anon`, `authenticated`, or `public`.
+  - `public.set_updated_at()` has fixed `search_path` and is not directly executable by `anon`, `authenticated`, or `public`.
+- Found broad default Data API table grants for `anon` and `authenticated`.
+- Added and applied live grant-hardening migration:
+  - `supabase/migrations/20260519194118_harden_table_grants.sql`
+- Updated `supabase/schema.sql` with least-privilege grants.
+- Live Supabase grant result after hardening:
+  - `anon`: no public table grants.
+  - `authenticated`: only required table operations.
+  - read-only grants for subjects/modules/topics/content tables.
+  - own-user write-capable grants only for profiles, conversations, messages, and feedback.
+- Added `supabase/.temp/` to `.gitignore` to avoid committing Supabase CLI local state.
+- Ran checks:
+  - `npm run lint` passed.
+  - `npx tsc --noEmit` passed.
+  - `npm run build` passed.
+  - `npm audit --audit-level=high` passed for high severity.
+
+### Issues / Notes
+- Supabase security advisor still reports leaked-password protection disabled. This must be enabled in the Supabase dashboard.
+- `npm audit` still reports a moderate `postcss` advisory through Next.js. No forced audit fix was run because npm proposes a breaking downgrade path.
+- Supabase performance advisor reports several unindexed foreign keys. These are performance, not direct security, and should be handled in a separate migration.
+- Vercel env values and Supabase Auth redirect URLs still require manual dashboard confirmation.
+
+### Next
+- Enable leaked-password protection in Supabase Auth dashboard.
+- Confirm Supabase Auth redirect URLs for local and production.
+- Verify Vercel env vars manually, especially that service role keys are not `NEXT_PUBLIC`.
+- Add performance indexes for foreign keys reported by Supabase advisors.
+
+## 2026-05-20 - PBCST304 OOP Notes Preview And Ingestion Gate
+
+### Completed
+- Inspected copied OOP content under `content/oop/`.
+- Confirmed canonical OOP note files now exist as:
+  - `content/oop/module-1.md`
+  - `content/oop/module-2.md`
+  - `content/oop/module-3.md`
+  - `content/oop/module-4.md`
+- Confirmed Module 5 is not required for PBCST304 and removed the old `content/oop/module-5.md` template from the content workspace.
+- Normalized Module 1, Module 2, and Module 3 frontmatter:
+  - `subject: oop`
+  - `subject_name: "Object Oriented Programming"`
+  - `subject_code: PBCST304`
+  - `source_type: notes`
+  - `status: ready`
+  - `needs_review: false`
+- Kept Module 4 as draft/review:
+  - `status: draft`
+  - `needs_review: true`
+  - no chunks generated
+- Updated content tooling so PBCST304 does not require Module 5.
+- Updated preview tooling to:
+  - process existing module files
+  - generate chunks only for ready OOP PBCST304 notes in Modules 1-3
+  - skip draft/review sources
+  - warn, not fail, when Module 5 is absent
+  - validate local figure links
+  - preserve `subjectCode`, source type, status, module, topic, and source metadata in generated chunks
+- Updated ingestion tooling so it only ingests ready OOP PBCST304 note chunks from Modules 1-3.
+- Verified previous-year questions remain staged only under `content/oop/questions-staging/`.
+- Verified `content/oop/questions-staging/previous-year-questions.json` is valid JSON.
+- Updated OOP catalog metadata:
+  - fallback subject code changed from `CST 201` to `PBCST304`
+  - seed data changed from `CST 201` to `PBCST304`
+  - OOP fallback modules changed to Modules 1-4 only
+  - OOP seed no longer creates Module 5
+- Updated live Supabase OOP subject metadata:
+  - `subjects.code = PBCST304`
+  - OOP modules are now `[1, 2, 3, 4]`
+- Ran `npm run content:preview`; passed.
+- Preview result:
+  - sources: 4
+  - chunks: 373
+  - Module 1 chunks: 225
+  - Module 2 chunks: 84
+  - Module 3 chunks: 64
+  - Module 4 chunks: 0
+  - Module 5 chunks: 0
+  - fatal errors: 0
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- Content ingestion did not run because `SUPABASE_SERVICE_ROLE_KEY` is not available in `.env.local` or the current shell environment.
+- Live Supabase currently has no OOP PBCST304 content source/chunk rows inserted.
+- Preview warnings remain from copied-note cleanup quality:
+  - many headings are short
+  - several extracted headings have no body content
+  - no fatal metadata errors were found
+  - no Module 5 chunks were generated
+  - no draft Module 4 chunks were generated
+- Module 4 still needs cleanup and review before it can be marked ready.
+- Previous-year questions remain staged only and need a dedicated question-library schema/ingestion phase.
+- No embeddings, pgvector, OpenAI, RAG, admin UI, upload UI, or app UI changes were added.
+
+### Next
+- Add `SUPABASE_SERVICE_ROLE_KEY` locally for developer ingestion only.
+- Re-run `npm run content:preview`.
+- Review and accept the remaining copied-note warnings, or clean the fragmented headings first.
+- Run `npm run content:ingest` after the service role key is available.
+- Add previous-year question library schema and ingestion for reviewed OOP PBCST304 questions.

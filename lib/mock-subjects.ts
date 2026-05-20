@@ -20,12 +20,12 @@ export const mockSubjects: MockSubject[] = [
     slug: "oop",
     name: "Object Oriented Programming",
     shortName: "OOP",
-    code: "CST 201",
+    code: "PBCST304",
     semester: "S4",
     status: "available",
     description:
       "Covers classes, objects, inheritance, polymorphism, exception handling, and core OOP principles.",
-    modules: subjectModules,
+    modules: ["all", "1", "2", "3", "4"],
     topicSamples: [
       "Classes and objects",
       "Inheritance",

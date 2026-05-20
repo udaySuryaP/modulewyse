@@ -7,6 +7,36 @@ import type { ContentPreviewOutput, ContentValidationIssue } from "../types/cont
 
 const rootDir = process.cwd();
 const previewPath = path.join(rootDir, "content", "generated", "oop-chunks.preview.json");
+const readyModules = new Set([1, 2, 3]);
+const expectedCourseCode = "PBCST304";
+
+async function loadLocalEnv() {
+  for (const fileName of [".env.local", ".env"]) {
+    try {
+      const raw = await readFile(path.join(rootDir, fileName), "utf8");
+
+      for (const line of raw.split(/\r?\n/)) {
+        const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+
+        if (!match) {
+          continue;
+        }
+
+        const [, key, rawValue] = match;
+
+        if (process.env[key]) {
+          continue;
+        }
+
+        process.env[key] = rawValue
+          .trim()
+          .replace(/^['"]|['"]$/g, "");
+      }
+    } catch {
+      // Optional local env file.
+    }
+  }
+}
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -19,6 +49,8 @@ function requireEnv(name: string) {
 }
 
 async function main() {
+  await loadLocalEnv();
+
   const supabaseUrl = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
   const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   const preview = JSON.parse(
@@ -37,6 +69,22 @@ async function main() {
 
   for (const source of preview.sources) {
     const blockingIssues = source.warnings.filter((issue) => issue.severity === "error");
+
+    if (
+      source.status !== "ready" ||
+      source.sourceType !== "notes" ||
+      source.subject !== "oop" ||
+      source.subjectCode !== expectedCourseCode ||
+      !readyModules.has(source.module)
+    ) {
+      warnings.push({
+        fileName: source.fileName,
+        message: "Skipped: only ready OOP PBCST304 Module 1-3 notes are ingested.",
+        severity: "warning",
+      });
+      skippedSources += 1;
+      continue;
+    }
 
     if (blockingIssues.length > 0) {
       warnings.push(...blockingIssues);
@@ -79,6 +127,9 @@ async function main() {
           file_name: source.fileName,
           metadata: {
             moduleNumber: source.module,
+            needsReview: source.needsReview,
+            subjectCode: source.subjectCode,
+            subjectName: source.subjectName,
             subjectSlug: source.subject,
             topics: source.topics,
           },
@@ -100,6 +151,15 @@ async function main() {
 
     sourcesUpserted += 1;
 
+    const { error: deleteChunksError } = await supabase
+      .from("content_chunks")
+      .delete()
+      .eq("source_id", sourceRow.id);
+
+    if (deleteChunksError) {
+      throw deleteChunksError;
+    }
+
     for (const chunk of source.chunks) {
       const { data: topic } = moduleRow
         ? await supabase
@@ -116,7 +176,11 @@ async function main() {
           {
             chunk_index: chunk.chunkIndex,
             content: chunk.content,
-            metadata: chunk.metadata,
+            metadata: {
+              ...chunk.metadata,
+              subjectCode: source.subjectCode,
+              sourceType: source.sourceType,
+            },
             module_id: moduleRow?.id ?? null,
             source_id: sourceRow.id,
             status: source.status,
