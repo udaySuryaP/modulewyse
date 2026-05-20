@@ -5,43 +5,60 @@ import { useMemo, useState } from "react";
 
 import { SelectInput } from "@/components/auth/form-fields";
 import { StatusBadge } from "@/components/landing/status-badge";
-import { type LibraryQuestion, mockLibraryQuestions } from "@/lib/mock-library";
 import {
-  getSubjectBySlug,
   isChatEnabledSubject,
   subjectModuleLabel,
 } from "@/lib/mock-subjects";
 import { cn } from "@/lib/utils";
+import type { LibraryQuestionViewModel } from "@/types/library";
 
 const allOption = "All";
-const subjectOptions = [
-  allOption,
-  ...Array.from(new Set(mockLibraryQuestions.map((item) => item.subjectLabel))),
-];
-const moduleOptions = [
-  allOption,
-  ...Array.from(
-    new Set(mockLibraryQuestions.map((item) => subjectModuleLabel(item.module))),
-  ),
-];
-const answerTypeOptions = [
-  allOption,
-  ...Array.from(new Set(mockLibraryQuestions.map((item) => item.answerType))),
-];
-const yearOptions = [
-  allOption,
-  ...Array.from(new Set(mockLibraryQuestions.map((item) => item.year))),
-];
 
-export function QuestionLibrary() {
+export function QuestionLibrary({
+  dataSource,
+  questions,
+}: {
+  dataSource: "supabase" | "fallback";
+  questions: LibraryQuestionViewModel[];
+}) {
   const [subject, setSubject] = useState(allOption);
   const [module, setModule] = useState(allOption);
   const [answerType, setAnswerType] = useState(allOption);
   const [year, setYear] = useState(allOption);
+  const subjectOptions = useMemo(
+    () => [
+      allOption,
+      ...Array.from(new Set(questions.map((item) => item.subjectLabel))),
+    ],
+    [questions],
+  );
+  const moduleOptions = useMemo(
+    () => [
+      allOption,
+      ...Array.from(
+        new Set(questions.map((item) => subjectModuleLabel(item.module))),
+      ),
+    ],
+    [questions],
+  );
+  const answerTypeOptions = useMemo(
+    () => [
+      allOption,
+      ...Array.from(new Set(questions.map((item) => item.answerType))),
+    ],
+    [questions],
+  );
+  const yearOptions = useMemo(
+    () => [
+      allOption,
+      ...Array.from(new Set(questions.map((item) => item.year))),
+    ],
+    [questions],
+  );
 
   const filteredQuestions = useMemo(
     () =>
-      mockLibraryQuestions.filter((question) => {
+      questions.filter((question) => {
         const moduleLabel = subjectModuleLabel(question.module);
 
         return (
@@ -51,7 +68,7 @@ export function QuestionLibrary() {
           (year === allOption || question.year === year)
         );
       }),
-    [answerType, module, subject, year],
+    [answerType, module, questions, subject, year],
   );
 
   return (
@@ -64,9 +81,14 @@ export function QuestionLibrary() {
           Previous-question library
         </h1>
         <p className="mt-4 max-w-[720px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
-          Browse static sample questions and open supported subjects directly in
+          Browse previous-year questions and open supported subjects directly in
           the ModuleWyse mock chat flow.
         </p>
+        {dataSource === "fallback" ? (
+          <p className="mt-3 text-[13px] leading-[1.5] text-[var(--mw-muted)]">
+            Showing fallback sample questions while the database library is unavailable.
+          </p>
+        ) : null}
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <FilterSelect
@@ -103,7 +125,7 @@ export function QuestionLibrary() {
           ))
         ) : (
           <div className="mw-card p-5 text-[15px] leading-[1.5] text-[var(--mw-body)]">
-            No static questions match these filters.
+            No questions match these filters.
           </div>
         )}
       </section>
@@ -140,9 +162,18 @@ function FilterSelect({
   );
 }
 
-function QuestionCard({ question }: { question: LibraryQuestion }) {
-  const subject = getSubjectBySlug(question.subjectSlug);
-  const canAsk = Boolean(subject && isChatEnabledSubject(subject));
+function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
+  const canAsk = isChatEnabledSubject({
+    code: "",
+    description: "",
+    modules: [],
+    name: question.subjectLabel,
+    semester: "",
+    shortName: question.subjectLabel,
+    slug: question.subjectSlug,
+    status: question.subjectStatus,
+    topicSamples: [],
+  });
   const chatHref = `/chat?q=${encodeURIComponent(question.question)}&subject=${question.subjectSlug}&module=${question.module}`;
 
   return (
@@ -155,7 +186,7 @@ function QuestionCard({ question }: { question: LibraryQuestion }) {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            {subject ? <StatusBadge status={subject.status} /> : null}
+            <StatusBadge status={question.subjectStatus} />
             <span className="mw-badge">
               {question.answerType}
             </span>

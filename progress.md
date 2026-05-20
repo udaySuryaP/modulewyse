@@ -2429,3 +2429,86 @@ create table if not exists public.message_feedback (
 ### Next
 - Add previous-year question library schema and ingestion for reviewed OOP PBCST304 questions.
 - After notes and question library are stable, add pgvector/embeddings in a separate phase.
+
+## 2026-05-20 - PBCST304 Previous-Year Questions Ingested
+
+### Completed
+- Added previous-year question database foundation:
+  - `public.previous_questions`
+  - `public.previous_question_appearances`
+- Added migration:
+  - `supabase/migrations/20260520064113_add_previous_year_questions.sql`
+- Updated `supabase/schema.sql` with:
+  - tables
+  - indexes
+  - updated-at trigger for `previous_questions`
+  - RLS policies
+  - least-privilege authenticated select grants
+  - no anon grants
+- Applied the migration to live Supabase.
+- Verified live Supabase:
+  - both previous-question tables exist
+  - RLS is enabled on both tables
+  - anon cannot select previous questions
+  - authenticated can select ready previous questions
+  - authenticated cannot insert previous questions
+- Added TypeScript types:
+  - `PreviousQuestion`
+  - `PreviousQuestionAppearance`
+  - `PreviousQuestionType`
+  - `PreviousQuestionStatus`
+  - `QuestionConfidence`
+  - library ingestion/view-model types
+- Added previous-question staging parser and normalization helpers:
+  - `lib/content/previous-questions.ts`
+- Added preview script:
+  - `npm run questions:preview`
+- Added ingestion script:
+  - `npm run questions:ingest`
+- Preview result:
+  - questions read: 136
+  - ready questions: 125
+  - skipped questions: 11
+  - skipped reason: not ready
+  - duplicate groups: 0
+  - module distribution: Module 1 = 88, Module 2 = 11, Module 4 = 26
+  - unknown metadata: exam = 120, marks = 125, module = 0, topic = 0, year = 0
+- Ingested reviewed OOP PBCST304 previous-year questions into Supabase:
+  - questions upserted: 125
+  - appearances upserted: 125
+  - questions skipped: 11
+- Verified live inserted rows:
+  - Module 1 questions: 88
+  - Module 2 questions: 11
+  - Module 4 questions: 26
+  - appearances: 125
+  - no Module 5 rows
+  - no low-confidence rows
+  - no needs-review rows
+  - no non-ready rows
+- Added server-side library data helpers:
+  - `lib/data/library.ts`
+- Updated `/library` to prefer Supabase previous-question rows and fall back to static sample questions if the database query fails or returns no rows.
+- Preserved existing filters and Ask AI routing.
+- Logged-out `/library` route check:
+  - returned `307`
+  - redirected to `/login?next=%2Flibrary`
+- Ran checks:
+  - `npm run questions:preview` passed.
+  - `npm run questions:ingest` passed.
+  - `npx tsc --noEmit` passed.
+  - `npm run lint` passed.
+  - `npm run build` passed.
+  - `npm audit --audit-level=high` passed for high severity.
+
+### Issues / Notes
+- Most ingested questions have unknown exam or marks metadata because the staged source does not provide those fields.
+- 11 staged questions remain uninserted because they are not ready.
+- Topic matching is exact-title based; many questions preserve topic text in metadata even when `topic_id` is null.
+- Library authenticated browser QA still requires a logged-in student session.
+- No answers, embeddings, pgvector, OpenAI, RAG, admin UI, upload UI, payment, or app redesign were added.
+
+### Next
+- Add pgvector and embedding preparation for ready PBCST304 content chunks.
+- Then build retrieval over ready chunks.
+- Only after retrieval works, add AI answer generation.
