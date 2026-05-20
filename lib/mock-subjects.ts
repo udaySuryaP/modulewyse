@@ -1,5 +1,5 @@
 export type SubjectStatus = "available" | "beta" | "coming-soon";
-export type SubjectModule = "all" | "1" | "2" | "3" | "4" | "5";
+export type SubjectModule = "all" | `${number}`;
 
 export type MockSubject = {
   slug: string;

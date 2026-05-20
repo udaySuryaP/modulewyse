@@ -1,25 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
 
 import { StatusBadge } from "@/components/landing/status-badge";
-import type { SubjectModule } from "@/lib/mock-subjects";
+import type {
+  ModuleReadiness,
+  SubjectModuleViewModel,
+  SubjectViewModel,
+} from "@/lib/data/subjects";
 import { subjectStatusLabel } from "@/lib/mock-subjects";
-import type { SubjectViewModel } from "@/lib/data/subjects";
 import { cn } from "@/lib/utils";
 
 type SubjectDetailPanelProps = {
   subject: SubjectViewModel;
 };
 
+const moduleStatusClasses: Record<ModuleReadiness, string> = {
+  empty: "bg-[var(--mw-surface-strong)] text-[var(--mw-muted)]",
+  ready: "bg-[var(--mw-primary)] text-white",
+  review: "bg-[rgba(244,197,168,0.28)] text-[var(--mw-ink)]",
+};
+
+function moduleMeta(module: SubjectModuleViewModel) {
+  const details = [
+    module.topicCount === 1
+      ? "1 topic"
+      : `${module.topicCount} topics`,
+  ];
+
+  if (module.readyChunkCount > 0) {
+    details.push(
+      module.readyChunkCount === 1
+        ? "1 ready chunk"
+        : `${module.readyChunkCount} ready chunks`,
+    );
+  }
+
+  return details.join(" · ");
+}
+
 export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
-  const [selectedModule, setSelectedModule] = useState<SubjectModule>("all");
-  const chatEnabled = subject.status === "available" || subject.status === "beta";
-  const chatHref = useMemo(
-    () => `/chat?subject=${subject.slug}&module=${selectedModule}`,
-    [selectedModule, subject.slug],
-  );
+  const subjectChatEnabled =
+    (subject.status === "available" || subject.status === "beta") &&
+    subject.hasReadyContent;
 
   return (
     <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -43,6 +66,15 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           {subject.description}
         </p>
 
+        <div className="mt-6 flex flex-wrap gap-2">
+          <span className="mw-radius-pill bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--mw-muted)]">
+            {subject.moduleCountLabel}
+          </span>
+          <span className="mw-radius-pill bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--mw-muted)]">
+            {subject.contentStatusLabel}
+          </span>
+        </div>
+
         {subject.status === "beta" ? (
           <div className="mt-6 mw-radius-card border border-[var(--mw-hairline)] bg-[rgba(244,197,168,0.22)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
             This subject is in beta. Answers may be less complete until the
@@ -50,54 +82,88 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           </div>
         ) : null}
 
-        {chatEnabled ? (
-          <>
-            <div className="mt-8">
+        <div className="mt-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
               <p className="mw-label">
-                Select module
+                Modules
               </p>
-              <div className="mt-3 flex min-w-0 flex-wrap gap-2">
-                {subject.modules.map((module) => (
-                  <button
-                    className={cn(
-                      "min-h-10 max-w-full mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 py-2 text-[13px] font-medium leading-none text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
-                      selectedModule === module.value &&
-                        "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
-                    )}
-                    key={module.value}
-                    onClick={() => setSelectedModule(module.value)}
-                    type="button"
-                  >
-                    <span className="block truncate">{module.label}</span>
-                  </button>
-                ))}
-              </div>
+              <p className="mt-2 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+                Module readiness is based on the notes and syllabus currently
+                fed into ModuleWyse.
+              </p>
             </div>
 
-            <Link
-              className="mw-pill-primary mt-8 w-full sm:w-auto"
-              href={chatHref}
-            >
-              Start Chat
-            </Link>
-          </>
-        ) : (
-          <div className="mt-8 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-5">
-            <h2 className="mw-display text-[28px] leading-[1.08] text-[var(--mw-ink)] sm:text-[32px]">
-              This subject is being prepared.
-            </h2>
-            <p className="mt-3 text-[15px] leading-[1.55] text-[var(--mw-body)]">
-              ModuleWyse will open this subject after the curated academic
-              content is ready.
-            </p>
-            <Link
-              className="mw-pill-primary mt-5 w-full sm:w-auto"
-              href="/subjects"
-            >
-              View Available Subjects
-            </Link>
+            {subjectChatEnabled ? (
+              <Link
+                className="mw-pill-primary w-full sm:w-auto"
+                href={`/chat?subject=${subject.slug}&module=all`}
+              >
+                Start Chat
+              </Link>
+            ) : null}
           </div>
-        )}
+
+          {subject.modules.length > 0 ? (
+            <div className="mt-4 grid gap-3 lg:grid-cols-2">
+              {subject.modules.map((module) => {
+                const moduleChatEnabled =
+                  subjectChatEnabled && module.hasReadyContent;
+
+                return (
+                  <article
+                    className="mw-radius-card min-w-0 border border-[var(--mw-hairline)] bg-white p-4"
+                    key={module.value}
+                  >
+                    <div className="flex min-w-0 items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="mw-label text-[11px]">
+                          {module.label}
+                        </p>
+                        <h2 className="mt-2 line-clamp-2 text-[17px] font-medium leading-[1.25] text-[var(--mw-ink)]">
+                          {module.title}
+                        </h2>
+                      </div>
+                      <span
+                        className={cn(
+                          "shrink-0 mw-radius-pill px-3 py-1.5 text-[11px] font-semibold uppercase leading-none tracking-[0.08em]",
+                          moduleStatusClasses[module.moduleReadiness],
+                        )}
+                      >
+                        {module.contentStatus}
+                      </span>
+                    </div>
+
+                    <p className="mt-3 text-[13px] leading-[1.45] text-[var(--mw-muted)]">
+                      {moduleMeta(module)}
+                    </p>
+
+                    {moduleChatEnabled ? (
+                      <Link
+                        className="mw-pill-outline mt-4 w-full justify-center sm:w-auto"
+                        href={`/chat?subject=${subject.slug}&module=${module.value}`}
+                      >
+                        Start Chat
+                      </Link>
+                    ) : (
+                      <button
+                        className="mt-4 h-10 w-full cursor-not-allowed mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-4 text-[13px] font-medium text-[var(--mw-muted)] sm:w-auto"
+                        disabled
+                        type="button"
+                      >
+                        Notes not ready yet
+                      </button>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-4 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-5 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+              No notes or syllabus modules have been fed for this subject yet.
+            </div>
+          )}
+        </div>
       </section>
 
       <aside className="mw-card min-w-0 p-4 sm:p-6 xl:self-start">
@@ -124,6 +190,13 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
             Status
           </span>
           <span className="text-[var(--mw-ink)]">{subjectStatusLabel(subject.status)}</span>
+        </div>
+
+        <div className="mt-6 grid gap-1 text-[14px] leading-[1.45] text-[var(--mw-body)]">
+          <span className="mw-label text-[11px]">
+            Content
+          </span>
+          <span className="text-[var(--mw-ink)]">{subject.contentStatusLabel}</span>
         </div>
       </aside>
     </div>

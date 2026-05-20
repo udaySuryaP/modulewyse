@@ -17,14 +17,16 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { StudentSidebar } from "@/components/dashboard/student-sidebar";
+import { MinimalLoader } from "@/components/ui/minimal-loader";
 import {
   createConversation,
   getConversationWithMessages,
   getUserConversations,
   insertMessage,
+  markConversationUsed,
   saveMessageFeedback,
 } from "@/lib/data/chat";
 import { clearPendingQuestion, readPendingQuestion } from "@/lib/landing-flow";
@@ -332,6 +334,26 @@ export function ChatWorkspace({
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const openedConversationUsageRef = useRef(new Set<string>());
+
+  const refreshRecentConversations = useCallback(async () => {
+    try {
+      setRecentConversations(await getUserConversations());
+    } catch {
+      setRecentConversations([]);
+    }
+  }, []);
+
+  const recordConversationUsage = useCallback(
+    async (conversationId: string) => {
+      const updatedConversation = await markConversationUsed(conversationId);
+
+      if (updatedConversation) {
+        void refreshRecentConversations();
+      }
+    },
+    [refreshRecentConversations],
+  );
 
   useEffect(() => {
     const desktopQuery = window.matchMedia("(min-width: 1024px)");
@@ -353,8 +375,12 @@ export function ChatWorkspace({
   }, [resolvedInitialQuestion]);
 
   useEffect(() => {
-    refreshRecentConversations();
-  }, []);
+    const timeout = window.setTimeout(() => {
+      void refreshRecentConversations();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [refreshRecentConversations]);
 
   useEffect(() => {
     if (!initialConversationId) {
@@ -395,6 +421,11 @@ export function ChatWorkspace({
         );
         setActiveConversationId(result.conversation.id);
         setConversationLoadState("idle");
+
+        if (!openedConversationUsageRef.current.has(result.conversation.id)) {
+          openedConversationUsageRef.current.add(result.conversation.id);
+          void recordConversationUsage(result.conversation.id);
+        }
       } catch {
         if (!cancelled) {
           setMessages([]);
@@ -409,7 +440,7 @@ export function ChatWorkspace({
     return () => {
       cancelled = true;
     };
-  }, [initialConversationId, initialContext]);
+  }, [initialConversationId, initialContext, recordConversationUsage]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -426,14 +457,6 @@ export function ChatWorkspace({
 
   function focusComposer() {
     window.setTimeout(() => inputRef.current?.focus(), 0);
-  }
-
-  async function refreshRecentConversations() {
-    try {
-      setRecentConversations(await getUserConversations());
-    } catch {
-      setRecentConversations([]);
-    }
   }
 
   function assistantMessage(
@@ -621,6 +644,10 @@ export function ChatWorkspace({
             : message,
         ),
       );
+
+      if (conversationId) {
+        void recordConversationUsage(conversationId);
+      }
     } catch {
       conversationId = null;
       setToast("Chat is continuing locally. Persistence failed.");
@@ -1129,7 +1156,9 @@ function SidebarRecentConversations({
             month: "short",
             hour: "2-digit",
             minute: "2-digit",
-          }).format(new Date(conversation.updated_at));
+          }).format(
+            new Date(conversation.last_accessed_at ?? conversation.updated_at),
+          );
 
           return (
             <Link
@@ -1426,14 +1455,7 @@ function AssistantMessage({
 function LoadingAnswer() {
   return (
     <div className="mw-card p-5">
-      <p className="mw-label">
-        Generating from selected notes...
-      </p>
-      <div className="mt-5 grid gap-3">
-        <div className="h-4 w-2/3 animate-pulse mw-radius-pill bg-[var(--mw-surface-strong)]" />
-        <div className="h-4 w-full animate-pulse mw-radius-pill bg-[var(--mw-surface-strong)]" />
-        <div className="h-4 w-5/6 animate-pulse mw-radius-pill bg-[var(--mw-surface-strong)]" />
-      </div>
+      <MinimalLoader label="Generating from selected notes" variant="inline" />
     </div>
   );
 }

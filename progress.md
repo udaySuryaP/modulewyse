@@ -2936,3 +2936,104 @@ create table if not exists public.message_feedback (
 - Deploy to Vercel production.
 - Visit the live site.
 - Verify page views appear in the Vercel Analytics dashboard.
+
+## 2026-05-20 - Conversation Usage Sorting for Recent Chats
+
+### Completed
+- Added conversation usage tracking fields to `public.conversations`:
+  - `access_count integer not null default 0`
+  - `last_accessed_at timestamptz`
+- Created and applied `supabase/migrations/20260520214804_add_conversation_usage_tracking.sql`.
+- Added a usage sort index for current-user conversation lists.
+- Added the RLS-respecting `public.mark_conversation_used(uuid)` RPC for authenticated users.
+- Updated local schema and TypeScript conversation types.
+- Added `markConversationUsed()` to the chat data layer.
+- Incremented usage when an existing conversation is opened once per page mount.
+- Incremented usage after a user message is successfully persisted.
+- Sorted sidebar recent chats by:
+  - `access_count desc`
+  - `last_accessed_at desc nulls last`
+  - `updated_at desc`
+  - `created_at desc`
+- Preserved the existing sidebar/mobile recent chat UI and chat persistence behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Usage count is lightweight product telemetry for per-user chat ordering, not analytics.
+- Old conversations default to `access_count = 0` and `last_accessed_at = null`, then fall back to `updated_at` ordering.
+- Conversation usage tracking uses authenticated Supabase access and does not use service-role client code.
+- No chat answer generation, RAG behavior, UI design, or message content logic was changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue final PBCST304 retrieval cleanup before RAG answer generation.
+
+## 2026-05-20 - Data-Driven Subjects Module Counts
+
+### Completed
+- Updated the Subjects section to use live fed module/content stats from Supabase.
+- Replaced misleading static module counts in `/subjects`.
+- Added subject view-model fields for:
+  - total modules
+  - ready modules
+  - draft/review modules
+  - module count label
+  - content status label
+  - fed content state
+  - ready content state
+- Updated `/subjects` cards to show live module/readiness counts.
+- Updated `/subjects/[id]` to list live modules with per-module readiness.
+- Disabled module chat CTAs for modules without ready notes.
+- Kept subject-level chat available only when at least one module has ready content.
+- Made OOP/PBCST304 reflect the live DB state:
+  - 4 total modules
+  - 3 ready modules
+  - 1 in review
+  - no Module 5
+- Preserved static fallback only for missing Supabase env, failed Supabase queries, unavailable tables, or no DB subject data.
+- Preserved existing editorial UI style and protected route behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Subjects with no live modules/content correctly resolve to `0 modules` in Supabase mode.
+- Modules with DB syllabus rows but no ready notes are shown as `In review` or `No notes yet` depending on module/subject status.
+- Module 4 remains visible as review/not-ready when present without ready chunks.
+- No RAG, AI answer generation, chat behavior, database schema, or design-system behavior was changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue final PBCST304 retrieval cleanup before RAG answer generation.
+
+## 2026-05-20 - Minimal Editorial Loader
+
+### Completed
+- Replaced the bulky global loading UI with a minimal editorial loader.
+- Added reusable `MinimalLoader` variants:
+  - `page`
+  - `inline`
+  - `button`
+- Updated `components/loading/app-loading.tsx` to use the minimal page loader.
+- Kept `app/loading.tsx` wired to the existing app loading wrapper.
+- Replaced the chat answer skeleton loading card contents with the minimal inline loader while preserving the existing chat card placement.
+- Removed the route loading video background, overlay, large spinner, large card, and skeleton bars.
+- Preserved auth, routing, Supabase/database, analytics, retrieval/RAG, content, chat persistence, and form submission logic.
+- Added accessible loader semantics with `role="status"`, `aria-live="polite"`, and `aria-busy="true"`.
+- Used only Tailwind/CSS motion-safe pulse animation; no new dependency was added.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- No route, auth, database, RAG/retrieval, analytics, or content pipeline logic changed.
+- Button pending text states were left intact because they were already compact and not visually bulky.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue final PBCST304 retrieval cleanup before RAG answer generation.

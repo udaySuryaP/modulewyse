@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
 import { hasSupabasePublicEnv } from "@/lib/env/public";
 import {
   mockSubjects,
@@ -6,7 +5,16 @@ import {
   subjectModuleLabel,
   type SubjectModule,
 } from "@/lib/mock-subjects";
-import type { Module, Subject, SubjectStatus, SubjectWithModules } from "@/types/database";
+import { createClient } from "@/lib/supabase/server";
+import type {
+  ContentChunk,
+  ContentSource,
+  Module,
+  Subject,
+  SubjectStatus,
+  SubjectWithModules,
+  Topic,
+} from "@/types/database";
 
 const visibleSubjectStatuses = ["available", "beta", "coming-soon"] as const;
 const statusRank: Record<(typeof visibleSubjectStatuses)[number], number> = {
@@ -15,28 +23,59 @@ const statusRank: Record<(typeof visibleSubjectStatuses)[number], number> = {
   "coming-soon": 2,
 };
 
+type ContentCounter = {
+  chunkCount: number;
+  readyChunkCount: number;
+  readySourceCount: number;
+  sourceCount: number;
+};
+
+type SubjectSupplementalData = {
+  chunks: ContentChunk[];
+  modules: Module[];
+  sources: ContentSource[];
+  topics: Topic[];
+};
+
 export type SubjectDataSource = "supabase" | "fallback";
+export type ModuleReadiness = "ready" | "review" | "empty";
 
 export type SubjectModuleViewModel = {
+  chunkCount: number;
+  contentStatus: "Ready" | "In review" | "No notes yet";
+  hasFedContent: boolean;
+  hasReadyContent: boolean;
   label: string;
-  moduleNumber: number | null;
+  moduleNumber: number;
+  moduleReadiness: ModuleReadiness;
+  readyChunkCount: number;
+  readySourceCount: number;
+  sourceCount: number;
   status: SubjectStatus;
   title: string;
+  topicCount: number;
   value: SubjectModule;
 };
 
 export type SubjectViewModel = {
   code: string;
+  contentStatusLabel: string;
   description: string;
+  draftModules: number;
+  hasFedContent: boolean;
+  hasReadyContent: boolean;
   id: string;
+  moduleCountLabel: string;
   modules: SubjectModuleViewModel[];
   name: string;
+  readyModules: number;
   semester: string;
   shortName: string;
   slug: string;
   source: SubjectDataSource;
   status: (typeof visibleSubjectStatuses)[number];
   topicSamples: string[];
+  totalModules: number;
 };
 
 export type SubjectListResult = {
@@ -72,29 +111,147 @@ function sortSubjects(subjects: SubjectViewModel[]) {
   });
 }
 
+function pluralizeModules(count: number) {
+  return count === 1 ? "1 module" : `${count} modules`;
+}
+
+function contentStatusLabel(totalModules: number, readyModules: number) {
+  if (totalModules === 0) {
+    return "No notes yet";
+  }
+
+  if (readyModules === 0) {
+    return "In review";
+  }
+
+  const draftModules = totalModules - readyModules;
+
+  if (draftModules <= 0) {
+    return `${readyModules} ready`;
+  }
+
+  return `${readyModules} ready · ${draftModules} in review`;
+}
+
+function metadataModuleNumber(metadata: Record<string, unknown>) {
+  const value = metadata.moduleNumber;
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function emptyCounter(): ContentCounter {
+  return {
+    chunkCount: 0,
+    readyChunkCount: 0,
+    readySourceCount: 0,
+    sourceCount: 0,
+  };
+}
+
+function counterFor(
+  countersByModuleNumber: Map<number, ContentCounter>,
+  moduleNumber: number,
+) {
+  const existing = countersByModuleNumber.get(moduleNumber);
+
+  if (existing) {
+    return existing;
+  }
+
+  const next = emptyCounter();
+  countersByModuleNumber.set(moduleNumber, next);
+  return next;
+}
+
+function moduleValue(moduleNumber: number): SubjectModule {
+  return String(moduleNumber) as SubjectModule;
+}
+
+function moduleReadinessLabel(
+  moduleStatus: SubjectStatus,
+  hasFedContent: boolean,
+  hasReadyContent: boolean,
+): SubjectModuleViewModel["contentStatus"] {
+  if (hasReadyContent) {
+    return "Ready";
+  }
+
+  if (hasFedContent && moduleStatus !== "coming-soon") {
+    return "In review";
+  }
+
+  return "No notes yet";
+}
+
 function fallbackModules(subject: MockSubject): SubjectModuleViewModel[] {
-  return subject.modules.map((module) => ({
-    label: subjectModuleLabel(module),
-    moduleNumber: module === "all" ? null : Number(module),
-    status: subject.status,
-    title: subjectModuleLabel(module),
-    value: module,
-  }));
+  return subject.modules
+    .filter((module) => module !== "all")
+    .map((module) => {
+      const moduleNumber = Number(module);
+      const hasFedContent = subject.status !== "coming-soon";
+      const hasReadyContent = subject.status === "available";
+      const contentStatus = moduleReadinessLabel(
+        subject.status,
+        hasFedContent,
+        hasReadyContent,
+      );
+
+      return {
+        chunkCount: 0,
+        contentStatus,
+        hasFedContent,
+        hasReadyContent,
+        label: subjectModuleLabel(module),
+        moduleNumber,
+        moduleReadiness: hasReadyContent
+          ? "ready"
+          : hasFedContent
+            ? "review"
+            : "empty",
+        readyChunkCount: 0,
+        readySourceCount: 0,
+        sourceCount: 0,
+        status: subject.status,
+        title: subjectModuleLabel(module),
+        topicCount: 0,
+        value: module,
+      };
+    });
 }
 
 function fallbackSubjectToViewModel(subject: MockSubject): SubjectViewModel {
+  const modules = fallbackModules(subject);
+  const readyModules = modules.filter((module) => module.hasReadyContent).length;
+  const totalModules = modules.length;
+
   return {
     code: subject.code,
+    contentStatusLabel: contentStatusLabel(totalModules, readyModules),
     description: subject.description,
+    draftModules: Math.max(totalModules - readyModules, 0),
+    hasFedContent: totalModules > 0,
+    hasReadyContent: readyModules > 0,
     id: subject.slug,
-    modules: fallbackModules(subject),
+    moduleCountLabel: pluralizeModules(totalModules),
+    modules,
     name: subject.name,
+    readyModules,
     semester: subject.semester,
     shortName: subject.shortName,
     slug: subject.slug,
     source: "fallback",
     status: subject.status,
     topicSamples: subject.topicSamples,
+    totalModules,
   };
 }
 
@@ -102,58 +259,207 @@ function fallbackSubjectList() {
   return sortSubjects(mockSubjects.map(fallbackSubjectToViewModel));
 }
 
-function moduleToViewModel(module: Module): SubjectModuleViewModel {
-  const value = String(module.module_number) as SubjectModule;
-
-  return {
-    label: subjectModuleLabel(value),
-    moduleNumber: module.module_number,
-    status: module.status,
-    title: module.title,
-    value,
-  };
-}
-
-function subjectToViewModel(
+function normalizeSubjectWithStats(
   subject: Subject,
-  modules: Module[] = [],
+  data: SubjectSupplementalData,
 ): SubjectViewModel {
-  const normalizedModules: SubjectModuleViewModel[] = [
-    {
-      label: "All modules",
-      moduleNumber: null,
-      status: subject.status,
-      title: "All modules",
-      value: "all",
-    },
-    ...modules
-      .sort((left, right) => left.module_number - right.module_number)
-      .map(moduleToViewModel),
-  ];
+  const moduleById = new Map(data.modules.map((module) => [module.id, module]));
+  const moduleNumbers = new Set(data.modules.map((module) => module.module_number));
+  const topicCountByModuleId = new Map<string, number>();
+  const countersByModuleNumber = new Map<number, ContentCounter>();
+
+  data.topics.forEach((topic) => {
+    topicCountByModuleId.set(
+      topic.module_id,
+      (topicCountByModuleId.get(topic.module_id) ?? 0) + 1,
+    );
+  });
+
+  data.sources.forEach((source) => {
+    const moduleNumber = source.module_id
+      ? moduleById.get(source.module_id)?.module_number
+      : metadataModuleNumber(source.metadata);
+
+    if (!moduleNumber) {
+      return;
+    }
+
+    moduleNumbers.add(moduleNumber);
+    const counter = counterFor(countersByModuleNumber, moduleNumber);
+    counter.sourceCount += 1;
+
+    if (source.status === "ready") {
+      counter.readySourceCount += 1;
+    }
+  });
+
+  data.chunks.forEach((chunk) => {
+    const moduleNumber = chunk.module_id
+      ? moduleById.get(chunk.module_id)?.module_number
+      : metadataModuleNumber(chunk.metadata);
+
+    if (!moduleNumber) {
+      return;
+    }
+
+    moduleNumbers.add(moduleNumber);
+    const counter = counterFor(countersByModuleNumber, moduleNumber);
+    counter.chunkCount += 1;
+
+    if (chunk.status === "ready") {
+      counter.readyChunkCount += 1;
+    }
+  });
+
+  const moduleViews = [...moduleNumbers]
+    .sort((left, right) => left - right)
+    .map((moduleNumber) => {
+      const moduleRecord = data.modules.find(
+        (item) => item.module_number === moduleNumber,
+      );
+      const counter = countersByModuleNumber.get(moduleNumber) ?? emptyCounter();
+      const topicCount = moduleRecord
+        ? topicCountByModuleId.get(moduleRecord.id) ?? 0
+        : 0;
+      const hasReadyContent =
+        counter.readyChunkCount > 0 || counter.readySourceCount > 0;
+      const hasFedContent =
+        Boolean(moduleRecord) ||
+        topicCount > 0 ||
+        counter.sourceCount > 0 ||
+        counter.chunkCount > 0;
+      const status = moduleRecord?.status ?? subject.status;
+      const contentStatus = moduleReadinessLabel(
+        status,
+        hasFedContent,
+        hasReadyContent,
+      );
+      const moduleReadiness: ModuleReadiness = hasReadyContent
+        ? "ready"
+        : contentStatus === "In review"
+          ? "review"
+          : "empty";
+      const value = moduleValue(moduleNumber);
+
+      return {
+        chunkCount: counter.chunkCount,
+        contentStatus,
+        hasFedContent,
+        hasReadyContent,
+        label: subjectModuleLabel(value),
+        moduleNumber,
+        moduleReadiness,
+        readyChunkCount: counter.readyChunkCount,
+        readySourceCount: counter.readySourceCount,
+        sourceCount: counter.sourceCount,
+        status,
+        title: moduleRecord?.title ?? subjectModuleLabel(value),
+        topicCount,
+        value,
+      };
+    });
+
+  const readyModules = moduleViews.filter((module) => module.hasReadyContent).length;
+  const totalModules = moduleViews.length;
+  const topicSamples = data.topics
+    .sort((left, right) => left.priority - right.priority || left.title.localeCompare(right.title))
+    .map((topic) => topic.title)
+    .filter((topic, index, topics) => topics.indexOf(topic) === index)
+    .slice(0, 4);
 
   return {
     code: subject.code ?? "TBD",
+    contentStatusLabel: contentStatusLabel(totalModules, readyModules),
     description: subject.description ?? "",
+    draftModules: Math.max(totalModules - readyModules, 0),
+    hasFedContent:
+      totalModules > 0 ||
+      data.topics.length > 0 ||
+      data.sources.length > 0 ||
+      data.chunks.length > 0,
+    hasReadyContent: readyModules > 0,
     id: subject.id,
-    modules: normalizedModules.length > 1
-      ? normalizedModules
-      : [
-          {
-            label: "All modules",
-            moduleNumber: null,
-            status: subject.status,
-            title: "All modules",
-            value: "all",
-          },
-        ],
+    moduleCountLabel: pluralizeModules(totalModules),
+    modules: moduleViews,
     name: subject.name,
+    readyModules,
     semester: subject.semester ? `S${subject.semester}` : "TBD",
     shortName: subject.short_name,
     slug: subject.slug,
     source: "supabase",
     status: isVisibleStatus(subject.status) ? subject.status : "coming-soon",
-    topicSamples: [],
+    topicSamples,
+    totalModules,
   };
+}
+
+async function getSupplementalData(
+  subjectIds: string[],
+): Promise<Map<string, SubjectSupplementalData> | null> {
+  if (subjectIds.length === 0 || !hasSupabasePublicEnv()) {
+    return new Map();
+  }
+
+  const supabase = await createClient();
+  const [modulesResult, topicsResult, sourcesResult, chunksResult] =
+    await Promise.all([
+      supabase
+        .from("modules")
+        .select("*")
+        .in("subject_id", subjectIds)
+        .order("module_number", { ascending: true }),
+      supabase
+        .from("topics")
+        .select("*")
+        .in("subject_id", subjectIds)
+        .order("priority", { ascending: true }),
+      supabase
+        .from("content_sources")
+        .select("*")
+        .in("subject_id", subjectIds),
+      supabase
+        .from("content_chunks")
+        .select("*")
+        .in("subject_id", subjectIds),
+    ]);
+
+  if (
+    modulesResult.error ||
+    topicsResult.error ||
+    sourcesResult.error ||
+    chunksResult.error
+  ) {
+    return null;
+  }
+
+  const dataBySubject = new Map<string, SubjectSupplementalData>();
+
+  subjectIds.forEach((subjectId) => {
+    dataBySubject.set(subjectId, {
+      chunks: [],
+      modules: [],
+      sources: [],
+      topics: [],
+    });
+  });
+
+  ((modulesResult.data ?? []) as Module[]).forEach((module) => {
+    dataBySubject.get(module.subject_id)?.modules.push(module);
+  });
+
+  ((topicsResult.data ?? []) as Topic[]).forEach((topic) => {
+    dataBySubject.get(topic.subject_id)?.topics.push(topic);
+  });
+
+  ((sourcesResult.data ?? []) as ContentSource[]).forEach((source) => {
+    dataBySubject.get(source.subject_id)?.sources.push(source);
+  });
+
+  ((chunksResult.data ?? []) as ContentChunk[]).forEach((chunk) => {
+    dataBySubject.get(chunk.subject_id)?.chunks.push(chunk);
+  });
+
+  return dataBySubject;
 }
 
 export async function getSubjects(): Promise<Subject[]> {
@@ -242,26 +548,61 @@ export async function getSubjectListWithFallback(): Promise<SubjectListResult> {
     };
   }
 
+  const supplementalData = await getSupplementalData(
+    subjects.map((subject) => subject.id),
+  );
+
+  if (!supplementalData) {
+    return {
+      source: "fallback",
+      subjects: fallbackSubjectList(),
+    };
+  }
+
   return {
     source: "supabase",
-    subjects: sortSubjects(subjects.map((subject) => subjectToViewModel(subject))),
+    subjects: sortSubjects(
+      subjects.map((subject) =>
+        normalizeSubjectWithStats(
+          subject,
+          supplementalData.get(subject.id) ?? {
+            chunks: [],
+            modules: [],
+            sources: [],
+            topics: [],
+          },
+        ),
+      ),
+    ),
   };
 }
 
 export async function getSubjectWithModulesAndFallback(
   slug: string,
 ): Promise<SubjectDetailResult> {
-  const subjectWithModules = await getSubjectWithModules(slug);
+  const subject = await getSubjectBySlug(slug);
 
-  if (subjectWithModules) {
-    return {
-      source: "supabase",
-      subject: subjectToViewModel(subjectWithModules, subjectWithModules.modules),
-    };
+  if (subject) {
+    const supplementalData = await getSupplementalData([subject.id]);
+
+    if (supplementalData) {
+      return {
+        source: "supabase",
+        subject: normalizeSubjectWithStats(
+          subject,
+          supplementalData.get(subject.id) ?? {
+            chunks: [],
+            modules: [],
+            sources: [],
+            topics: [],
+          },
+        ),
+      };
+    }
   }
 
   const fallbackSubject = mockSubjects.find(
-    (subject) => subject.slug.toLowerCase() === slug.toLowerCase(),
+    (item) => item.slug.toLowerCase() === slug.toLowerCase(),
   );
 
   return {
@@ -287,6 +628,10 @@ export function normalizeSubjectModuleValue(
   modules: SubjectModuleViewModel[],
 ): SubjectModule {
   const normalized = value?.toLowerCase().replace(/^module\s+/, "");
+
+  if (normalized === "all") {
+    return "all";
+  }
 
   if (
     normalized &&
