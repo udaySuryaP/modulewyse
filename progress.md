@@ -2971,6 +2971,40 @@ create table if not exists public.message_feedback (
 ### Next
 - Continue final PBCST304 retrieval cleanup before RAG answer generation.
 
+## 2026-05-20 - Branch Stabilized Before RAG Answer Generation
+
+### Completed
+- Confirmed active branch is `codex/embedding-foundation`.
+- Confirmed the recent non-RAG work was already committed and pushed in `093706b`.
+- Reviewed completed non-RAG updates:
+  - recent chats usage-frequency sorting
+  - minimal editorial loader
+  - data-driven Subjects module/content counts
+  - Vercel Analytics integration
+- Verified `.env.local` remains ignored and untracked.
+- Verified committed secret references are placeholders or server/script-only environment names.
+- Verified live OOP/PBCST304 subject state:
+  - 4 total modules
+  - 3 ready modules
+  - 1 review module
+  - no Module 5
+- Preserved existing auth, chat persistence, content ingestion, retrieval, and route behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- RAG answer generation is not built yet.
+- No `/api/chat` RAG route exists yet.
+- Module 4 remains draft/review.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions remain unembedded.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 using embedded chunks, citations/source chips, Markdown/LaTeX-safe rendering, and insufficient-source fallback.
+
 ## 2026-05-20 - Data-Driven Subjects Module Counts
 
 ### Completed
