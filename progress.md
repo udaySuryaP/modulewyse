@@ -2638,3 +2638,86 @@ create table if not exists public.message_feedback (
 - Run `npm run embeddings:status`.
 - Run `npm run retrieval:test`.
 - Update `docs/retrieval-quality-report.md` with actual retrieved chunks and relevance judgments.
+
+## 2026-05-20 - PBCST304 Embeddings Generated and Retrieval Tested
+
+### Completed
+- Confirmed active branch:
+  - `codex/embedding-foundation`
+- Confirmed `.env.local` remains ignored and untracked.
+- Ran secret hygiene checks:
+  - no real keys printed
+  - no `NEXT_PUBLIC` OpenAI or service-role secrets added
+  - service-role and OpenAI key references remain server/script-side
+- Confirmed local env availability without exposing values:
+  - `OPENAI_API_KEY`: set
+  - `SUPABASE_SERVICE_ROLE_KEY`: set
+  - `OPENAI_EMBEDDING_MODEL`: set
+  - `EMBEDDING_DIMENSIONS`: set
+- Confirmed effective embedding config:
+  - model: `text-embedding-3-small`
+  - dimensions: `1536`
+- Ran `npm run embeddings:status` before generation:
+  - total ready PBCST304 chunks: 242
+  - embedded: 0
+  - pending: 242
+  - failed: 0
+  - skipped: 0
+  - Module 1: 144 pending
+  - Module 2: 53 pending
+  - Module 3: 45 pending
+- Ran `npm run embeddings:generate`:
+  - chunks scanned: 242
+  - chunks eligible: 242
+  - chunks embedded: 242
+  - chunks skipped: 0
+  - chunks failed: 0
+- Ran `npm run embeddings:status` after generation:
+  - total ready PBCST304 chunks: 242
+  - embedded: 242
+  - pending: 0
+  - failed: 0
+  - skipped: 0
+  - Module 1: 144 embedded
+  - Module 2: 53 embedded
+  - Module 3: 45 embedded
+  - embedding model distribution: `text-embedding-3-small`: 242
+- Verified live Supabase exclusions:
+  - embedded Module 1-3 chunks: 242
+  - embedded Module 4 chunks: 0
+  - embedded Module 5 chunks: 0
+  - embedded previous-question chunks: 0
+  - embedded non-ready chunks: 0
+- Ran `npm run retrieval:test` with:
+  - Explain classes and objects
+  - What is inheritance?
+  - Explain constructors in OOP
+  - Difference between class and object
+  - Explain method overloading
+  - What is polymorphism?
+  - Explain access specifiers
+  - What is dynamic binding?
+- Updated retrieval quality report:
+  - `docs/retrieval-quality-report.md`
+
+### Issues / Notes
+- Retrieval is strong for:
+  - classes and objects
+  - class vs object difference
+  - polymorphism
+  - access specifiers/access modifiers
+- Retrieval is acceptable for:
+  - inheritance
+  - method overloading
+- Retrieval is weak for:
+  - constructors, because top chunks are relevant but have noisy extracted titles
+  - dynamic binding, because direct topic coverage is weak and results are indirect
+- Some chunks still contain noisy extracted headings, page markers, syllabus fragments, or OCR/copied-note artifacts.
+- Module 4 remains draft/review and was not embedded.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions were not embedded.
+- No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
+
+### Next
+- Improve PBCST304 chunk quality and retrieval ranking before answer generation.
+- Clean noisy constructor/dynamic-binding chunks and rerun preview/ingestion/embedding for changed content.

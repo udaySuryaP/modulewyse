@@ -20,7 +20,12 @@ type RetrievedRow = {
 const defaultQueries = [
   "Explain classes and objects",
   "What is inheritance?",
-  "Explain constructor in OOP",
+  "Explain constructors in OOP",
+  "Difference between class and object",
+  "Explain method overloading",
+  "What is polymorphism?",
+  "Explain access specifiers",
+  "What is dynamic binding?",
 ];
 
 function preview(content: string) {
