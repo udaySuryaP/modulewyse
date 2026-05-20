@@ -29,10 +29,10 @@ topics:
   - "Compile Time Polymorphism (method Overloading)"
   - "Runtime Polymorphism (method Overriding)"
   - "Example: Class Over"
-  - "Output"
+  - "Method Overloading Output"
   - "Box()"
-  - "Box(double Len)"
-  - "Box B2 = New Box();"
+  - "Parameterized Constructor Example"
+  - "Constructor Overloading Output"
   - "Argument Passing"
   - "Test(int I)"
   - "System.out.println(\"object Parameter\");"
@@ -40,7 +40,7 @@ topics:
   - "Object Parameter"
   - "Before Call: 15"
   - "After Call: 15"
-  - "Person(person P) // Copy Constructor"
+  - "Copy Constructor with Object Parameter"
   - "Alice"
   - "System.out.println(p2.name);"
   - "System.out.println(p2.age);"
@@ -90,10 +90,10 @@ topics:
   - "Output: Obj1"
   - "Constructor A"
   - "Constructor B Obj2: A=10 B=20"
-  - "Box(box Ob)"
-  - "Boxweight(boxweight Ob)"
-  - "Boxweight()"
-  - "Boxweight Mybox2 = New Boxweight();"
+  - "Copy Constructor Example"
+  - "Subclass Copy Constructor Example"
+  - "Subclass Default Constructor Example"
+  - "Subclass Constructor Output Example"
   - "Example : Class A"
   - "Shipping Cost: $3.41"
   - "Shipping Cost: $1.28"
@@ -106,8 +106,8 @@ topics:
   - "{ System.out.println(\"inside C's Constructor.\"); Class Callingcons"
   - "Inside B’s Constructor"
   - "Inside C’s Constructor"
-  - "Types Of Access Modifiers In Java: A. Private"
-  - "Outside The Package(subclass)"
+  - "Access Modifier Types"
+  - "Access Modifier Comparison Table"
   - "System.out.println(obj.number); Obj.display();"
   - "Inside Display"
   - "{ System.out.println(\"default Method In Parent\");"
@@ -204,7 +204,7 @@ Runtime polymorphism means that the method to be called is determined at runtime
 System.out.println("b =" +b); public static void main(String args[])
 { Over ob = new Over(); ob.test(); ob.test(10.5); ob.test(2, 5); ob.test(3);
 
-## Topic: Output
+## Topic: Method Overloading Output
 
 Empty a=10.5 a =2 b =5 a=3.0
 Here, test( ) is overloaded three times. The first version test() takes no parameters, the second test(double a) takes one double parameter the third test(int a, int b) takes two integer parameters.
@@ -215,18 +215,18 @@ Constructors can be overloaded. A class can have any number of constructors -one
 Box(double w, double h, double d)
 { width = w; height = h; depth = d;
 
-## Topic: Box()
+## Topic: Constructor Overloading Example
 
 { width = -1; height = -1; depth = -1;
 <!-- page: 4 -->
 
-## Topic: Box(double Len)
+Box(double len)
 
 { width = height = depth = len; double volume()
 { return width * height * depth; class OverloadCons
 { Box b1 = new Box(10, 20, 15);
 
-## Topic: Box B2 = New Box();
+## Topic: Constructor Overloading Output
 
 Box b3 = new Box(7); double vol; vol = b1.volume(); // get volume of first box
 System.out.println("Volume of b1 is " + vol); vol = b2.volume(); // get volume of second box
@@ -301,7 +301,7 @@ After call: 30 lnteger parameter
 Example: Passing an object to a constructor class Person
 { String name; int age;
 
-## Topic: Person(person P) // Copy Constructor
+## Topic: Copy Constructor with Object Parameter
 
 { this.name = p.name; this.age = p.age;
 Person(String name, int age) // Regular constructor
@@ -631,37 +631,37 @@ Constructor A
 Example : super( ) can be called using any form defined by the superclass. The constructor executed will be the one that matches the arguments class Box
 { private double width, height, depth;
 
-## Topic: Box(box Ob)
+## Topic: Copy Constructor Example
 
 { width = ob.width; height = ob.height; depth = ob.depth;
 Box(double w, double h, double d)
 { width = w; height = h; depth = d;
 
-## Topic: Box()
+## Topic: Default Constructor Example
 
 { width = height = depth = -1;
 
-## Topic: Box(double Len)
+## Topic: Parameterized Constructor Example
 
 { width = height = depth = len; double volume()
 { return width * height * depth; class BoxWeight extends Box
 { double weight;
 <!-- page: 19 -->
 
-## Topic: Boxweight(boxweight Ob)
+## Topic: Subclass Copy Constructor Example
 
 { super(ob); weight = ob.weight;
 BoxWeight(double w, double h, double d, double m)
 { super(w, h, d); // call superclass constructor weight = m;
 
-## Topic: Boxweight()
+## Topic: Subclass Default Constructor Example
 
 { super(); weight = -1;
 BoxWeight(double len, double m)
 { super(len); weight = m; class DemoSuper
 { BoxWeight mybox1 = new BoxWeight(10, 20, 15, 34.3);
 
-## Topic: Boxweight Mybox2 = New Boxweight();
+## Topic: Subclass Constructor Output Example
 
 BoxWeight mycube = new BoxWeight(3, 2);
 BoxWeight myclone = new BoxWeight(mybox1); double vol = mybox1.volume();
@@ -746,11 +746,11 @@ Inside B’s Constructor
 
 Inside C’s Constructor
 
-## Topic: Protected Members
+## Topic: Access Modifiers in Java
 
 Access modifiers in Java are keywords used to set the visibility or accessibility of classes, methods, constructors, and variables. They control how the members of a class can be accessed from other classes or packages.
 
-## Topic: Types Of Access Modifiers In Java: A. Private
+## Topic: Access Modifier Types
 
 - These are accessible only within the same class. b. default (no modifier)
 - When no modifier is specified, it is known as package-private or default access.
@@ -759,10 +759,12 @@ Access modifiers in Java are keywords used to set the visibility or accessibilit
 - The public modifier allows the member to be accessible from anywhere — from any class and package
 - This method can be accessed from any other class in any package
 
-## Topic: Outside The Package(subclass)
+## Topic: Access Modifier Comparison Table
 
 Outside the package public Yes Yes Yes Yes protected Yes Yes Yes (Only to derived classes) No default Yes Yes No No private Yes No No No
 <!-- page: 23 -->
+
+## Topic: Protected Member Examples
 
 - Protected within the same class. public class ProtectedSample
 { protected int number = 42; protected void display()

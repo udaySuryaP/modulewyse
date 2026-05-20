@@ -156,8 +156,12 @@ create table if not exists public.conversations (
   title text not null default 'New chat',
   subject_slug text,
   module_value text,
+  access_count integer not null default 0,
+  last_accessed_at timestamptz,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint conversations_access_count_nonnegative
+    check (access_count >= 0)
 );
 
 create table if not exists public.messages (
@@ -186,6 +190,15 @@ create table if not exists public.message_feedback (
     unique (message_id, user_id)
 );
 
+create index if not exists conversations_usage_sort_idx
+on public.conversations (
+  user_id,
+  access_count desc,
+  last_accessed_at desc nulls last,
+  updated_at desc,
+  created_at desc
+);
+
 drop trigger if exists subjects_set_updated_at on public.subjects;
 create trigger subjects_set_updated_at
 before update on public.subjects
@@ -209,6 +222,33 @@ create trigger conversations_set_updated_at
 before update on public.conversations
 for each row
 execute function public.set_updated_at();
+
+create or replace function public.mark_conversation_used(
+  p_conversation_id uuid
+)
+returns public.conversations
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  updated_conversation public.conversations;
+begin
+  update public.conversations
+  set
+    access_count = public.conversations.access_count + 1,
+    last_accessed_at = now()
+  where id = p_conversation_id
+    and user_id = (select auth.uid())
+  returning * into updated_conversation;
+
+  return updated_conversation;
+end;
+$$;
+
+revoke all on function public.mark_conversation_used(uuid) from public;
+revoke all on function public.mark_conversation_used(uuid) from anon;
+grant execute on function public.mark_conversation_used(uuid) to authenticated;
 
 alter table public.subjects enable row level security;
 alter table public.modules enable row level security;

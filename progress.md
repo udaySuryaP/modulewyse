@@ -2818,3 +2818,256 @@ create table if not exists public.message_feedback (
 - Manually curate remaining PBCST304 constructor example headings and access-modifier table chunks.
 - Rerun preview, ingestion, embeddings, and retrieval tests.
 - Build retrieval-backed answer generation only after top constructor results are clean enough for citations.
+
+## 2026-05-20 - Final PBCST304 Retrieval Cleanup Before RAG
+
+### Completed
+- Performed a final source-supported cleanup pass for PBCST304 Modules 1-3.
+- Cleaned remaining constructor example headings in `content/oop/module-2.md`:
+  - `Box(double Len)` -> `Parameterized Constructor Example`
+  - `Box(box Ob)` -> `Copy Constructor Example`
+  - `Boxweight(boxweight Ob)` -> `Subclass Copy Constructor Example`
+  - `Person(person P) // Copy Constructor` -> `Copy Constructor with Object Parameter`
+- Cleaned remaining access-modifier headings in `content/oop/module-1.md` and `content/oop/module-2.md`:
+  - `Types Of Access Modifiers In Java: A. Private` -> `Access Modifier Types`
+  - `Outside The Package(subclass)` -> `Access Modifier Comparison Table`
+- Updated chunk preparation:
+  - strips copied-note `<!-- page: n -->` markers from generated chunk content
+  - classifies plural `Access Modifiers` as a concept chunk
+- Updated retrieval test ranking only:
+  - exact constructor-overloading topic matches are preferred over adjacent constructor examples
+  - this remains developer-test logic and is not wired into the app/chat flow
+- Ran `npm run content:preview`:
+  - sources: 4
+  - chunks: 178
+  - warnings: 310
+- Ran `npm run content:ingest`:
+  - sources upserted: 3
+  - chunks upserted: 178
+  - sources skipped: 1 (`module-4.md`)
+- Ran `npm run embeddings:status` before regeneration:
+  - total ready chunks: 178
+  - embedded: 0
+  - pending: 178
+  - failed: 0
+  - skipped: 0
+- Ran `npm run embeddings:generate`:
+  - chunks scanned: 178
+  - chunks eligible: 178
+  - chunks embedded: 178
+  - skipped: 0
+  - failed: 0
+- Ran `npm run embeddings:status` after regeneration:
+  - total ready chunks: 178
+  - embedded: 178
+  - pending: 0
+  - failed: 0
+  - skipped: 0
+  - Module 1: 107 embedded
+  - Module 2: 42 embedded
+  - Module 3: 29 embedded
+- Verified live exclusions:
+  - embedded Module 1-3 chunks: 178
+  - embedded Module 4 chunks: 0
+  - embedded Module 5 chunks: 0
+  - embedded previous-question chunks: 0
+  - embedded non-ready chunks: 0
+- Ran `npm run retrieval:test` with final query set.
+- Ran explicit retrieval check for `Difference between method overloading and overriding`:
+  - top chunks included `Method Overloading`, `Compile Time Polymorphism (method Overloading)`, and `Method Overriding`
+  - judgment: good
+- Updated `docs/retrieval-quality-report.md`.
+- Final retrieval verdict: `READY FOR RAG ANSWER GENERATION`.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Retrieval is now good for:
+  - classes and objects
+  - class vs object
+  - method overloading
+  - polymorphism
+  - dynamic binding
+  - dynamic method dispatch
+  - runtime polymorphism
+  - private/public/protected/default access modifier comparison
+- Retrieval is acceptable for:
+  - inheritance
+  - constructors
+  - default constructor
+  - copy constructor
+  - parameterized constructor
+  - constructor overloading
+- Some source chunks remain compact/OCR-like because no academic content was invented or rewritten beyond source-supported restructuring.
+- General constructor queries still need strict answer synthesis from multiple chunks.
+- Module 4 remains draft/review and was not embedded.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions remain unembedded.
+- No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 using embedded chunks.
+- Add citations/source chips and a strict insufficient-source fallback.
+- Keep Module 4, Module 5, and previous-year questions excluded until their own ingestion/embedding phase.
+
+## 2026-05-20 - Vercel Web Analytics Integration
+
+### Completed
+- Installed `@vercel/analytics`.
+- Added `Analytics` from `@vercel/analytics/next` to the root App Router layout at `app/layout.tsx`.
+- Rendered `<Analytics />` inside the root `<body>` after `{children}`.
+- Kept UI, routing, auth, Supabase/database, RAG, retrieval, and content pipeline logic unchanged.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Analytics data appears only after deployment and real page visits.
+- No custom event tracking was added.
+- Speed Insights was not added.
+- No environment files or secrets were changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Deploy to Vercel production.
+- Visit the live site.
+- Verify page views appear in the Vercel Analytics dashboard.
+
+## 2026-05-20 - Conversation Usage Sorting for Recent Chats
+
+### Completed
+- Added conversation usage tracking fields to `public.conversations`:
+  - `access_count integer not null default 0`
+  - `last_accessed_at timestamptz`
+- Created and applied `supabase/migrations/20260520214804_add_conversation_usage_tracking.sql`.
+- Added a usage sort index for current-user conversation lists.
+- Added the RLS-respecting `public.mark_conversation_used(uuid)` RPC for authenticated users.
+- Updated local schema and TypeScript conversation types.
+- Added `markConversationUsed()` to the chat data layer.
+- Incremented usage when an existing conversation is opened once per page mount.
+- Incremented usage after a user message is successfully persisted.
+- Sorted sidebar recent chats by:
+  - `access_count desc`
+  - `last_accessed_at desc nulls last`
+  - `updated_at desc`
+  - `created_at desc`
+- Preserved the existing sidebar/mobile recent chat UI and chat persistence behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Usage count is lightweight product telemetry for per-user chat ordering, not analytics.
+- Old conversations default to `access_count = 0` and `last_accessed_at = null`, then fall back to `updated_at` ordering.
+- Conversation usage tracking uses authenticated Supabase access and does not use service-role client code.
+- No chat answer generation, RAG behavior, UI design, or message content logic was changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue final PBCST304 retrieval cleanup before RAG answer generation.
+
+## 2026-05-20 - Branch Stabilized Before RAG Answer Generation
+
+### Completed
+- Confirmed active branch is `codex/embedding-foundation`.
+- Confirmed the recent non-RAG work was already committed and pushed in `093706b`.
+- Reviewed completed non-RAG updates:
+  - recent chats usage-frequency sorting
+  - minimal editorial loader
+  - data-driven Subjects module/content counts
+  - Vercel Analytics integration
+- Verified `.env.local` remains ignored and untracked.
+- Verified committed secret references are placeholders or server/script-only environment names.
+- Verified live OOP/PBCST304 subject state:
+  - 4 total modules
+  - 3 ready modules
+  - 1 review module
+  - no Module 5
+- Preserved existing auth, chat persistence, content ingestion, retrieval, and route behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- RAG answer generation is not built yet.
+- No `/api/chat` RAG route exists yet.
+- Module 4 remains draft/review.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions remain unembedded.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 using embedded chunks, citations/source chips, Markdown/LaTeX-safe rendering, and insufficient-source fallback.
+
+## 2026-05-20 - Data-Driven Subjects Module Counts
+
+### Completed
+- Updated the Subjects section to use live fed module/content stats from Supabase.
+- Replaced misleading static module counts in `/subjects`.
+- Added subject view-model fields for:
+  - total modules
+  - ready modules
+  - draft/review modules
+  - module count label
+  - content status label
+  - fed content state
+  - ready content state
+- Updated `/subjects` cards to show live module/readiness counts.
+- Updated `/subjects/[id]` to list live modules with per-module readiness.
+- Disabled module chat CTAs for modules without ready notes.
+- Kept subject-level chat available only when at least one module has ready content.
+- Made OOP/PBCST304 reflect the live DB state:
+  - 4 total modules
+  - 3 ready modules
+  - 1 in review
+  - no Module 5
+- Preserved static fallback only for missing Supabase env, failed Supabase queries, unavailable tables, or no DB subject data.
+- Preserved existing editorial UI style and protected route behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Subjects with no live modules/content correctly resolve to `0 modules` in Supabase mode.
+- Modules with DB syllabus rows but no ready notes are shown as `In review` or `No notes yet` depending on module/subject status.
+- Module 4 remains visible as review/not-ready when present without ready chunks.
+- No RAG, AI answer generation, chat behavior, database schema, or design-system behavior was changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue final PBCST304 retrieval cleanup before RAG answer generation.
+
+## 2026-05-20 - Minimal Editorial Loader
+
+### Completed
+- Replaced the bulky global loading UI with a minimal editorial loader.
+- Added reusable `MinimalLoader` variants:
+  - `page`
+  - `inline`
+  - `button`
+- Updated `components/loading/app-loading.tsx` to use the minimal page loader.
+- Kept `app/loading.tsx` wired to the existing app loading wrapper.
+- Replaced the chat answer skeleton loading card contents with the minimal inline loader while preserving the existing chat card placement.
+- Removed the route loading video background, overlay, large spinner, large card, and skeleton bars.
+- Preserved auth, routing, Supabase/database, analytics, retrieval/RAG, content, chat persistence, and form submission logic.
+- Added accessible loader semantics with `role="status"`, `aria-live="polite"`, and `aria-busy="true"`.
+- Used only Tailwind/CSS motion-safe pulse animation; no new dependency was added.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- No route, auth, database, RAG/retrieval, analytics, or content pipeline logic changed.
+- Button pending text states were left intact because they were already compact and not visually bulky.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue final PBCST304 retrieval cleanup before RAG answer generation.

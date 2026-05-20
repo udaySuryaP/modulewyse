@@ -44,6 +44,8 @@ export type Conversation = {
   title: string;
   subject_slug: string | null;
   module_value: string | null;
+  access_count: number;
+  last_accessed_at: string | null;
   created_at: string;
   updated_at: string;
 };

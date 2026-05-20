@@ -73,8 +73,10 @@ export default async function SubjectsPage() {
                 <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
                   <p className="mw-label text-[11px]">
                     {enabled
-                      ? `${Math.max(subject.modules.length - 1, 0)} modules`
-                      : subjectStatusLabel(subject.status)}
+                      ? `${subject.moduleCountLabel} · ${subject.contentStatusLabel}`
+                      : subject.totalModules > 0
+                        ? `${subject.moduleCountLabel} · ${subject.contentStatusLabel}`
+                        : subjectStatusLabel(subject.status)}
                   </p>
                   <span className="text-[13px] font-medium text-[var(--mw-ink)]">
                     {enabled ? "Open Subject" : "In Preparation"}

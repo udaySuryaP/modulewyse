@@ -3,13 +3,14 @@ import type {
   PreviousQuestionType,
   QuestionConfidence,
 } from "@/types/database";
+import type { SubjectModule } from "@/lib/mock-subjects";
 
 export type LibraryQuestionViewModel = {
   answerAvailable: boolean;
   answerType: string;
   confidence: QuestionConfidence;
   id: string;
-  module: "all" | "1" | "2" | "3" | "4" | "5";
+  module: SubjectModule;
   question: string;
   questionType: PreviousQuestionType;
   source: "supabase" | "fallback";

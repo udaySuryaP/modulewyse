@@ -63,7 +63,10 @@ export async function getUserConversations() {
   const { data, error } = await supabase
     .from("conversations")
     .select("*")
+    .order("access_count", { ascending: false })
+    .order("last_accessed_at", { ascending: false, nullsFirst: false })
     .order("updated_at", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(10);
 
   if (error) {
@@ -71,6 +74,19 @@ export async function getUserConversations() {
   }
 
   return (data ?? []) as Conversation[];
+}
+
+export async function markConversationUsed(conversationId: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("mark_conversation_used", {
+    p_conversation_id: conversationId,
+  });
+
+  if (error) {
+    return null;
+  }
+
+  return data as Conversation | null;
 }
 
 export async function getConversationWithMessages(
