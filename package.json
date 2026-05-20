@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "content:preview": "tsx scripts/prepare-content-chunks.ts",
-    "content:ingest": "tsx scripts/ingest-content.ts"
+    "content:ingest": "tsx scripts/ingest-content.ts",
+    "questions:preview": "tsx scripts/preview-previous-questions.ts",
+    "questions:ingest": "tsx scripts/ingest-previous-questions.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

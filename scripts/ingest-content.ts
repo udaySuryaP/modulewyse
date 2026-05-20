@@ -9,6 +9,7 @@ const rootDir = process.cwd();
 const previewPath = path.join(rootDir, "content", "generated", "oop-chunks.preview.json");
 const readyModules = new Set([1, 2, 3]);
 const expectedCourseCode = "PBCST304";
+const minimumReadyChunkWords = 20;
 
 async function loadLocalEnv() {
   for (const fileName of [".env.local", ".env"]) {
@@ -161,6 +162,15 @@ async function main() {
     }
 
     for (const chunk of source.chunks) {
+      if (chunk.wordCount < minimumReadyChunkWords) {
+        warnings.push({
+          fileName: source.fileName,
+          message: `Skipped tiny extracted fragment "${chunk.title}" (${chunk.wordCount} words).`,
+          severity: "warning",
+        });
+        continue;
+      }
+
       const { data: topic } = moduleRow
         ? await supabase
             .from("topics")

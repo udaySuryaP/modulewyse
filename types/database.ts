@@ -117,6 +117,49 @@ export type ContentChunk = {
   updated_at: string;
 };
 
+export type PreviousQuestionType =
+  | "short"
+  | "medium"
+  | "long"
+  | "part_a"
+  | "part_b"
+  | "part_c"
+  | "unknown";
+
+export type QuestionConfidence = "high" | "medium" | "low";
+export type PreviousQuestionStatus = ContentStatus;
+
+export type PreviousQuestion = {
+  id: string;
+  subject_id: string;
+  module_id: string | null;
+  topic_id: string | null;
+  question: string;
+  question_type: PreviousQuestionType;
+  marks: number | null;
+  year: number | null;
+  exam: string | null;
+  source_file: string | null;
+  source_page: number | null;
+  answer_available: boolean;
+  confidence: QuestionConfidence;
+  status: PreviousQuestionStatus;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PreviousQuestionAppearance = {
+  id: string;
+  question_id: string;
+  year: number | null;
+  exam: string | null;
+  source_file: string | null;
+  source_page: number | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+
 export type SubjectWithModules = Subject & {
   modules: Module[];
 };
