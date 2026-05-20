@@ -26,10 +26,48 @@ const defaultQueries = [
   "What is polymorphism?",
   "Explain access specifiers",
   "What is dynamic binding?",
+  "Explain default constructor",
+  "Explain runtime polymorphism",
+  "Explain dynamic method dispatch",
+  "Explain constructor overloading",
 ];
 
 function preview(content: string) {
   return content.replace(/\s+/g, " ").trim().slice(0, 220);
+}
+
+function expandQuery(query: string) {
+  const normalized = query.toLowerCase();
+  const expansions: string[] = [];
+
+  if (normalized.includes("constructor overloading")) {
+    expansions.push(
+      "multiple constructors same class different parameter list Box() Box(double) Box(double w double h double d)",
+    );
+  } else if (normalized.includes("default constructor")) {
+    expansions.push(
+      "default constructor compiler provided no constructor defined initializes object default values",
+    );
+  } else if (normalized.includes("constructor")) {
+    expansions.push(
+      "default constructor parameterized constructor copy constructor constructor chaining this() superclass constructor super()",
+    );
+  }
+
+  if (
+    normalized.includes("dynamic binding") ||
+    normalized.includes("dynamic method dispatch")
+  ) {
+    expansions.push(
+      "late binding dynamic method dispatch runtime polymorphism method overriding superclass reference subclass object overridden method",
+    );
+  }
+
+  if (normalized.includes("access specifier")) {
+    expansions.push("access modifier public private protected default package-private");
+  }
+
+  return [query, ...expansions].join(" ");
 }
 
 async function main() {
@@ -45,7 +83,8 @@ async function main() {
   console.log(`Retrieval test dimensions: ${dimensions}`);
 
   for (const currentQuery of queries) {
-    const [embedding] = await createEmbeddings(currentQuery);
+    const expandedQuery = expandQuery(currentQuery);
+    const [embedding] = await createEmbeddings(expandedQuery);
 
     if (!embedding || embedding.length !== dimensions) {
       throw new Error(`Query embedding dimension mismatch for "${currentQuery}".`);

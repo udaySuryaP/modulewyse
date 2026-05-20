@@ -63,7 +63,9 @@ export type ChunkPreview = {
   chunkIndex: number;
   content: string;
   metadata: {
+    chunkKind: "concept" | "example";
     moduleNumber: number;
+    retrievalEligible: boolean;
     sourceFile: string;
     sourceTitle: string;
     sourceType: ContentSourceType;

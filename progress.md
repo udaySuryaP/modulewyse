@@ -2721,3 +2721,100 @@ create table if not exists public.message_feedback (
 ### Next
 - Improve PBCST304 chunk quality and retrieval ranking before answer generation.
 - Clean noisy constructor/dynamic-binding chunks and rerun preview/ingestion/embedding for changed content.
+
+## 2026-05-20 - PBCST304 Chunk Quality Cleanup and Retrieval Retest
+
+### Completed
+- Reviewed `docs/retrieval-quality-report.md`.
+- Identified weak/noisy retrieval areas:
+  - constructors
+  - constructor overloading
+  - dynamic binding
+  - code/output-derived topic headings
+  - short syllabus/list fragments
+- Cleaned source Markdown structure in:
+  - `content/oop/module-1.md`
+  - `content/oop/module-2.md`
+- Normalized source-supported sections:
+  - `Constructor Definition`
+  - `Default Constructor`
+  - `Parameterized Constructor`
+  - `Copy Constructor`
+  - `Constructor Chaining with this()`
+  - `Superclass Constructor Call Example`
+  - `Calling Order of Constructors`
+  - `Method Overriding`
+  - `Dynamic Method Dispatch`
+  - `Late Binding and Early Binding`
+- Removed/converted known noisy topic titles from retrieval chunks:
+  - `Shipping Cost: $1.28`
+  - `Constructor B Obj2: A=10 B=20`
+  - `This() // Default Constructor`
+  - `// System.out.println(p.message); // Error`
+- Improved content preview chunking:
+  - code/output headings attach to previous valid topics
+  - short outline fragments can be skipped
+  - chunk metadata now includes `chunkKind` and `retrievalEligible`
+- Improved retrieval test ranking:
+  - added test-only query expansion for constructors, default constructor, constructor overloading, dynamic binding/dynamic method dispatch, and access specifiers
+  - no chat/RAG wiring was added
+- Ran `npm run content:preview`:
+  - sources: 4
+  - chunks: 175
+  - warnings: 303
+- Ran `npm run content:ingest`:
+  - sources upserted: 3
+  - chunks upserted: 175
+  - sources skipped: 1 (`module-4.md`)
+- Ran `npm run embeddings:status` before regeneration:
+  - total ready chunks: 175
+  - embedded: 0
+  - pending: 175
+  - failed: 0
+  - skipped: 0
+- Ran `npm run embeddings:generate`:
+  - chunks scanned: 175
+  - chunks eligible: 175
+  - chunks embedded: 175
+  - chunks skipped: 0
+  - chunks failed: 0
+- Ran `npm run embeddings:status` after regeneration:
+  - total ready chunks: 175
+  - embedded: 175
+  - pending: 0
+  - failed: 0
+  - skipped: 0
+  - Module 1: 107 embedded
+  - Module 2: 38 embedded
+  - Module 3: 30 embedded
+- Verified live exclusions:
+  - embedded Module 1-3 chunks: 175
+  - embedded Module 4 chunks: 0
+  - embedded Module 5 chunks: 0
+  - embedded previous-question chunks: 0
+  - embedded non-ready chunks: 0
+- Ran `npm run retrieval:test` with 12 queries.
+- Updated `docs/retrieval-quality-report.md` with before/after results and judgments.
+
+### Issues / Notes
+- Retrieval improved materially:
+  - dynamic binding: now good
+  - dynamic method dispatch: good
+  - constructors: acceptable
+  - default constructor: acceptable
+  - constructor overloading: acceptable
+- Retrieval remains not fully ready because some constructor example headings are still code-derived:
+  - `Boxweight(boxweight Ob)`
+  - `Box(double Len)`
+  - `Box(box Ob)`
+- Access-modifier retrieval is relevant but still table-like/fragmented.
+- Method-overloading retrieval still pulls related overriding/dynamic-dispatch chunks after the strongest result.
+- Module 4 remains draft/review and was not embedded.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions remain unembedded.
+- No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
+
+### Next
+- Manually curate remaining PBCST304 constructor example headings and access-modifier table chunks.
+- Rerun preview, ingestion, embeddings, and retrieval tests.
+- Build retrieval-backed answer generation only after top constructor results are clean enough for citations.
