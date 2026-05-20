@@ -82,6 +82,7 @@ export type ContentSourceType =
 
 export type ContentStatus = "draft" | "ready" | "archived";
 export type ContentChunkStatus = ContentStatus;
+export type EmbeddingStatus = "pending" | "embedded" | "failed" | "skipped";
 
 export type ContentSource = {
   id: string;
@@ -112,6 +113,11 @@ export type ContentChunk = {
   content: string;
   token_count: number | null;
   status: ContentChunkStatus;
+  embedding: number[] | string | null;
+  embedding_model: string | null;
+  embedding_status: EmbeddingStatus;
+  embedding_error: string | null;
+  embedding_generated_at: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;

@@ -10,7 +10,10 @@
     "content:preview": "tsx scripts/prepare-content-chunks.ts",
     "content:ingest": "tsx scripts/ingest-content.ts",
     "questions:preview": "tsx scripts/preview-previous-questions.ts",
-    "questions:ingest": "tsx scripts/ingest-previous-questions.ts"
+    "questions:ingest": "tsx scripts/ingest-previous-questions.ts",
+    "embeddings:generate": "tsx scripts/generate-content-embeddings.ts",
+    "embeddings:status": "tsx scripts/check-embedding-status.ts",
+    "retrieval:test": "tsx scripts/test-content-retrieval.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
