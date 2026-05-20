@@ -26,6 +26,7 @@ const generatedDir = path.join(rootDir, "content", "generated");
 const outputPath = path.join(generatedDir, "oop-chunks.preview.json");
 const expectedCourseCode = "PBCST304";
 const readyModuleNumbers = new Set<number>(pbcst304ReadyModules);
+const minimumReadyChunkWords = 20;
 
 function hashContent(content: string) {
   return createHash("sha256").update(content).digest("hex");
@@ -250,6 +251,17 @@ async function buildPreview() {
       }
 
       for (const content of chunkTexts) {
+        const contentWordCount = wordCount(content);
+
+        if (contentWordCount < minimumReadyChunkWords) {
+          sourceWarnings.push({
+            fileName,
+            message: `topic "${topic.title}" was skipped as a tiny extracted fragment (${contentWordCount} words).`,
+            severity: "warning",
+          });
+          continue;
+        }
+
         sourceWarnings.push(
           ...validateChunkMetadata({
             content,
@@ -275,7 +287,7 @@ async function buildPreview() {
             topicTitle: topic.title,
           },
           title: topic.title,
-          wordCount: wordCount(content),
+          wordCount: contentWordCount,
         });
         chunkIndex += 1;
       }

@@ -2363,3 +2363,69 @@ create table if not exists public.message_feedback (
 - Review and accept the remaining copied-note warnings, or clean the fragmented headings first.
 - Run `npm run content:ingest` after the service role key is available.
 - Add previous-year question library schema and ingestion for reviewed OOP PBCST304 questions.
+
+## 2026-05-20 - PBCST304 Module 1-3 Notes Ingested
+
+### Completed
+- Re-ran secret hygiene checks before ingestion:
+  - `.env.local` remains gitignored and untracked.
+  - no service-role key value is committed.
+  - service-role usage remains limited to the Node-only ingestion script.
+- Confirmed OOP PBCST304 module statuses:
+  - Module 1: ready
+  - Module 2: ready
+  - Module 3: ready
+  - Module 4: draft/review
+  - Module 5: not part of PBCST304
+- Confirmed previous-year question files remain staged only under `content/oop/questions-staging/`.
+- Verified `content/oop/questions-staging/previous-year-questions.json` is valid JSON.
+- Added a conservative ready-note chunk filter:
+  - preview skips tiny extracted fragments under 20 words.
+  - ingestion also refuses chunks under 20 words as a defense-in-depth check.
+- Ran `npm run content:preview`; passed.
+- Final preview result:
+  - sources: 4
+  - chunks: 242
+  - Module 1 chunks: 144
+  - Module 2 chunks: 53
+  - Module 3 chunks: 45
+  - Module 4 chunks: 0
+  - Module 5 chunks: 0
+  - fatal errors: 0
+  - previous-year question chunks: 0
+- Ran `npm run content:ingest`; passed.
+- Ingestion result:
+  - sources upserted: 3
+  - chunks upserted: 242
+  - sources skipped: 1 (`module-4.md`)
+- Verified live Supabase rows:
+  - `module-1.md`: 144 ready note chunks
+  - `module-2.md`: 53 ready note chunks
+  - `module-3.md`: 45 ready note chunks
+  - no Module 4 chunks
+  - no Module 5 chunks
+  - no previous-year question chunks
+  - no TODO chunks
+  - all inserted chunks have `subjectCode: PBCST304`, `subjectSlug: oop`, and `sourceType: notes`
+- Ran `npx tsc --noEmit`; passed.
+- Ran `npm run lint`; passed.
+- Ran `npm run build`; passed.
+- Ran `npm audit --audit-level=high`; passed for high severity.
+
+### Issues / Notes
+- Preview still reports copied-note cleanup warnings:
+  - 131 tiny extracted fragments skipped
+  - 271 empty extracted sections
+  - 164 short-but-ingested chunks under the general 80-word warning threshold
+  - 0 long chunk warnings
+  - 0 TODO warnings
+  - 0 Module 5 warnings/errors
+  - 0 broken image link warnings
+- The remaining warnings are content-quality cleanup items from copied notes, not ingestion blockers.
+- Module 4 still needs review before it can be marked ready.
+- Previous-year questions still need a dedicated question-library schema and ingestion flow.
+- No embeddings, pgvector, OpenAI, RAG, admin UI, upload UI, payment, or app UI changes were added.
+
+### Next
+- Add previous-year question library schema and ingestion for reviewed OOP PBCST304 questions.
+- After notes and question library are stable, add pgvector/embeddings in a separate phase.
