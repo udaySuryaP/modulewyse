@@ -2818,3 +2818,97 @@ create table if not exists public.message_feedback (
 - Manually curate remaining PBCST304 constructor example headings and access-modifier table chunks.
 - Rerun preview, ingestion, embeddings, and retrieval tests.
 - Build retrieval-backed answer generation only after top constructor results are clean enough for citations.
+
+## 2026-05-20 - Final PBCST304 Retrieval Cleanup Before RAG
+
+### Completed
+- Performed a final source-supported cleanup pass for PBCST304 Modules 1-3.
+- Cleaned remaining constructor example headings in `content/oop/module-2.md`:
+  - `Box(double Len)` -> `Parameterized Constructor Example`
+  - `Box(box Ob)` -> `Copy Constructor Example`
+  - `Boxweight(boxweight Ob)` -> `Subclass Copy Constructor Example`
+  - `Person(person P) // Copy Constructor` -> `Copy Constructor with Object Parameter`
+- Cleaned remaining access-modifier headings in `content/oop/module-1.md` and `content/oop/module-2.md`:
+  - `Types Of Access Modifiers In Java: A. Private` -> `Access Modifier Types`
+  - `Outside The Package(subclass)` -> `Access Modifier Comparison Table`
+- Updated chunk preparation:
+  - strips copied-note `<!-- page: n -->` markers from generated chunk content
+  - classifies plural `Access Modifiers` as a concept chunk
+- Updated retrieval test ranking only:
+  - exact constructor-overloading topic matches are preferred over adjacent constructor examples
+  - this remains developer-test logic and is not wired into the app/chat flow
+- Ran `npm run content:preview`:
+  - sources: 4
+  - chunks: 178
+  - warnings: 310
+- Ran `npm run content:ingest`:
+  - sources upserted: 3
+  - chunks upserted: 178
+  - sources skipped: 1 (`module-4.md`)
+- Ran `npm run embeddings:status` before regeneration:
+  - total ready chunks: 178
+  - embedded: 0
+  - pending: 178
+  - failed: 0
+  - skipped: 0
+- Ran `npm run embeddings:generate`:
+  - chunks scanned: 178
+  - chunks eligible: 178
+  - chunks embedded: 178
+  - skipped: 0
+  - failed: 0
+- Ran `npm run embeddings:status` after regeneration:
+  - total ready chunks: 178
+  - embedded: 178
+  - pending: 0
+  - failed: 0
+  - skipped: 0
+  - Module 1: 107 embedded
+  - Module 2: 42 embedded
+  - Module 3: 29 embedded
+- Verified live exclusions:
+  - embedded Module 1-3 chunks: 178
+  - embedded Module 4 chunks: 0
+  - embedded Module 5 chunks: 0
+  - embedded previous-question chunks: 0
+  - embedded non-ready chunks: 0
+- Ran `npm run retrieval:test` with final query set.
+- Ran explicit retrieval check for `Difference between method overloading and overriding`:
+  - top chunks included `Method Overloading`, `Compile Time Polymorphism (method Overloading)`, and `Method Overriding`
+  - judgment: good
+- Updated `docs/retrieval-quality-report.md`.
+- Final retrieval verdict: `READY FOR RAG ANSWER GENERATION`.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Retrieval is now good for:
+  - classes and objects
+  - class vs object
+  - method overloading
+  - polymorphism
+  - dynamic binding
+  - dynamic method dispatch
+  - runtime polymorphism
+  - private/public/protected/default access modifier comparison
+- Retrieval is acceptable for:
+  - inheritance
+  - constructors
+  - default constructor
+  - copy constructor
+  - parameterized constructor
+  - constructor overloading
+- Some source chunks remain compact/OCR-like because no academic content was invented or rewritten beyond source-supported restructuring.
+- General constructor queries still need strict answer synthesis from multiple chunks.
+- Module 4 remains draft/review and was not embedded.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions remain unembedded.
+- No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 using embedded chunks.
+- Add citations/source chips and a strict insufficient-source fallback.
+- Keep Module 4, Module 5, and previous-year questions excluded until their own ingestion/embedding phase.

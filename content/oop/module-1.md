@@ -354,9 +354,9 @@ topics:
   - "Book(string T)"
   - "{ Book B1 = New Book(\"java Programming\");"
   - "Output: Title: Java Programming"
-  - "Types Of Access Modifiers In Java: A. Private"
-  - "Outside The Package(subclass)"
-  - "Example Class Test"
+  - "Access Modifier Types"
+  - "Access Modifier Comparison Table"
+  - "Access Modifier Example"
   - "Class Accesstest"
   - "Using \"this\" To Refer To Current Class Instance Variables Class This"
   - "Using This() To Invoke Current Class Constructor Class This"
@@ -2261,7 +2261,7 @@ Output: Title: Java Programming
 
 Access modifiers in Java are keywords used to set the visibility or accessibility of classes, methods, constructors, and variables. They control how the members of a class can be accessed from other classes or packages.
 
-## Topic: Types Of Access Modifiers In Java: A. Private
+## Topic: Access Modifier Types
 
 • These are accessible only within the same class. b. default (no modifier)
 • When no modifier is specified, it is known as package-private or default access.
@@ -2270,11 +2270,11 @@ Access modifiers in Java are keywords used to set the visibility or accessibilit
 • The public modifier allows the member to be accessible from anywhere — from any class and package
 • This method can be accessed from any other class in any package
 
-## Topic: Outside The Package(subclass)
+## Topic: Access Modifier Comparison Table
 
 (Only to derived classes) No default Yes Yes No No private Yes No No No
 
-## Topic: Example Class Test
+## Topic: Access Modifier Example
 
 { int a; // default access public int b; // public access private int c; // private access void setc(int i) // methods to access c
 { c = i; int getc()

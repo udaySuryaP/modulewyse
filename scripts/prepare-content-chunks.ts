@@ -128,7 +128,7 @@ function parseTopics(body: string) {
     const start = (match.index ?? 0) + match[0].length;
     const end = nextMatch?.index ?? body.length;
     const title = match[1].trim();
-    const content = body.slice(start, end).trim();
+    const content = cleanExtractedContent(body.slice(start, end));
 
     if (looksLikeCodeOrOutputHeading(title) && topics.length > 0) {
       const previous = topics[topics.length - 1];
@@ -143,6 +143,13 @@ function parseTopics(body: string) {
   }
 
   return topics;
+}
+
+function cleanExtractedContent(content: string) {
+  return content
+    .replace(/<!--\s*page:\s*\d+\s*-->/gi, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function looksLikeCodeOrOutputHeading(title: string) {
@@ -166,6 +173,14 @@ function looksLikeCodeOrOutputHeading(title: string) {
 
 function inferChunkKind(title: string, content: string) {
   const combined = `${title}\n${content}`;
+
+  if (
+    /\b(access modifiers?|method overloading|method overriding|dynamic method dispatch|runtime polymorphism|constructor|polymorphism|inheritance)\b/i.test(
+      title,
+    )
+  ) {
+    return "concept";
+  }
 
   if (looksLikeCodeOrOutputHeading(title)) {
     return "example";
