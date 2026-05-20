@@ -2912,3 +2912,27 @@ create table if not exists public.message_feedback (
 - Build retrieval-backed answer generation for PBCST304 using embedded chunks.
 - Add citations/source chips and a strict insufficient-source fallback.
 - Keep Module 4, Module 5, and previous-year questions excluded until their own ingestion/embedding phase.
+
+## 2026-05-20 - Vercel Web Analytics Integration
+
+### Completed
+- Installed `@vercel/analytics`.
+- Added `Analytics` from `@vercel/analytics/next` to the root App Router layout at `app/layout.tsx`.
+- Rendered `<Analytics />` inside the root `<body>` after `{children}`.
+- Kept UI, routing, auth, Supabase/database, RAG, retrieval, and content pipeline logic unchanged.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Analytics data appears only after deployment and real page visits.
+- No custom event tracking was added.
+- Speed Insights was not added.
+- No environment files or secrets were changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Deploy to Vercel production.
+- Visit the live site.
+- Verify page views appear in the Vercel Analytics dashboard.
