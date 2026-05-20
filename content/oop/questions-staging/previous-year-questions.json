@@ -1,0 +1,3412 @@
+{
+  "subject": "Object Oriented Programming",
+  "subjectCode": "PBCST304",
+  "branch": "CSE",
+  "semester": 3,
+  "status": "partially_ready",
+  "questionCount": 136,
+  "readyQuestionCount": 125,
+  "needsReview": true,
+  "questions": [
+    {
+      "id": "pbcst304-m1-q001",
+      "question": "Write Java class named Student with aRributes and a method to display details. 72. Create Java program that demonstrates constructor overloading. 73. Demonstrate the use of this keyword in a constructor.",
+      "module": 1,
+      "topic": "Java Class Named Student Arributes",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q002",
+      "question": "Write Java func1on to reverse a number.",
+      "module": 1,
+      "topic": "Java Func1on Reverse Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q003",
+      "question": "Write Java program to add two numbers using command-line arguments.",
+      "module": 1,
+      "topic": "Java Program Add Two Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q004",
+      "question": "Write Java program adding two numbers.",
+      "module": 1,
+      "topic": "Java Program Adding Two Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q005",
+      "question": "Write Java program to calculate the area of a circle.",
+      "module": 1,
+      "topic": "Java Program Area Circle",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q006",
+      "question": "Write Java program to calculate the area of a triangle using base and height.",
+      "module": 1,
+      "topic": "Java Program Area Triangle Using",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q007",
+      "question": "Write Java program to calculate the average of three numbers.",
+      "module": 1,
+      "topic": "Java Program Average Three Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q008",
+      "question": "Write Java program to check if a character is a vowel or consonant.",
+      "module": 1,
+      "topic": "Java Program Check Character Vowel",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q009",
+      "question": "Write Java program to check if a number is divisible by 7.",
+      "module": 1,
+      "topic": "Java Program Check Number Divisible",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q010",
+      "question": "Write Java program to check if a number is divisible by both 3 and 5.",
+      "module": 1,
+      "topic": "Java Program Check Number Divisible",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q011",
+      "question": "Write Java program to check if a number is even or odd.",
+      "module": 1,
+      "topic": "Java Program Check Number Even",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q012",
+      "question": "Write Java program to check if a number is a mul1ple of 10.",
+      "module": 1,
+      "topic": "Java Program Check Number Mul1ple",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q013",
+      "question": "Write Java program to check if a string is a palindrome.",
+      "module": 1,
+      "topic": "Java Program Check String Palindrome",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q014",
+      "question": "Write Java program to check whether a character is uppercase or lowercase.",
+      "module": 1,
+      "topic": "Java Program Check Whether Character",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q015",
+      "question": "Write Java program to check whether a number is a palindrome.",
+      "module": 1,
+      "topic": "Java Program Check Whether Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q016",
+      "question": "Write Java program to check whether a number is posi1ve or nega1ve.",
+      "module": 1,
+      "topic": "Java Program Check Whether Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q017",
+      "question": "Write Java program to calculate compound interest.",
+      "module": 1,
+      "topic": "Java Program Compound Interest",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q018",
+      "question": "Write Java program to convert Celsius to Fahrenheit.",
+      "module": 1,
+      "topic": "Java Program Convert Celsius Fahrenheit",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q019",
+      "question": "Write Java program to convert days to years, weeks, and days.",
+      "module": 1,
+      "topic": "Java Program Convert Days Years",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q020",
+      "question": "Write Java program to convert Fahrenheit to Celsius.",
+      "module": 1,
+      "topic": "Java Program Convert Fahrenheit Celsius",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q021",
+      "question": "Write Java program to convert minutes to hours and minutes.",
+      "module": 1,
+      "topic": "Java Program Convert Minutes Hours",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q022",
+      "question": "Write Java program to copy elements from one array to another.",
+      "module": 1,
+      "topic": "Java Program Copy Elements From",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q023",
+      "question": "Write Java program to count the frequency of elements in an array.",
+      "module": 1,
+      "topic": "Java Program Count Frequency Elements",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q024",
+      "question": "Write Java program to count the number of digits in a number.",
+      "module": 1,
+      "topic": "Java Program Count Number Digits",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q025",
+      "question": "Write Java program to count vowels and spaces in a string.",
+      "module": 1,
+      "topic": "Java Program Count Vowels Spaces",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q026",
+      "question": "Write Java program to declare and print elements of an array.",
+      "module": 1,
+      "topic": "Java Program Declare Print Elements",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q027",
+      "question": "Write Java program demonstra1ng constructor chaining using this(). 98. A shopkeeper wants to track product stock using a 2D array. Write Java program to store and print the stock table.",
+      "module": 1,
+      "topic": "Java Program Demonstra1ng Constructor Chaining",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 5,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 5
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q028",
+      "question": "Write Java program demonstra1ng a func1onal interface and lambda expression. 87. Create Java program to sort objects using Comparable interface.",
+      "module": 1,
+      "topic": "Java Program Demonstra1ng Func1onal Interface",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q029",
+      "question": "Write Java program demonstra1ng interface inheritance.",
+      "module": 1,
+      "topic": "Java Program Demonstra1ng Interface Inheritance",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q030",
+      "question": "Write Java program demonstra1ng the use of break and con1nue.",
+      "module": 1,
+      "topic": "Java Program Demonstra1ng Use Break",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q031",
+      "question": "Write Java program to demonstrate excep1on handling using try-catch-ﬁnally. 96. A library system needs to check if a book is available. Write Java program using ArrayList to search for a book name.",
+      "module": 1,
+      "topic": "Java Program Demonstrate Excep1on Handling",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 5,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 5
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q032",
+      "question": "Write Java program to demonstrate a jagged array.",
+      "module": 1,
+      "topic": "Java Program Demonstrate Jagged Array",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q033",
+      "question": "Write Java program to demonstrate the use of super to call parent class methods. 94. A bakery owner wants a billing system. Write Java program to calculate the total bill for items using price and quan1ty arrays.",
+      "module": 1,
+      "topic": "Java Program Demonstrate Use Super",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 5,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 5
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q034",
+      "question": "Write Java program to display all prime numbers up to a given number.",
+      "module": 1,
+      "topic": "Java Program Display All Prime",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q035",
+      "question": "Write Java program to divide two numbers and display the result.",
+      "module": 1,
+      "topic": "Java Program Divide Two Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q036",
+      "question": "Write Java program to calculate factorial using recursion.",
+      "module": 1,
+      "topic": "Java Program Factorial Using Recursion",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q037",
+      "question": "Write Java program to ﬁnd the absolute value of a number.",
+      "module": 1,
+      "topic": "Java Program Find Absolute Value",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q038",
+      "question": "Write Java program to ﬁnd the area of a rectangle.",
+      "module": 1,
+      "topic": "Java Program Find Area Rectangle",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q039",
+      "question": "Write Java program to ﬁnd the area of a square.",
+      "module": 1,
+      "topic": "Java Program Find Area Square",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q040",
+      "question": "Write Java program to ﬁnd the cube of a number.",
+      "module": 1,
+      "topic": "Java Program Find Cube Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q041",
+      "question": "Write Java program to ﬁnd factorial using a for loop.",
+      "module": 1,
+      "topic": "Java Program Find Factorial Using",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q042",
+      "question": "Write Java program to ﬁnd the greatest of three numbers.",
+      "module": 1,
+      "topic": "Java Program Find Greatest Three",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q043",
+      "question": "Write Java program to ﬁnd the maximum and minimum elements in an array.",
+      "module": 1,
+      "topic": "Java Program Find Maximum Minimum",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q044",
+      "question": "Write Java program to ﬁnd the remainder of a division.",
+      "module": 1,
+      "topic": "Java Program Find Remainder Division",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q045",
+      "question": "Write Java program to ﬁnd the sum of array elements.",
+      "module": 1,
+      "topic": "Java Program Find Sum Array",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q046",
+      "question": "Write Java program to ﬁnd the sum of digits of a number.",
+      "module": 1,
+      "topic": "Java Program Find Sum Digits",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q047",
+      "question": "Write Java program to ﬁnd whether a year is a leap year.",
+      "module": 1,
+      "topic": "Java Program Find Whether Year",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q048",
+      "question": "Write Java program with a func1on that adds two numbers and returns the result.",
+      "module": 1,
+      "topic": "Java Program Func1on That Adds",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q049",
+      "question": "Write Java program with a func1on that has no parameters and no return value.",
+      "module": 1,
+      "topic": "Java Program Func1on That Has",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q050",
+      "question": "Write Java program with a func1on that returns a ﬁxed value without parameters.",
+      "module": 1,
+      "topic": "Java Program Func1on That Returns",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q051",
+      "question": "Write Java program with a func1on that takes parameters and returns nothing.",
+      "module": 1,
+      "topic": "Java Program Func1on That Takes",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q052",
+      "question": "Write Java program to generate the Fibonacci series using a while loop.",
+      "module": 1,
+      "topic": "Java Program Generate Fibonacci Series",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q053",
+      "question": "Write Java program for matrix addi1on.",
+      "module": 1,
+      "topic": "Java Program Matrix Addi1on",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q054",
+      "question": "Write Java program for matrix mul1plica1on.",
+      "module": 1,
+      "topic": "Java Program Matrix Mul1plica1on",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q055",
+      "question": "Write Java program to modify a string using StringBuilder.",
+      "module": 1,
+      "topic": "Java Program Modify String Using",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q056",
+      "question": "Write Java program to mul1ply two numbers.",
+      "module": 1,
+      "topic": "Java Program Mul1ply Two Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q057",
+      "question": "Write Java program to calculate the perimeter of a rectangle.",
+      "module": 1,
+      "topic": "Java Program Perimeter Rectangle",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q058",
+      "question": "Write Java program prin1ng \"Hello World!\"",
+      "module": 1,
+      "topic": "Java Program Prin1ng \"hello World!\"",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q059",
+      "question": "Write Java program to print ASCII value of a character.",
+      "module": 1,
+      "topic": "Java Program Print Ascii Value",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q060",
+      "question": "Write Java program to print day of the week using switch-case.",
+      "module": 1,
+      "topic": "Java Program Print Day Week",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q061",
+      "question": "Write Java program to print the mul1plica1on table of a number.",
+      "module": 1,
+      "topic": "Java Program Print Mul1plica1on Table",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q062",
+      "question": "Write Java program to print a triangle paRern using nested loops.",
+      "module": 1,
+      "topic": "Java Program Print Triangle Parern",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q063",
+      "question": "Write Java program to reverse an array.",
+      "module": 1,
+      "topic": "Java Program Reverse Array",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q064",
+      "question": "Write Java program to reverse a number.",
+      "module": 1,
+      "topic": "Java Program Reverse Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q065",
+      "question": "Write Java program to reverse a string.",
+      "module": 1,
+      "topic": "Java Program Reverse String",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q066",
+      "question": "Write Java program to calculate simple interest.",
+      "module": 1,
+      "topic": "Java Program Simple Interest",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q067",
+      "question": "Write Java program to sort an array in ascending order.",
+      "module": 1,
+      "topic": "Java Program Sort Array Ascending",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q068",
+      "question": "Write Java program to compare strings using == and .equals().",
+      "module": 1,
+      "topic": "Java Program Strings Using Equals",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q069",
+      "question": "Write Java program to subtract two integers.",
+      "module": 1,
+      "topic": "Java Program Subtract Two Integers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q070",
+      "question": "Write Java program to sum any number of integers using varargs.",
+      "module": 1,
+      "topic": "Java Program Sum Number Integers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q071",
+      "question": "Write Java program to swap two numbers using a third variable.",
+      "module": 1,
+      "topic": "Java Program Swap Two Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q072",
+      "question": "Write Java program to swap two numbers without using a third variable.",
+      "module": 1,
+      "topic": "Java Program Swap Two Numbers",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 1,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 1
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q073",
+      "question": "Write Java program that assigns grades using if-else-if ladder.",
+      "module": 1,
+      "topic": "Java Program That Assigns Grades",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q074",
+      "question": "Write Java program that creates objects using a parameterized constructor. 75. Create a class with methods and call them using object references.",
+      "module": 1,
+      "topic": "Java Program That Creates Objects",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q075",
+      "question": "Write Java program that creates and uses mul1ple objects of a class. 77. Create Java program to demonstrate access modiﬁers (public, private, protected).",
+      "module": 1,
+      "topic": "Java Program That Creates Uses",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q076",
+      "question": "Write Java program that implements an interface. 83. Create Java program with mul1ple interfaces.",
+      "module": 1,
+      "topic": "Java Program That Implements Interface",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q077",
+      "question": "Write Java program that overrides toString() method. 89. Create Java program demonstra1ng method overloading.",
+      "module": 1,
+      "topic": "Java Program That Overrides Tostring",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q078",
+      "question": "Write Java program that returns the nth Fibonacci number using recursion.",
+      "module": 1,
+      "topic": "Java Program That Returns Nth",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q079",
+      "question": "Write Java program that stores the number of steps walked for 7 days in an array and calculates the total and average steps. 92. A teacher wants to store names of 5 students and print them. Write Java program to read and display student names using an array.",
+      "module": 1,
+      "topic": "Java Program That Stores Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 5,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 5
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q080",
+      "question": "Write Java program that uses method overriding.",
+      "module": 1,
+      "topic": "Java Program That Uses Method",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q081",
+      "question": "Write Java program that uses return to exit early from a method.",
+      "module": 1,
+      "topic": "Java Program That Uses Return",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 3,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 3
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q082",
+      "question": "Write Java program that uses sta1c variables and methods. 79. Create Java program to demonstrate the use of ﬁnal variables and methods. 80. Demonstrate the use of inner classes in Java.",
+      "module": 1,
+      "topic": "Java Program That Uses Sta1c",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q083",
+      "question": "Write Java program to use an interface as a reference to diﬀerent implementa1ons.",
+      "module": 1,
+      "topic": "Java Program Use Interface Reference",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q084",
+      "question": "Write Java program using an abstract class with an abstract method.",
+      "module": 1,
+      "topic": "Java Program Using Abstract Class",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q085",
+      "question": "Write Java program using labeled break and con1nue.",
+      "module": 1,
+      "topic": "Java Program Using Labeled Break",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q086",
+      "question": "Write Java program using a sta1c block and sta1c method. 100. A mobile app wants to log user login details. Write Java program using a class User that stores username and login 1me, and display it.",
+      "module": 1,
+      "topic": "Java Program Using Sta1c Block",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "MODULE-1 WORKS.pdf",
+      "sourcePage": 5,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "MODULE-1 WORKS.pdf",
+          "sourcePage": 5
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q087",
+      "question": "8 List the main steps to establish JDBC connection. What is PreparedStatement, and why is it preferred over Statement?",
+      "module": 1,
+      "topic": "Main Steps Establish JDBC Connection",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m1-q088",
+      "question": "What is PreparedStatement, and why is it preferred over Statement?",
+      "module": 1,
+      "topic": "Preparedstatement Preferred Over Statement?",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 4,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 4
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q089",
+      "question": "Write an Adapter so that it conforms to your Logger interface (log(String)). Show both class definitions and the adapter code. public interface Logger void log(String message); public class AnalyticsService public void sendEvent(String event) // Sends event to analytics backend System.out.println(\"Analytics event sent: \" + event); public class AnalyticsLoggerAdapter implements Logger private AnalyticsService analyticsService; public AnalyticsLoggerAdapter(AnalyticsService analyticsService) this.analyticsService = analyticsService",
+      "module": 2,
+      "topic": "Adapter That Conforms Your Logger",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 23,
+      "answerAvailable": true,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 23
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q090",
+      "question": "Can final modifier be used with an abstract class. Justify your answer. 2. State the uses of super keyword?",
+      "module": 2,
+      "topic": "Can Final Modifier Used Abstract",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 80,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 80
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q091",
+      "question": "Write the complete code for this application. 16 a) Draw an MVC diagram for this Swing+JDBC app. (3) b) Describe how you’d apply Dependency Inversion so the Controller can be unit-tested without a real database. (3) *****",
+      "module": 2,
+      "topic": "Complete Code This Application Mvc",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 6,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 6
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q092",
+      "question": "Explain the concept of method overloading with the help of a program.",
+      "module": 2,
+      "topic": "Concept Method Overloading Help Program",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 80,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 80
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q093",
+      "question": "Demonstrate how objects are passed as function parameters with a suitable example. 6. Explain the concept of method overloading with the help of a program. 7. What is inheritance?",
+      "module": 2,
+      "topic": "Demonstrate Objects Are Passed Function",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 80,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 80
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q094",
+      "question": "Explain dynamic method dispatch with an example.",
+      "module": 2,
+      "topic": "Dynamic Method Dispatch Example",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 81,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 81
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q095",
+      "question": "What exact statement must replace // **INSERT STATEMENT A HERE** so that when you run TestSuper, you see: Vehicle created Type: Car Parent Type: Generic Vehicle b. In one sentence each, explain: (i) What the statement you inserted does here. (ii) Why super.type prints \"Generic Vehicle\" while type prints \"Car\". a. No need to add any statement there The constructor of Car class implicitly executes super(). It will call the constructor of its base class. b. i. The constructor of Car class implicitly executes super(). It will call the constructor of its base class. ii. super.type in Car class refers to the variable in its parent class. So it will print “Generic Vehicle”.",
+      "module": 2,
+      "topic": "Exact Statement Must Replace **insert",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 8,
+      "answerAvailable": true,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 8
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q096",
+      "question": "Illustrate inheritance in Java. • The mechanism of deriving a new class from an old class is called Inheritance. • The old class is known as the base class(or super class or parent class), and the new one is called the subclass (or derived class or child class). • A subclass is a specialized version of a superclass. It inherits all possible instance variables and methods defined by the superclass and adds its own, unique elements. • To inherit a class, we should use the keyword extends.",
+      "module": 2,
+      "topic": "Inheritance Java Mechanism Deriving New",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 8,
+      "answerAvailable": true,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 8
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q097",
+      "question": "What is inheritance?",
+      "module": 2,
+      "topic": "Inheritance?",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 80,
+      "answerAvailable": false,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 80
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q098",
+      "question": "Define Java base class Animal with a method makeSound( ) that prints a generic sound. Then, create two subclasses Dog and Cat that override the makeSound() method to print \"Bark\" and \"Meow\" respectively. In the main method, create objects of Dog and Cat and call the makeSound() method to show runtime polymorphism. class Animal void makeSound() System.out.println(\"Animal makes a sound\"); class Dog extends Animal void makeSound() System.out.println(\"Bark\")",
+      "module": 2,
+      "topic": "Java Base Class Animal Method",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 22,
+      "answerAvailable": true,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 22
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q099",
+      "question": "Write a java program to show the significance of method overriding in achieving run time polymorphism. Discuss difference between method overriding and method overloading. 5. Demonstrate how objects are passed as function parameters with a suitable example.",
+      "module": 2,
+      "topic": "Java Program Significance Method Overriding",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 80,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 80
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q100",
+      "question": "List the main steps to establish JDBC connection. What is PreparedStatement, and why is it preferred over Statement?",
+      "module": 2,
+      "topic": "Main Steps Establish JDBC Connection",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 13,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 13
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q101",
+      "question": "Differentiate method overloading and method overriding with the help of examples. 9. Create a class Person with attributes name, age, address and a method display() to display the details. Create a subclass Student with attributes rollno, mark1, mark2 and mark3. Overide display() method and calculate the grade. Create another subclass Faculty with attributes faculty_id, department, basic_pay and DA. Override display() method to calculate total salary as (basic_pay+DA)+70% of (basic_pay+DA). Create instances of Student and Faculty and display the details.",
+      "module": 2,
+      "topic": "Method Overloading Method Overriding Help",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 81,
+      "answerAvailable": false,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 81
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q102",
+      "question": "What is the name of the compiled file format that makes this possible?",
+      "module": 2,
+      "topic": "Name Compiled File Format That",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 2,
+      "answerAvailable": true,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 2
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q103",
+      "question": "Discuss the uses of final keyword citing examples.",
+      "module": 2,
+      "topic": "Uses Final Keyword Citing Examples",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 81,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 81
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q104",
+      "question": "Discuss the uses of final keyword citing examples. 11. Explain dynamic method dispatch with an example. 12. What is inheritance?",
+      "module": 2,
+      "topic": "Uses Final Keyword Citing Examples",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 81,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 81
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q105",
+      "question": "State the uses of super keyword?",
+      "module": 2,
+      "topic": "Uses Super Keyword?",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 80,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 2-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 80
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q106",
+      "question": "What will be the value of a after the execution of the following code segment in Java. int a = -1; a = a >> 4; In Java, the signed right shift operator (>>) fills the higher-order bits with the sign bit (1 for negative values). The binary representation of -1 is all 1's in two's complement (for a 32 -bit int, it's 32 ones). Right shifting by any number of bits for -1 keeps all bits as 1 (since the sign bit is 1), so the value remains -1 Therefore, after a = a >> 4;, a is still -1 3. You’re given this Java code: class Vehicle protected String type = \"Generic Vehicle\"; Vehicle() System.out.println(\"Vehicle created\"); class Car extends Vehicle protected String type = \"Car\"; Car()",
+      "module": 2,
+      "topic": "Will Value After Execution Code",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 7,
+      "answerAvailable": true,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 7
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m2-q107",
+      "question": "Show your code and explain how it ensures a single instance. (File- out of syllabus) import java.io.BufferedWriter; import java.io.FileWriter; import java.io.IOException; public class Logger private static Logger instance; private BufferedWriter writer; // Private constructor prevents instantiation from outside private Logger() try writer = new BufferedWriter(new FileWriter(\"log.txt\", true)); // Append mode catch (IOException e)",
+      "module": 2,
+      "topic": "Your Code Ensures Single Instance",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Model",
+      "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+      "sourcePage": 24,
+      "answerAvailable": true,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Model",
+          "sourceFile": "JAVA MQ SOLVED ktunotes.live .pdf",
+          "sourcePage": 24
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q108",
+      "question": "Explain how ActionEvent class and FocusEvent class is used with emphasis on the methods and constants provided by the given classes (Dec 2022).",
+      "module": 4,
+      "topic": "Actionevent Class Focusevent Class Used",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 105,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 105
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q109",
+      "question": "Describe the architecture of JDBC with a neat diagram. (Dec 2023)",
+      "module": 4,
+      "topic": "Architecture JDBC Neat Diagram Dec",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 141,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 141
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q110",
+      "question": "Differentiate between Components and Containers in Swing (Dec 2021, Dec 2023, Dec 2024)",
+      "module": 4,
+      "topic": "Between Components Containers Swing Dec",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q111",
+      "question": "Discuss the event handling mechanism in Java using the Delegation Event Model (Dec 2020, Dec 2022, Dec 2024)",
+      "module": 4,
+      "topic": "Event Handling Mechanism Java Using",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q112",
+      "question": "How events are handled in java Swing?",
+      "module": 4,
+      "topic": "Events Are Handled Java Swing?",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 104,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 104
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q113",
+      "question": "Write GUI program to perform arithmetic operations of two numbers. (Dec 2023)",
+      "module": 4,
+      "topic": "Gui Program Perform Arithmetic Operations",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 105,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 105
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q114",
+      "question": "Write Java code to demonstrate the execution of create and insert queries using JDBC. (Dec 2020)",
+      "module": 4,
+      "topic": "Java Code Demonstrate Execution Create",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 141,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 141
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q115",
+      "question": "Write java code to demonstrate the execution of select and delete queries using JDBC (Dec 2021)",
+      "module": 4,
+      "topic": "Java Code Demonstrate Execution Select",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 141,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 141
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q116",
+      "question": "Write a java program that accepts a number through a text field, checks whether the number is prime or not and then display the result in a label when user clicks a button.",
+      "module": 4,
+      "topic": "Java Program That Accepts Number",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 77,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 77
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q117",
+      "question": "Write a java program that accepts two input numbers through two text fields, perform the different arithmetic operations and display the result in a third text field when user clicks corresponding buttons (+, -, *, /).",
+      "module": 4,
+      "topic": "Java Program That Accepts Two",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 77,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 77
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q118",
+      "question": "Write a java program that accepts two input strings through two text fields, concatenates these strings and display the result in a label when user clicks a button.",
+      "module": 4,
+      "topic": "Java Program That Accepts Two",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 77,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 77
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q119",
+      "question": "Write Java program that uses two textfields and a button. The first textfield accepts temperature in Celsius. When the 'Convert' button is clicked the second textfield displays the temperature in Fahrenheit. Use appropriate Swing components and event handling techniques. F-(C*9/5)+32. (Dec 2022)",
+      "module": 4,
+      "topic": "Java Program That Uses Two",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 104,
+      "answerAvailable": false,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 104
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q120",
+      "question": "Write Java program using Swing to create a frame having three text fields, three labels and a button. The interface has to accept a number in the first text field. While clicking the button, the second and third textfields have to display the previous number and next number respectively, of the accepted input number.(Dec 2021)",
+      "module": 4,
+      "topic": "Java Program Using Swing Create",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 104,
+      "answerAvailable": false,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 104
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q121",
+      "question": "Write a java program which insert a set of values into a database table ‘student’ (Dec 2024)",
+      "module": 4,
+      "topic": "Java Program Which Insert",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 141,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 141
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q122",
+      "question": "How mouse events are handled in Java?",
+      "module": 4,
+      "topic": "Mouse Events Are Handled Java?",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q123",
+      "question": "Explain any one type. (Dec 2020, Dec 2022, Dec 2023)",
+      "module": 4,
+      "topic": "One Type Dec 2020 Dec",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q124",
+      "question": "Write a program to implement an authentication system. The system should read the Otherwise, name and password from the user. If the username entered is “admin” and password is “12345”, the program should print “V alid User” in a label. Otherwise, it should print “Invalid User”.",
+      "module": 4,
+      "topic": "Program Implement Authentication System System",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 77,
+      "answerAvailable": false,
+      "confidence": "medium",
+      "needsReview": true,
+      "status": "draft",
+      "notes": "Needs manual review for extraction quality, module/topic certainty, or excessive merged text.",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 77
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q125",
+      "question": "Write a program to illustrate the use of JFrame, JTextField and Jlabel. (Dec 2020)",
+      "module": 4,
+      "topic": "Program Use Jframe Jtextfield Jlabel",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q126",
+      "question": "Write sample code to establish database connectivity in Java. Discuss the various steps involved. (Dec 2020, Dec 2021, Dec 2022, Dec 2023, Dec 2024)",
+      "module": 4,
+      "topic": "Sample Code Establish Database Connectivity",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 141,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 141
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q127",
+      "question": "Write a simple swing program which prints a message on a text box when a button is clicked. (Dec 2024)",
+      "module": 4,
+      "topic": "Simple Swing Program Which Prints",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 105,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 105
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q128",
+      "question": "List any six Event Listener interfaces. (Dec 2021, Dec 2023)",
+      "module": 4,
+      "topic": "Six Event Listener Interfaces Dec",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q129",
+      "question": "Compare Swing APl and AWT API. (Dec 2022, Dec 2024)",
+      "module": 4,
+      "topic": "Swing Apl Awt Api Dec",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 105,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 105
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q130",
+      "question": "Write a swing program to develop a mini calculator which include addition, subtraction, multiplication and division functionality. (Dec 2024).",
+      "module": 4,
+      "topic": "Swing Program Develop Mini Calculator",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 105,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 105
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q131",
+      "question": "List any three event sources and their corresponding event types and listeners used. (Dec 2022, Dec 2024)",
+      "module": 4,
+      "topic": "Three Event Sources Their Corresponding",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 105,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 105
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q132",
+      "question": "Summarize any three features of Swing API. (Dec 2021, Dec 2023)",
+      "module": 4,
+      "topic": "Three Features Swing Api Dec",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q133",
+      "question": "Compare any three types of Swing button classes. (Dec 2020).",
+      "module": 4,
+      "topic": "Three Types Swing Button Classes",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q134",
+      "question": "Compare any three types of Swing button classes. (Dec 2020). 3. Discuss the event handling mechanism in Java using the Delegation Event Model (Dec 2020, Dec 2022, Dec 2024) 4. How mouse events are handled in Java?",
+      "module": 4,
+      "topic": "Three Types Swing Button Classes",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q135",
+      "question": "Describe the two different ways to create frames using Swing package with appropriate examples. (Dec 2022)",
+      "module": 4,
+      "topic": "Two Different Ways Create Frames",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 104,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 104
+        }
+      ]
+    },
+    {
+      "id": "pbcst304-m4-q136",
+      "question": "What is the use of Swing package in java?",
+      "module": 4,
+      "topic": "Use Swing Package Java?",
+      "questionType": "Unknown",
+      "marks": null,
+      "year": 2024,
+      "exam": "Unknown",
+      "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+      "sourcePage": 103,
+      "answerAvailable": false,
+      "confidence": "high",
+      "needsReview": false,
+      "status": "ready",
+      "notes": "",
+      "appearances": [
+        {
+          "year": 2024,
+          "exam": "Unknown",
+          "sourceFile": "module 4-2-KTUNOTES.LIVE.pdf",
+          "sourcePage": 103
+        }
+      ]
+    }
+  ]
+}

@@ -1,23 +1,20 @@
-# OOP Content Workspace
+# OOP PBCST304 Content Workspace
 
-This folder is for curated Object Oriented Programming notes prepared by the ModuleWyse team.
+This folder holds curated Object Oriented Programming notes for PBCST304. Students do not upload notes; these files are developer/admin curated before ingestion.
 
-Students do not upload notes. Paste only reviewed, syllabus-relevant material that the platform is allowed to use.
+## Current ingestion status
 
-## How To Add Notes
+- Module 1: ready candidate
+- Module 2: ready candidate
+- Module 3: ready candidate
+- Module 4: draft/review
+- Module 5: not part of PBCST304 and should not be created or ingested
 
-1. Open the matching `module-*.md` file.
-2. Keep the frontmatter at the top.
-3. Add notes under `## Topic:` headings.
-4. Keep one topic per section.
-5. Mark incomplete sections with `TODO`.
-6. Keep `status: draft` until the content is manually reviewed.
+## File rules
 
-## Topic Boundaries
+Use `module-1.md`, `module-2.md`, `module-3.md`, and `module-4.md` only for this course. Keep previous-year questions in `questions-staging/` until a dedicated question-library schema exists.
 
-Keep each topic focused. Do not mix unrelated areas in one topic section. If a topic becomes too long, split it into multiple `## Topic:` sections with clearer names.
-
-## Preview
+Each ready notes file should use frontmatter with `subject: oop`, `subject_code: PBCST304`, `source_type: notes`, and `status: ready`. Draft or uncertain files must use `status: draft` and `needs_review: true`.
 
 Run:
 
@@ -25,10 +22,4 @@ Run:
 npm run content:preview
 ```
 
-The script writes chunk previews to:
-
-```text
-content/generated/oop-chunks.preview.json
-```
-
-Review that JSON before any ingestion.
+Review `content/generated/oop-chunks.preview.json` before running ingestion. Do not ingest draft files, previous-year questions, or unresolved TODO content.

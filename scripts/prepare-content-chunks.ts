@@ -6,6 +6,7 @@ import {
   approximateTokenCount,
   isAllowedContentStatus,
   isAllowedSourceType,
+  pbcst304ReadyModules,
   validateChunkMetadata,
   validateSourceMetadata,
   wordCount,
@@ -23,6 +24,8 @@ const rootDir = process.cwd();
 const contentDir = path.join(rootDir, "content", "oop");
 const generatedDir = path.join(rootDir, "content", "generated");
 const outputPath = path.join(generatedDir, "oop-chunks.preview.json");
+const expectedCourseCode = "PBCST304";
+const readyModuleNumbers = new Set<number>(pbcst304ReadyModules);
 
 function hashContent(content: string) {
   return createHash("sha256").update(content).digest("hex");
@@ -30,6 +33,22 @@ function hashContent(content: string) {
 
 function parseScalar(value: string) {
   const trimmed = value.trim();
+
+  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    return trimmed.slice(1, -1);
+  }
+
+  if (trimmed === "true") {
+    return true;
+  }
+
+  if (trimmed === "false") {
+    return false;
+  }
+
+  if (trimmed === "null") {
+    return null;
+  }
 
   if (/^\d+$/.test(trimmed)) {
     return Number(trimmed);
@@ -80,9 +99,12 @@ function parseFrontmatter(raw: string, fileName: string) {
 
   const parsed = {
     module: typeof metadata.module === "number" ? metadata.module : Number(metadata.module),
+    needs_review: Boolean(metadata.needs_review),
     source_type: String(metadata.source_type ?? ""),
     status: String(metadata.status ?? ""),
     subject: String(metadata.subject ?? ""),
+    subject_code: String(metadata.subject_code ?? ""),
+    subject_name: String(metadata.subject_name ?? ""),
     title: String(metadata.title ?? ""),
     topics: Array.isArray(metadata.topics) ? metadata.topics.map(String) : [],
   } as Partial<ContentSourceMetadata>;
@@ -128,9 +150,29 @@ function splitTopicIntoChunks(topic: ParsedContentTopic, maxWords = 700) {
   return chunks;
 }
 
+function imageLinksFromMarkdown(content: string) {
+  return [...content.matchAll(/!\[[^\]]*]\(([^)]+)\)/g)].map((match) => match[1].trim());
+}
+
+async function imageLinkExists(fileName: string, link: string) {
+  if (/^https?:\/\//i.test(link)) {
+    return true;
+  }
+
+  const cleanLink = link.split("#")[0].split("?")[0];
+  const absolutePath = path.resolve(contentDir, path.dirname(fileName), cleanLink);
+
+  try {
+    await readFile(absolutePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function buildPreview() {
   const fileNames = (await readdir(contentDir))
-    .filter((fileName) => /^module-[1-5]\.md$/.test(fileName))
+    .filter((fileName) => /^module[- ][1-5]\.md$/.test(fileName))
     .sort();
   const sources: SourcePreview[] = [];
   const globalWarnings: ContentValidationIssue[] = [];
@@ -141,6 +183,19 @@ async function buildPreview() {
     const sourceWarnings = [...warnings];
     const topics = parseTopics(body);
     const chunks: ChunkPreview[] = [];
+    const sourceType = metadata.source_type && isAllowedSourceType(metadata.source_type)
+      ? metadata.source_type
+      : "notes";
+    const status = metadata.status && isAllowedContentStatus(metadata.status)
+      ? metadata.status
+      : "draft";
+    const subjectCode = metadata.subject_code ?? "";
+    const shouldGenerateChunks =
+      status === "ready" &&
+      sourceType === "notes" &&
+      metadata.subject === "oop" &&
+      subjectCode === expectedCourseCode &&
+      readyModuleNumbers.has(metadata.module ?? 0);
 
     if (topics.length === 0) {
       sourceWarnings.push({
@@ -150,8 +205,34 @@ async function buildPreview() {
       });
     }
 
+    if (metadata.module === 5 && subjectCode === expectedCourseCode) {
+      sourceWarnings.push({
+        fileName,
+        message: "Module 5 not expected for PBCST304; file skipped.",
+        severity: "error",
+      });
+    }
+
+    if (status !== "ready") {
+      sourceWarnings.push({
+        fileName,
+        message: "Draft/review source included in preview metadata only; chunks were not generated.",
+        severity: "warning",
+      });
+    }
+
+    for (const link of imageLinksFromMarkdown(body)) {
+      if (!(await imageLinkExists(fileName, link))) {
+        sourceWarnings.push({
+          fileName,
+          message: `Image link does not resolve: ${link}`,
+          severity: status === "ready" ? "error" : "warning",
+        });
+      }
+    }
+
     let chunkIndex = 0;
-    for (const topic of topics) {
+    for (const topic of shouldGenerateChunks ? topics : []) {
       const chunkTexts = splitTopicIntoChunks(topic);
 
       if (chunkTexts.length === 0) {
@@ -160,7 +241,7 @@ async function buildPreview() {
             content: "",
             fileName,
             moduleNumber: metadata.module ?? 0,
-            status: metadata.status ?? "draft",
+            status,
             subjectSlug: metadata.subject ?? "",
             title: topic.title,
           }),
@@ -174,7 +255,7 @@ async function buildPreview() {
             content,
             fileName,
             moduleNumber: metadata.module ?? 0,
-            status: metadata.status ?? "draft",
+            status,
             subjectSlug: metadata.subject ?? "",
             title: topic.title,
           }),
@@ -185,6 +266,9 @@ async function buildPreview() {
           content,
           metadata: {
             moduleNumber: metadata.module ?? 0,
+            sourceType,
+            status,
+            subjectCode,
             sourceFile: fileName,
             sourceTitle: metadata.title ?? "",
             subjectSlug: metadata.subject ?? "",
@@ -197,21 +281,17 @@ async function buildPreview() {
       }
     }
 
-    const sourceType = metadata.source_type && isAllowedSourceType(metadata.source_type)
-      ? metadata.source_type
-      : "notes";
-    const status = metadata.status && isAllowedContentStatus(metadata.status)
-      ? metadata.status
-      : "draft";
-
     sources.push({
       chunks,
       contentHash: hashContent(raw),
       fileName,
       module: metadata.module ?? 0,
+      needsReview: Boolean(metadata.needs_review),
       sourceType,
       status,
       subject: metadata.subject ?? "",
+      subjectCode,
+      subjectName: metadata.subject_name ?? "",
       title: metadata.title ?? fileName,
       topics: metadata.topics ?? [],
       warnings: sourceWarnings,

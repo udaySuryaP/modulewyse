@@ -16,7 +16,7 @@ values
     'oop',
     'Object Oriented Programming',
     'OOP',
-    'CST 201',
+    'PBCST304',
     4,
     'available',
     'Covers classes, objects, inheritance, polymorphism, exception handling, and core OOP principles.'
@@ -72,16 +72,35 @@ with module_seed as (
     subjects.status,
     modules.module_number,
     modules.title
-  from public.subjects
-  cross join (
+  from (
     values
-      (1, 'Module 1'),
-      (2, 'Module 2'),
-      (3, 'Module 3'),
-      (4, 'Module 4'),
-      (5, 'Module 5')
-  ) as modules(module_number, title)
-  where subjects.slug in ('oop', 'dbms', 'os', 'cn', 'ds')
+      ('oop', 1, 'Module 1'),
+      ('oop', 2, 'Module 2'),
+      ('oop', 3, 'Module 3'),
+      ('oop', 4, 'Module 4'),
+      ('dbms', 1, 'Module 1'),
+      ('dbms', 2, 'Module 2'),
+      ('dbms', 3, 'Module 3'),
+      ('dbms', 4, 'Module 4'),
+      ('dbms', 5, 'Module 5'),
+      ('os', 1, 'Module 1'),
+      ('os', 2, 'Module 2'),
+      ('os', 3, 'Module 3'),
+      ('os', 4, 'Module 4'),
+      ('os', 5, 'Module 5'),
+      ('cn', 1, 'Module 1'),
+      ('cn', 2, 'Module 2'),
+      ('cn', 3, 'Module 3'),
+      ('cn', 4, 'Module 4'),
+      ('cn', 5, 'Module 5'),
+      ('ds', 1, 'Module 1'),
+      ('ds', 2, 'Module 2'),
+      ('ds', 3, 'Module 3'),
+      ('ds', 4, 'Module 4'),
+      ('ds', 5, 'Module 5')
+  ) as modules(subject_slug, module_number, title)
+  join public.subjects
+    on subjects.slug = modules.subject_slug
 )
 insert into public.modules (
   subject_id,
@@ -111,7 +130,6 @@ with topic_seed as (
       ('oop', 4, 'Exception handling', array['exceptions'], 90, 'available'),
       ('oop', 2, 'Interfaces', array['interface'], 80, 'available'),
       ('oop', 2, 'Packages', array['package'], 75, 'available'),
-      ('oop', 5, 'File handling', array['files', 'streams'], 70, 'available'),
       ('dbms', 1, 'ER model', array['entity relationship model'], 100, 'beta'),
       ('dbms', 1, 'Relational model', array['relations'], 95, 'beta'),
       ('dbms', 2, 'SQL', array['structured query language'], 100, 'beta'),
