@@ -8,6 +8,7 @@ import "server-only";
 export const serverEnv = {
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
+  OPENAI_ANSWER_MODEL: process.env.OPENAI_ANSWER_MODEL ?? "gpt-5.2",
   EMBEDDING_MODEL:
     process.env.EMBEDDING_MODEL ??
     process.env.OPENAI_EMBEDDING_MODEL ??

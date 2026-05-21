@@ -21,10 +21,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StudentSidebar } from "@/components/dashboard/student-sidebar";
 import { MinimalLoader } from "@/components/ui/minimal-loader";
 import {
-  createConversation,
   getConversationWithMessages,
   getUserConversations,
-  insertMessage,
   markConversationUsed,
   saveMessageFeedback,
 } from "@/lib/data/chat";
@@ -47,6 +45,7 @@ import type {
   Message as PersistedMessage,
   MessageFeedback,
 } from "@/types/database";
+import type { RagAnswerResponse } from "@/types/chat";
 
 const answerTypes = answerTypeOptions;
 const supportedChatModules = new Set<SubjectModule>(["all", "1", "2", "3"]);
@@ -105,50 +104,6 @@ type ChatWorkspaceProps = {
 
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function mockAnswer(question: string, answerType: string, examMode: string) {
-  return [
-    "Mock exam-ready answer",
-    "",
-    `This is a placeholder answer showing how ModuleWyse will structure ${examMode.toLowerCase()} responses from curated academic content.`,
-    "",
-    "Definition / introduction",
-    `${question} can be answered by first defining the core concept, then connecting it to the reviewed notes ModuleWyse can search.`,
-    "",
-    "Key points",
-    "- Identify the main term used in the question.",
-    "- Explain the idea using syllabus-aligned language.",
-    "- Add two or three exam-relevant points with clear sequencing.",
-    "- Keep the answer grounded in the available reviewed notes.",
-    "",
-    "Short example",
-    "For OOP questions, relate the concept to a class, object, method, or real-world model where possible.",
-    "",
-    "Exam writing tip",
-    `For ${answerType} answers in ${examMode} mode, keep the structure direct: definition, points, example, and conclusion.`,
-    "",
-    "Conclusion",
-    "This local mock answer previews the response format. Real answers will later come from verified ModuleWyse academic content.",
-  ].join("\n");
-}
-
-function shouldTriggerState(question: string): AssistantStatus | null {
-  const normalized = question.toLowerCase();
-
-  if (normalized.includes("/fail")) {
-    return "failed";
-  }
-
-  if (normalized.includes("/insufficient")) {
-    return "insufficient";
-  }
-
-  if (normalized.includes("/rate")) {
-    return "rate-limited";
-  }
-
-  return null;
 }
 
 function contextFromProps(initialContext: ChatContext) {
@@ -219,36 +174,6 @@ function contextFromConversation(conversation: Conversation, fallback: ChatConte
   };
 }
 
-function titleFromQuestion(question: string) {
-  const normalized = question.replace(/\s+/g, " ").trim();
-
-  if (!normalized) {
-    return "New chat";
-  }
-
-  return normalized.length > 64 ? `${normalized.slice(0, 61)}...` : normalized;
-}
-
-function metadataForMessage(
-  status: AssistantStatus,
-  contextSnapshot: ChatContext,
-  answerTypeSnapshot: string,
-  examModeSnapshot: string,
-) {
-  return {
-    answerType: answerTypeSnapshot,
-    assistantStatus: status,
-    examMode: examModeSnapshot,
-    isMock: true,
-    moduleLabel: contextSnapshot.module,
-    moduleValue: moduleValueForContext(contextSnapshot),
-    sourceChips: sourceChipsForContext(contextSnapshot),
-    status: "BASED_ON_AVAILABLE_NOTES",
-    subjectLabel: contextSnapshot.subject,
-    subjectSlug: subjectSlugForContext(contextSnapshot),
-  };
-}
-
 function stringFromMetadata(
   metadata: Record<string, unknown>,
   key: string,
@@ -283,6 +208,14 @@ function messageFromPersisted(
     module: stringFromMetadata(metadata, "moduleLabel", conversationContext.module),
   };
   const status = stringFromMetadata(metadata, "assistantStatus", "complete");
+  const assistantStatus =
+    status === "answered"
+      ? "complete"
+      : status === "insufficient_source"
+        ? "insufficient"
+        : status === "error"
+          ? "failed"
+          : status;
 
   return {
     answerType: message.answer_type ?? stringFromMetadata(metadata, "answerType", "Default"),
@@ -296,8 +229,8 @@ function messageFromPersisted(
     sources: sourceChipsFromMetadata(metadata, sourceChipsForContext(contextSnapshot)),
     status:
       message.role === "assistant" &&
-      ["complete", "failed", "insufficient", "rate-limited"].includes(status)
-        ? (status as AssistantStatus)
+      ["complete", "failed", "insufficient", "rate-limited"].includes(assistantStatus)
+        ? (assistantStatus as AssistantStatus)
         : undefined,
   };
 }
@@ -458,123 +391,33 @@ export function ChatWorkspace({
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
-  function assistantMessage(
-    question: string,
-    status: AssistantStatus = "complete",
-    contextSnapshot: ChatContext = context,
-    answerTypeSnapshot: string = answerType,
-    examModeSnapshot: string = preferences.examModeDefault,
-  ): Message {
-    return {
-      id: newId("assistant"),
-      role: "assistant",
-      content:
-        status === "complete"
-          ? mockAnswer(question, answerTypeSnapshot, examModeSnapshot)
-          : status === "insufficient"
-            ? "I do not have enough verified material for this answer yet."
-            : status === "rate-limited"
-              ? "Local mock rate limit reached. Try again in a moment."
-              : "The local mock answer failed to generate.",
-      createdAt: new Date(),
-      answerType: answerTypeSnapshot,
-      context: contextSnapshot,
-      sources: sourceChipsForContext(contextSnapshot),
-      status,
-    };
-  }
-
-  function finishMockAnswer(
-    question: string,
-    contextSnapshot: ChatContext,
-    answerTypeSnapshot: string,
-    examModeSnapshot: string,
-    conversationId: string | null,
-  ) {
-    const forcedState = shouldTriggerState(question);
-    const nextAssistantMessage = assistantMessage(
-      question,
-      forcedState ?? "complete",
-      contextSnapshot,
-      answerTypeSnapshot,
-      examModeSnapshot,
-    );
-
-    setMessages((current) => [
-      ...current.filter((message) => message.status !== "loading"),
-      nextAssistantMessage,
-    ]);
-
-    if (conversationId) {
-      persistAssistantMessage(
-        conversationId,
-        nextAssistantMessage,
-        forcedState ?? "complete",
-        contextSnapshot,
-        answerTypeSnapshot,
-        examModeSnapshot,
-      );
-    }
-
-    setIsGenerating(false);
-    focusComposer();
-  }
-
-  async function ensureConversation(
-    question: string,
-    contextSnapshot: ChatContext,
-  ) {
-    if (activeConversationId) {
-      return activeConversationId;
-    }
-
-    const conversation = await createConversation({
-      moduleValue: moduleValueForContext(contextSnapshot),
-      subjectSlug: subjectSlugForContext(contextSnapshot),
-      title: titleFromQuestion(question),
-      userId,
+  async function requestAnswer(input: {
+    answerType: string;
+    contextSnapshot: ChatContext;
+    question: string;
+  }) {
+    const response = await fetch("/api/chat/answer", {
+      body: JSON.stringify({
+        answerType: input.answerType,
+        conversationId: activeConversationId || null,
+        moduleHint: moduleValueForContext(input.contextSnapshot),
+        question: input.question,
+        subjectHint: subjectSlugForContext(input.contextSnapshot),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
     });
+    const payload = (await response.json()) as
+      | RagAnswerResponse
+      | { error?: string };
 
-    setActiveConversationId(conversation.id);
-    window.history.replaceState(null, "", `/chat?conversation=${conversation.id}`);
-    refreshRecentConversations();
-    return conversation.id;
-  }
-
-  async function persistAssistantMessage(
-    conversationId: string,
-    message: Message,
-    status: AssistantStatus,
-    contextSnapshot: ChatContext,
-    answerTypeSnapshot: string,
-    examModeSnapshot: string,
-  ) {
-    try {
-      const persisted = await insertMessage({
-        answerType: answerTypeSnapshot,
-        content: message.content,
-        conversationId,
-        metadata: metadataForMessage(
-          status,
-          contextSnapshot,
-          answerTypeSnapshot,
-          examModeSnapshot,
-        ),
-        role: "assistant",
-        userId,
-      });
-
-      setMessages((current) =>
-        current.map((item) =>
-          item.id === message.id
-            ? { ...item, id: persisted.id, persistedId: persisted.id }
-            : item,
-        ),
-      );
-      refreshRecentConversations();
-    } catch {
-      setToast("Answer kept locally. Persistence failed.");
+    if (!response.ok && !("status" in payload)) {
+      throw new Error(payload.error ?? "Answer generation failed.");
     }
+
+    return payload as RagAnswerResponse;
   }
 
   async function sendMessage(question: string) {
@@ -587,7 +430,6 @@ export function ChatWorkspace({
     setDraft("");
     const contextSnapshot = context;
     const answerTypeSnapshot = answerType;
-    const examModeSnapshot = preferences.examModeDefault;
     const sourceChips = sourceChipsForContext(contextSnapshot);
 
     const localUserMessage: Message = {
@@ -614,56 +456,76 @@ export function ChatWorkspace({
     ]);
     setIsGenerating(true);
 
-    let conversationId: string | null = activeConversationId || null;
-
     try {
-      conversationId = await ensureConversation(trimmedQuestion, contextSnapshot);
-      const persistedUserMessage = await insertMessage({
-        answerType: null,
-        content: trimmedQuestion,
-        conversationId,
-        metadata: {
-          moduleLabel: contextSnapshot.module,
-          moduleValue: moduleValueForContext(contextSnapshot),
-          subjectLabel: contextSnapshot.subject,
-          subjectSlug: subjectSlugForContext(contextSnapshot),
-        },
-        role: "user",
-        userId,
+      const response = await requestAnswer({
+        answerType: answerTypeSnapshot,
+        contextSnapshot,
+        question: trimmedQuestion,
       });
+      const nextSources =
+        response.sources.length > 0
+          ? response.sources.map(
+              (source) => `Module ${source.moduleNumber} · ${source.topicTitle}`,
+            )
+          : sourceChips;
+      const assistantStatus: AssistantStatus =
+        response.status === "answered"
+          ? "complete"
+          : response.status === "insufficient_source"
+            ? "insufficient"
+            : "failed";
 
       setMessages((current) =>
         current.map((message) =>
           message.id === localUserMessage.id
             ? {
                 ...message,
-                id: persistedUserMessage.id,
-                persistedId: persistedUserMessage.id,
+                id: response.userMessageId ?? message.id,
+                persistedId: response.userMessageId ?? undefined,
               }
+            : message.id === loadingMessage.id
+              ? {
+                  ...message,
+                  answerType: answerTypeSnapshot,
+                  content: response.answer,
+                  id: response.assistantMessageId ?? message.id,
+                  persistedId: response.assistantMessageId ?? undefined,
+                  sources: nextSources,
+                  status: assistantStatus,
+                }
             : message,
         ),
       );
 
-      if (conversationId) {
-        void recordConversationUsage(conversationId);
+      if (response.conversationId) {
+        setActiveConversationId(response.conversationId);
+        window.history.replaceState(
+          null,
+          "",
+          `/chat?conversation=${response.conversationId}`,
+        );
       }
-    } catch {
-      conversationId = null;
-      setToast("Chat is continuing locally. Persistence failed.");
-    }
+      void refreshRecentConversations();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Answer generation failed.";
 
-    const delay = 700 + Math.round(Math.random() * 500);
-    window.setTimeout(
-      () =>
-        finishMockAnswer(
-          trimmedQuestion,
-          contextSnapshot,
-          answerTypeSnapshot,
-          examModeSnapshot,
-          conversationId,
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === loadingMessage.id
+            ? {
+                ...item,
+                content: "The answer could not be generated right now.",
+                status: "failed",
+              }
+            : item,
         ),
-      delay,
-    );
+      );
+      setToast(message);
+    } finally {
+      setIsGenerating(false);
+      focusComposer();
+    }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -715,63 +577,9 @@ export function ChatWorkspace({
   }
 
   function regenerate(messageId: string) {
-    const index = messages.findIndex((message) => message.id === messageId);
-    const previousQuestion = [...messages]
-      .slice(0, index)
-      .reverse()
-      .find((message) => message.role === "user")?.content;
-
-    if (!previousQuestion || isGenerating) {
-      return;
+    if (messages.some((message) => message.id === messageId)) {
+      setToast("Regenerate will be added after the RAG route is verified.");
     }
-
-    const targetMessage = messages[index];
-    const contextSnapshot = targetMessage?.context ?? context;
-    const answerTypeSnapshot = targetMessage?.answerType ?? answerType;
-    const examModeSnapshot = preferences.examModeDefault;
-    const loadingMessage: Message = {
-      id: newId("assistant-regenerating"),
-      role: "assistant",
-      content: "Searching reviewed notes...",
-      createdAt: new Date(),
-      answerType: answerTypeSnapshot,
-      context: contextSnapshot,
-      status: "loading",
-      sources: sourceChipsForContext(contextSnapshot),
-    };
-
-    setMessages((current) => [...current, loadingMessage]);
-    setIsGenerating(true);
-
-    window.setTimeout(() => {
-      const regeneratedMessage = assistantMessage(
-        previousQuestion,
-        "complete",
-        contextSnapshot,
-        answerTypeSnapshot,
-        examModeSnapshot,
-      );
-
-      setMessages((current) =>
-        current.map((message) =>
-          message.id === loadingMessage.id ? regeneratedMessage : message,
-        ),
-      );
-
-      if (activeConversationId) {
-        persistAssistantMessage(
-          activeConversationId,
-          regeneratedMessage,
-          "complete",
-          contextSnapshot,
-          answerTypeSnapshot,
-          examModeSnapshot,
-        );
-      }
-
-      setIsGenerating(false);
-      setToast("Answer regenerated.");
-    }, 850);
   }
 
   const canSend = draft.trim().length > 0 && !isGenerating;
@@ -1170,7 +978,7 @@ function Composer({
           className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Ask a question from your ModuleWyse notes..."
+          placeholder="Ask anything from your available notes..."
           ref={inputRef}
           rows={1}
           value={draft}
@@ -1202,7 +1010,7 @@ function EmptyConversation({
           What do you want to prepare today?
         </h2>
         <p className="mt-3 text-[15px] font-normal leading-[1.55] text-[var(--mw-body)] sm:mt-4 sm:text-[18px]">
-          Ask naturally. ModuleWyse will search the available reviewed notes.
+          Ask naturally. ModuleWyse will search the available reviewed notes and answer with sources.
         </p>
         {showSuggestedPrompts ? (
           <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
@@ -1271,8 +1079,7 @@ function AssistantMessage({
   if (message.status === "failed") {
     return (
       <EdgeCard
-        action="Try Again"
-        body="The local mock answer failed to generate."
+        body={message.content || "The answer could not be generated right now."}
         onAction={() => onRegenerate(message.id)}
         title="Answer failed"
       />
@@ -1282,8 +1089,7 @@ function AssistantMessage({
   if (message.status === "insufficient") {
     return (
       <EdgeCard
-        action="Try Another Question"
-        body="I do not have enough verified material for this answer yet."
+        body={message.content}
         onAction={() => undefined}
         title="Not enough verified content"
       />
@@ -1294,7 +1100,7 @@ function AssistantMessage({
     return (
       <EdgeCard
         action="Try Again"
-        body="Local mock rate limit reached. Try again in a moment."
+        body="Answer generation is rate limited. Try again in a moment."
         onAction={() => onRegenerate(message.id)}
         title="Rate limited"
       />
@@ -1303,10 +1109,16 @@ function AssistantMessage({
 
   return (
     <article className={cn("mw-card", preferences.compactAnswerCards ? "p-4" : "p-5")}>
-      {preferences.showSourceChips ? (
-        <div className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
-          {message.context?.subject ?? "Object Oriented Programming"} /{" "}
-          {message.context?.module ?? "Module 3"}
+      {preferences.showSourceChips && message.sources?.length ? (
+        <div className="flex flex-wrap gap-2">
+          {message.sources.map((source) => (
+            <span
+              className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]"
+              key={source}
+            >
+              {source}
+            </span>
+          ))}
         </div>
       ) : null}
 
@@ -1366,7 +1178,7 @@ function EdgeCard({
 }: {
   title: string;
   body: string;
-  action: string;
+  action?: string;
   onAction: () => void;
 }) {
   return (
@@ -1375,13 +1187,15 @@ function EdgeCard({
         {title}
       </h3>
       <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-body)]">{body}</p>
-      <button
-        className="mw-pill-primary mt-5"
-        onClick={onAction}
-        type="button"
-      >
-        {action}
-      </button>
+      {action ? (
+        <button
+          className="mw-pill-primary mt-5"
+          onClick={onAction}
+          type="button"
+        >
+          {action}
+        </button>
+      ) : null}
     </div>
   );
 }
