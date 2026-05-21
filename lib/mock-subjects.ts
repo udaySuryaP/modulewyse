@@ -120,10 +120,17 @@ export function subjectModuleLabel(module: SubjectModule) {
   return module === "all" ? "All modules" : `Module ${module}`;
 }
 
-export function subjectStatusLabel(status: SubjectStatus) {
-  if (status === "coming-soon") {
-    return "Coming soon";
-  }
+export function subjectStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    available: "Available",
+    beta: "Beta",
+    "coming soon": "Coming soon",
+    "coming-soon": "Coming soon",
+    draft: "Draft",
+    "in-review": "In review",
+    ready: "Ready",
+    review: "Review",
+  };
 
-  return status;
+  return labels[status] ?? status;
 }

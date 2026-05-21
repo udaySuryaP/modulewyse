@@ -75,6 +75,15 @@ export function LoginForm() {
 
   return (
     <form className="grid gap-4" onSubmit={handleSubmit}>
+      <div>
+        <h1 className="mw-display text-[32px] leading-[1.05] text-[var(--mw-ink)] sm:text-[38px]">
+          Sign in with email
+        </h1>
+        <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+          Continue to your ModuleWyse workspace using your registered email.
+        </p>
+      </div>
+
       <Field label="Email">
         <TextInput
           autoComplete="email"

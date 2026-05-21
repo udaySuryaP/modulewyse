@@ -9,12 +9,15 @@ export type LibraryQuestionViewModel = {
   answerAvailable: boolean;
   answerType: string;
   confidence: QuestionConfidence;
+  exam: string;
   id: string;
   module: SubjectModule;
+  moduleLabel: string;
   question: string;
   questionType: PreviousQuestionType;
   source: "supabase" | "fallback";
   status: string;
+  subjectCode: string | null;
   subjectLabel: string;
   subjectSlug: string;
   subjectStatus: "available" | "beta" | "coming-soon";

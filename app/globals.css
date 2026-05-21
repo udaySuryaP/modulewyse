@@ -110,6 +110,16 @@
   --sidebar-ring: var(--mw-ink);
 }
 
+@keyframes modulewyse-loader-fade {
+  0% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0.18;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -159,6 +169,17 @@
 }
 
 @layer utilities {
+  .mw-ios-loader-bar {
+    animation: modulewyse-loader-fade 960ms linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mw-ios-loader-bar {
+      animation: none;
+      opacity: 0.42;
+    }
+  }
+
   .mw-display {
     font-family: var(--font-display), Georgia, serif;
     font-weight: 300;

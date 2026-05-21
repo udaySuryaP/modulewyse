@@ -27,14 +27,32 @@ function firstParam(value: string | string[] | undefined) {
   return value ?? "";
 }
 
+function chatNextPath(params: Awaited<ChatPageProps["searchParams"]>) {
+  const nextParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item) => nextParams.append(key, item));
+      return;
+    }
+
+    if (value) {
+      nextParams.set(key, value);
+    }
+  });
+
+  const queryString = nextParams.toString();
+  return queryString ? `/chat?${queryString}` : "/chat";
+}
+
 export default async function ChatPage({ searchParams }: ChatPageProps) {
+  const params = await searchParams;
   const { user, profile } = await getUserProfile();
 
   if (!user) {
-    redirect("/login?next=/chat");
+    redirect(`/login?next=${encodeURIComponent(chatNextPath(params))}`);
   }
 
-  const params = await searchParams;
   const conversationId = firstParam(params.conversation);
   const pendingQuestion = firstParam(params.q);
   const subjectParam = firstParam(params.subject);

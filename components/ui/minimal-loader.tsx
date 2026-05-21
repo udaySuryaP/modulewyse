@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { cn } from "@/lib/utils";
 
 type MinimalLoaderProps = {
@@ -7,24 +9,69 @@ type MinimalLoaderProps = {
   variant?: "page" | "inline" | "button";
 };
 
+const barIndexes = Array.from({ length: 12 }, (_, index) => index);
+
 const variantStyles = {
   page: {
+    bar: "h-[7px] w-0.5",
     container:
       "grid min-h-dvh place-items-center bg-[var(--mw-canvas)] px-5 py-10 text-center",
     content: "flex-col items-center gap-3",
     label: "text-[13px] text-[var(--mw-muted)]",
+    offset: 10,
+    size: "size-7",
   },
   inline: {
+    bar: "h-[5px] w-[1.5px]",
     container: "inline-flex items-center text-left",
     content: "flex-row items-center gap-2",
     label: "text-[13px] text-[var(--mw-muted)]",
+    offset: 7,
+    size: "size-5",
   },
   button: {
+    bar: "h-1 w-[1.5px]",
     container: "inline-flex items-center",
     content: "flex-row items-center gap-2",
     label: "text-current",
+    offset: 5.5,
+    size: "size-4",
   },
 } as const;
+
+function CircularBarLoader({
+  label,
+  variant,
+}: {
+  label: string;
+  variant: NonNullable<MinimalLoaderProps["variant"]>;
+}) {
+  const styles = variantStyles[variant];
+
+  return (
+    <span
+      className={cn("relative shrink-0 text-[var(--mw-primary)]", styles.size)}
+    >
+      {barIndexes.map((index) => (
+        <span
+          aria-hidden="true"
+          className={cn(
+            "mw-ios-loader-bar absolute left-1/2 top-1/2 mw-radius-pill bg-current",
+            styles.bar,
+          )}
+          key={index}
+          style={
+            {
+              animationDelay: `${index * -80}ms`,
+              transform: `translate(-50%, -50%) rotate(${index * 30}deg) translateY(-${styles.offset}px)`,
+            } satisfies CSSProperties
+          }
+        />
+      ))}
+      <span className="sr-only">{label}</span>
+    </span>
+  );
+}
 
 export function MinimalLoader({
   className,
@@ -43,16 +90,17 @@ export function MinimalLoader({
     >
       <div className={cn("flex", styles.content)}>
         {showBrand ? (
-          <span className="mw-label text-[11px]">modulewyse</span>
+          <span className="mw-label text-[11px]" aria-hidden="true">
+            modulewyse
+          </span>
         ) : null}
 
-        <span className="inline-flex items-center gap-1.5" aria-hidden="true">
-          <span className="size-1.5 mw-radius-pill bg-[var(--mw-primary)] motion-safe:animate-pulse" />
-          <span className="size-1.5 mw-radius-pill bg-[var(--mw-muted)] motion-safe:animate-pulse [animation-delay:120ms]" />
-          <span className="size-1.5 mw-radius-pill bg-[var(--mw-muted-soft)] motion-safe:animate-pulse [animation-delay:240ms]" />
-        </span>
+        <CircularBarLoader label={label} variant={variant} />
 
-        <span className={cn("font-medium leading-none", styles.label)}>
+        <span
+          aria-hidden="true"
+          className={cn("font-medium leading-none", styles.label)}
+        >
           {label}
         </span>
       </div>

@@ -111,6 +111,15 @@ export function SignupForm() {
 
   return (
     <form className="grid gap-3 sm:gap-4" onSubmit={handleSubmit}>
+      <div className="mb-1">
+        <h1 className="mw-display text-[32px] leading-[1.05] text-[var(--mw-ink)] sm:text-[38px]">
+          Get started
+        </h1>
+        <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+          Create your ModuleWyse account and start learning from syllabus-grounded notes.
+        </p>
+      </div>
+
       <Field label="Full name">
         <TextInput
           autoComplete="name"

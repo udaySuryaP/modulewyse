@@ -2971,6 +2971,36 @@ create table if not exists public.message_feedback (
 ### Next
 - Continue final PBCST304 retrieval cleanup before RAG answer generation.
 
+## 2026-05-21 - Chat Context UX Simplification
+
+### Completed
+- Removed the visible Semester, Subject, and Module dropdowns from the Chat UI.
+- Kept Answer Type as the only user-facing chat context control.
+- Removed the mobile chat menu Semester, Subject, and Module controls.
+- Preserved `/chat?subject=oop&module=...` and `/chat?q=...&subject=oop&module=...` route compatibility as silent context hints.
+- Preserved Library and Subjects Ask AI / Start Chat route shapes.
+- Prepared the current chat context to default to reviewed PBCST304 OOP notes across supported Modules 1-3.
+- Excluded unsupported Module 4 and absent Module 5 from the sanitized chat context.
+- Updated chat copy and loading copy so students can ask naturally without selecting subject/module first.
+- Preserved chat persistence, recent chats, feedback, regenerate, source display, and auth behavior.
+- Preserved answer type persistence in message metadata.
+- Preserved logged-out redirect behavior while keeping the full `/chat` query string in the `next` parameter.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Current automatic retrieval scope is prepared for PBCST304 OOP Modules 1-3.
+- Module 4 remains draft/review and excluded from answer context.
+- Module 5 does not exist for PBCST304.
+- Previous-year questions are not answer sources yet.
+- Full RAG answer generation is still not wired in this prompt.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 using embedded chunks, citations/source chips, Markdown/LaTeX-safe rendering, and insufficient-source fallback.
+
 ## 2026-05-20 - Branch Stabilized Before RAG Answer Generation
 
 ### Completed
@@ -3004,6 +3034,144 @@ create table if not exists public.message_feedback (
 
 ### Next
 - Build retrieval-backed answer generation for PBCST304 using embedded chunks, citations/source chips, Markdown/LaTeX-safe rendering, and insufficient-source fallback.
+
+## 2026-05-21 - iOS-Style Circular Bar Loader
+
+### Completed
+- Replaced the current dot/pulse loader animation with a compact iOS-style circular bar loader.
+- Preserved the existing `MinimalLoader` API:
+  - `label`
+  - `variant`
+  - `showBrand`
+- Updated page, inline, and button variants with compact bar-loader sizing.
+- Kept existing loading logic and all loader call sites unchanged.
+- Added CSS-only `modulewyse-loader-fade` animation.
+- Added reduced-motion fallback for static muted bars.
+- Used current ModuleWyse ink/primary token colors and inherited off-white backgrounds.
+- Added no new animation dependency.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- This was a visual-only change.
+- No auth, routing, Supabase/database, chat persistence, retrieval, RAG, analytics, subjects, or content logic changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue RAG branch setup / RAG answer generation implementation.
+
+## 2026-05-21 - Library Dropdown Quality Pass
+
+### Completed
+- Improved Library dropdown population from available question data.
+- Reworked Subject, Module, Question type, Year, and Exam filters to derive options from the loaded Library questions.
+- Added clean Subject labels with course code where available.
+- Added Exam filtering using existing question metadata.
+- Normalized question-type labels such as `Unknown Type` and `Short Answer`.
+- Normalized unknown year/exam labels to `Unknown year` and `Unknown exam`.
+- Sorted modules numerically, years descending, and unknown values last.
+- Added cascading filter behavior:
+  - changing Subject resets Module, Question type, Year, and Exam
+  - changing Module resets Question type, Year, and Exam
+  - changing Question type resets Year and Exam
+  - changing Year resets Exam
+- Improved empty-filter state copy.
+- Preserved Supabase-first and static fallback behavior.
+- Updated fallback Library data to match the improved filter model.
+- Preserved existing Library visual design and mobile stacking behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Topic filter was not added because live reviewed previous-question rows currently have null topic IDs, so topic options would be low quality.
+- Some old questions still carry unknown exam/question-type metadata and are grouped cleanly rather than hidden.
+- No RAG, AI answer generation, auth, database schema, embedding, or admin behavior changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 on the RAG branch.
+
+## 2026-05-21 - Subject Detail Spacing And Status Label Polish
+
+### Completed
+- Added vertical spacing between the subject detail Back button and main card.
+- Formatted subject status labels with capitalized display text.
+- Preserved raw status values for routing, data, and UI logic.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- UI polish only.
+- No subject data, routing, auth, Supabase/database, chat, retrieval, or RAG logic changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue RAG answer generation implementation on the RAG branch.
+
+## 2026-05-21 - Performance Audit And Optimization Pass
+
+### Completed
+- Audited app rendering, navigation, data fetching, assets, fonts, animations, and database index coverage.
+- Measured baseline with `npm run build`.
+- Reduced unnecessary client component surface:
+  - converted `components/subjects/subject-detail-panel.tsx` back to a Server Component
+  - removed the `framer-motion` client dependency from `components/motion/liquid-motion.tsx`
+- Optimized Subjects data fetching:
+  - stopped fetching full `content_chunks` rows for subject module counts
+  - stopped fetching full `content_sources` rows for subject module counts
+  - now selects only IDs, subject/module references, status, metadata, and lightweight module/topic fields needed for view-model stats
+- Preserved Supabase-first and static fallback behavior.
+- Reviewed Library filters; existing derived data is memoized and no schema/query changes were needed.
+- Reviewed Chat shell and sidebar; no behavior-preserving split was worth the risk in this pass.
+- Reviewed navigation; internal student navigation already uses `next/link`.
+- Reviewed database indexes; existing indexes cover current hot paths well enough, so no migration was added.
+- Build comparison:
+  - observed baseline compile: 6.9s
+  - observed post-pass compile: 3.7s
+  - route list unchanged
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- No product behavior changed.
+- No auth, Supabase RLS/security, database schema, chat, retrieval, or RAG logic changed.
+- Next build output in this project did not include per-route first-load JS sizes, so no route-size delta was recorded.
+- Chat remains the largest unavoidable client surface because the workspace is interactive.
+- Dashboard shell remains client-side because sidebar/mobile navigation state is interactive.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Build retrieval-backed answer generation for PBCST304 on the RAG branch.
+
+## 2026-05-21 - Auth Page Copy Refresh
+
+### Completed
+- Updated login heading to `Sign in with email`.
+- Added login subheading: `Continue to your ModuleWyse workspace using your registered email.`
+- Updated signup heading to `Get started`.
+- Added signup subheading: `Create your ModuleWyse account and start learning from syllabus-grounded notes.`
+- Preserved Supabase auth logic, validation, redirects, callback behavior, onboarding flow, and form behavior.
+- Left forgot-password copy unchanged because it already matches the calmer account-recovery tone.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Copy-only auth UI text change.
+- No auth, routing, Supabase/database, chat, retrieval, RAG, analytics, or environment logic changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue RAG branch setup / RAG answer generation implementation.
 
 ## 2026-05-20 - Data-Driven Subjects Module Counts
 
