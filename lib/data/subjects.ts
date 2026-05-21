@@ -7,8 +7,6 @@ import {
 } from "@/lib/mock-subjects";
 import { createClient } from "@/lib/supabase/server";
 import type {
-  ContentChunk,
-  ContentSource,
   Module,
   Subject,
   SubjectStatus,
@@ -31,11 +29,32 @@ type ContentCounter = {
 };
 
 type SubjectSupplementalData = {
-  chunks: ContentChunk[];
+  chunks: SubjectChunkStats[];
   modules: Module[];
-  sources: ContentSource[];
-  topics: Topic[];
+  sources: SubjectSourceStats[];
+  topics: SubjectTopicStats[];
 };
+
+type SubjectSourceStats = {
+  id: string;
+  metadata: Record<string, unknown>;
+  module_id: string | null;
+  status: string;
+  subject_id: string;
+};
+
+type SubjectChunkStats = {
+  id: string;
+  metadata: Record<string, unknown>;
+  module_id: string | null;
+  status: string;
+  subject_id: string;
+};
+
+type SubjectTopicStats = Pick<
+  Topic,
+  "id" | "module_id" | "priority" | "subject_id" | "title"
+>;
 
 export type SubjectDataSource = "supabase" | "fallback";
 export type ModuleReadiness = "ready" | "review" | "empty";
@@ -405,21 +424,21 @@ async function getSupplementalData(
     await Promise.all([
       supabase
         .from("modules")
-        .select("*")
+        .select("id, subject_id, module_number, title, description, status, created_at, updated_at")
         .in("subject_id", subjectIds)
         .order("module_number", { ascending: true }),
       supabase
         .from("topics")
-        .select("*")
+        .select("id, subject_id, module_id, title, priority")
         .in("subject_id", subjectIds)
         .order("priority", { ascending: true }),
       supabase
         .from("content_sources")
-        .select("*")
+        .select("id, subject_id, module_id, status, metadata")
         .in("subject_id", subjectIds),
       supabase
         .from("content_chunks")
-        .select("*")
+        .select("id, subject_id, module_id, status, metadata")
         .in("subject_id", subjectIds),
     ]);
 
@@ -447,15 +466,15 @@ async function getSupplementalData(
     dataBySubject.get(module.subject_id)?.modules.push(module);
   });
 
-  ((topicsResult.data ?? []) as Topic[]).forEach((topic) => {
+  ((topicsResult.data ?? []) as SubjectTopicStats[]).forEach((topic) => {
     dataBySubject.get(topic.subject_id)?.topics.push(topic);
   });
 
-  ((sourcesResult.data ?? []) as ContentSource[]).forEach((source) => {
+  ((sourcesResult.data ?? []) as SubjectSourceStats[]).forEach((source) => {
     dataBySubject.get(source.subject_id)?.sources.push(source);
   });
 
-  ((chunksResult.data ?? []) as ContentChunk[]).forEach((chunk) => {
+  ((chunksResult.data ?? []) as SubjectChunkStats[]).forEach((chunk) => {
     dataBySubject.get(chunk.subject_id)?.chunks.push(chunk);
   });
 

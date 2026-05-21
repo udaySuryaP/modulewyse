@@ -5,14 +5,162 @@ import { useMemo, useState } from "react";
 
 import { SelectInput } from "@/components/auth/form-fields";
 import { StatusBadge } from "@/components/landing/status-badge";
-import {
-  isChatEnabledSubject,
-  subjectModuleLabel,
-} from "@/lib/mock-subjects";
+import { isChatEnabledSubject } from "@/lib/mock-subjects";
 import { cn } from "@/lib/utils";
 import type { LibraryQuestionViewModel } from "@/types/library";
 
-const allOption = "All";
+const allValue = "all";
+
+type FilterOption = {
+  label: string;
+  value: string;
+};
+
+type LibraryFilters = {
+  answerType: string;
+  exam: string;
+  module: string;
+  subject: string;
+  year: string;
+};
+
+const allOptions = {
+  answerType: { label: "All question types", value: allValue },
+  exam: { label: "All exams", value: allValue },
+  module: { label: "All modules", value: allValue },
+  subject: { label: "All subjects", value: allValue },
+  year: { label: "All years", value: allValue },
+} satisfies Record<keyof LibraryFilters, FilterOption>;
+
+const questionTypeRank: Record<string, number> = {
+  part_a: 0,
+  part_b: 1,
+  part_c: 2,
+  short: 3,
+  medium: 4,
+  long: 5,
+  unknown: 99,
+};
+
+function uniqueByValue(options: FilterOption[]) {
+  return [...new Map(options.map((option) => [option.value, option])).values()];
+}
+
+function subjectDisplayLabel(question: LibraryQuestionViewModel) {
+  return question.subjectCode
+    ? `${question.subjectLabel} · ${question.subjectCode}`
+    : question.subjectLabel;
+}
+
+function byLabel(left: FilterOption, right: FilterOption) {
+  return left.label.localeCompare(right.label);
+}
+
+function byModuleNumber(left: FilterOption, right: FilterOption) {
+  return Number(left.value) - Number(right.value);
+}
+
+function byYearDesc(left: FilterOption, right: FilterOption) {
+  if (left.value === "unknown") {
+    return 1;
+  }
+
+  if (right.value === "unknown") {
+    return -1;
+  }
+
+  return Number(right.value) - Number(left.value);
+}
+
+function byQuestionType(left: FilterOption, right: FilterOption) {
+  return (
+    (questionTypeRank[left.value] ?? 50) -
+      (questionTypeRank[right.value] ?? 50) ||
+    left.label.localeCompare(right.label)
+  );
+}
+
+function valueFromYear(year: string) {
+  return year === "Unknown year" ? "unknown" : year;
+}
+
+function valuesContain(options: FilterOption[], value: string) {
+  return value === allValue || options.some((option) => option.value === value);
+}
+
+function applyFilters(
+  questions: LibraryQuestionViewModel[],
+  filters: LibraryFilters,
+) {
+  return questions.filter(
+    (question) =>
+      (filters.subject === allValue || question.subjectSlug === filters.subject) &&
+      (filters.module === allValue || question.module === filters.module) &&
+      (filters.answerType === allValue ||
+        question.questionType === filters.answerType) &&
+      (filters.year === allValue || valueFromYear(question.year) === filters.year) &&
+      (filters.exam === allValue || question.exam === filters.exam),
+  );
+}
+
+function buildSubjectOptions(questions: LibraryQuestionViewModel[]) {
+  return uniqueByValue(
+    questions.map((question) => ({
+      label: subjectDisplayLabel(question),
+      value: question.subjectSlug,
+    })),
+  ).sort(byLabel);
+}
+
+function buildModuleOptions(questions: LibraryQuestionViewModel[]) {
+  return uniqueByValue(
+    questions
+      .filter((question) => question.module !== allValue)
+      .map((question) => ({
+        label: question.moduleLabel,
+        value: question.module,
+      })),
+  ).sort(byModuleNumber);
+}
+
+function buildQuestionTypeOptions(questions: LibraryQuestionViewModel[]) {
+  return uniqueByValue(
+    questions.map((question) => ({
+      label: question.answerType,
+      value: question.questionType,
+    })),
+  ).sort(byQuestionType);
+}
+
+function buildYearOptions(questions: LibraryQuestionViewModel[]) {
+  return uniqueByValue(
+    questions.map((question) => ({
+      label: question.year,
+      value: valueFromYear(question.year),
+    })),
+  ).sort(byYearDesc);
+}
+
+function buildExamOptions(questions: LibraryQuestionViewModel[]) {
+  return uniqueByValue(
+    questions
+      .filter((question) => question.exam.trim().length > 0)
+      .map((question) => ({
+        label: question.exam,
+        value: question.exam,
+      })),
+  ).sort((left, right) => {
+    if (left.value === "Unknown exam") {
+      return 1;
+    }
+
+    if (right.value === "Unknown exam") {
+      return -1;
+    }
+
+    return left.label.localeCompare(right.label);
+  });
+}
 
 export function QuestionLibrary({
   dataSource,
@@ -21,55 +169,147 @@ export function QuestionLibrary({
   dataSource: "supabase" | "fallback";
   questions: LibraryQuestionViewModel[];
 }) {
-  const [subject, setSubject] = useState(allOption);
-  const [module, setModule] = useState(allOption);
-  const [answerType, setAnswerType] = useState(allOption);
-  const [year, setYear] = useState(allOption);
+  const [filters, setFilters] = useState<LibraryFilters>({
+    answerType: allValue,
+    exam: allValue,
+    module: allValue,
+    subject: allValue,
+    year: allValue,
+  });
+
   const subjectOptions = useMemo(
-    () => [
-      allOption,
-      ...Array.from(new Set(questions.map((item) => item.subjectLabel))),
-    ],
+    () => [allOptions.subject, ...buildSubjectOptions(questions)],
     [questions],
   );
-  const moduleOptions = useMemo(
-    () => [
-      allOption,
-      ...Array.from(
-        new Set(questions.map((item) => subjectModuleLabel(item.module))),
+  const subjectScopedQuestions = useMemo(
+    () =>
+      questions.filter(
+        (question) =>
+          filters.subject === allValue ||
+          question.subjectSlug === filters.subject,
       ),
-    ],
-    [questions],
+    [filters.subject, questions],
+  );
+  const moduleOptions = useMemo(
+    () => [allOptions.module, ...buildModuleOptions(subjectScopedQuestions)],
+    [subjectScopedQuestions],
+  );
+  const moduleScopedQuestions = useMemo(
+    () =>
+      subjectScopedQuestions.filter(
+        (question) =>
+          filters.module === allValue || question.module === filters.module,
+      ),
+    [filters.module, subjectScopedQuestions],
   );
   const answerTypeOptions = useMemo(
     () => [
-      allOption,
-      ...Array.from(new Set(questions.map((item) => item.answerType))),
+      allOptions.answerType,
+      ...buildQuestionTypeOptions(moduleScopedQuestions),
     ],
-    [questions],
+    [moduleScopedQuestions],
+  );
+  const typeScopedQuestions = useMemo(
+    () =>
+      moduleScopedQuestions.filter(
+        (question) =>
+          filters.answerType === allValue ||
+          question.questionType === filters.answerType,
+      ),
+    [filters.answerType, moduleScopedQuestions],
   );
   const yearOptions = useMemo(
-    () => [
-      allOption,
-      ...Array.from(new Set(questions.map((item) => item.year))),
-    ],
-    [questions],
+    () => [allOptions.year, ...buildYearOptions(typeScopedQuestions)],
+    [typeScopedQuestions],
   );
-
-  const filteredQuestions = useMemo(
+  const yearScopedQuestions = useMemo(
     () =>
-      questions.filter((question) => {
-        const moduleLabel = subjectModuleLabel(question.module);
-
-        return (
-          (subject === allOption || question.subjectLabel === subject) &&
-          (module === allOption || moduleLabel === module) &&
-          (answerType === allOption || question.answerType === answerType) &&
-          (year === allOption || question.year === year)
-        );
-      }),
-    [answerType, module, questions, subject, year],
+      typeScopedQuestions.filter(
+        (question) =>
+          filters.year === allValue ||
+          valueFromYear(question.year) === filters.year,
+      ),
+    [filters.year, typeScopedQuestions],
   );
+  const examOptions = useMemo(
+    () => [allOptions.exam, ...buildExamOptions(yearScopedQuestions)],
+    [yearScopedQuestions],
+  );
+
+  const effectiveFilters = useMemo(
+    () => ({
+      answerType: valuesContain(answerTypeOptions, filters.answerType)
+        ? filters.answerType
+        : allValue,
+      exam: valuesContain(examOptions, filters.exam) ? filters.exam : allValue,
+      module: valuesContain(moduleOptions, filters.module)
+        ? filters.module
+        : allValue,
+      subject: valuesContain(subjectOptions, filters.subject)
+        ? filters.subject
+        : allValue,
+      year: valuesContain(yearOptions, filters.year) ? filters.year : allValue,
+    }),
+    [
+      answerTypeOptions,
+      examOptions,
+      filters.answerType,
+      filters.exam,
+      filters.module,
+      filters.subject,
+      filters.year,
+      moduleOptions,
+      subjectOptions,
+      yearOptions,
+    ],
+  );
+  const filteredQuestions = useMemo(
+    () => applyFilters(questions, effectiveFilters),
+    [effectiveFilters, questions],
+  );
+
+  function updateFilter(key: keyof LibraryFilters, value: string) {
+    setFilters((current) => {
+      if (key === "subject") {
+        return {
+          answerType: allValue,
+          exam: allValue,
+          module: allValue,
+          subject: value,
+          year: allValue,
+        };
+      }
+
+      if (key === "module") {
+        return {
+          ...current,
+          answerType: allValue,
+          exam: allValue,
+          module: value,
+          year: allValue,
+        };
+      }
+
+      if (key === "answerType") {
+        return {
+          ...current,
+          answerType: value,
+          exam: allValue,
+          year: allValue,
+        };
+      }
+
+      if (key === "year") {
+        return {
+          ...current,
+          exam: allValue,
+          year: value,
+        };
+      }
+
+      return { ...current, [key]: value };
+    });
+  }
 
   return (
     <div className="grid gap-4">
@@ -90,30 +330,36 @@ export function QuestionLibrary({
           </p>
         ) : null}
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <FilterSelect
             label="Subject"
-            onChange={setSubject}
+            onChange={(value) => updateFilter("subject", value)}
             options={subjectOptions}
-            value={subject}
+            value={effectiveFilters.subject}
           />
           <FilterSelect
             label="Module"
-            onChange={setModule}
+            onChange={(value) => updateFilter("module", value)}
             options={moduleOptions}
-            value={module}
+            value={effectiveFilters.module}
           />
           <FilterSelect
-            label="Answer type"
-            onChange={setAnswerType}
+            label="Question type"
+            onChange={(value) => updateFilter("answerType", value)}
             options={answerTypeOptions}
-            value={answerType}
+            value={effectiveFilters.answerType}
           />
           <FilterSelect
             label="Year"
-            onChange={setYear}
+            onChange={(value) => updateFilter("year", value)}
             options={yearOptions}
-            value={year}
+            value={effectiveFilters.year}
+          />
+          <FilterSelect
+            label="Exam"
+            onChange={(value) => updateFilter("exam", value)}
+            options={examOptions}
+            value={effectiveFilters.exam}
           />
         </div>
       </section>
@@ -125,7 +371,12 @@ export function QuestionLibrary({
           ))
         ) : (
           <div className="mw-card p-5 text-[15px] leading-[1.5] text-[var(--mw-body)]">
-            No questions match these filters.
+            <p className="font-medium text-[var(--mw-ink)]">
+              No questions found for this filter.
+            </p>
+            <p className="mt-2 text-[14px] text-[var(--mw-muted)]">
+              Try changing the module, year, or question type.
+            </p>
           </div>
         )}
       </section>
@@ -140,7 +391,7 @@ function FilterSelect({
   onChange,
 }: {
   label: string;
-  options: string[];
+  options: FilterOption[];
   value: string;
   onChange: (value: string) => void;
 }) {
@@ -155,7 +406,9 @@ function FilterSelect({
         value={value}
       >
         {options.map((option) => (
-          <option key={option}>{option}</option>
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
         ))}
       </SelectInput>
     </label>
@@ -164,7 +417,7 @@ function FilterSelect({
 
 function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
   const canAsk = isChatEnabledSubject({
-    code: "",
+    code: question.subjectCode ?? "",
     description: "",
     modules: [],
     name: question.subjectLabel,
@@ -193,6 +446,9 @@ function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
             <span className="mw-badge">
               {question.year}
             </span>
+            <span className="mw-badge">
+              {question.exam}
+            </span>
           </div>
 
           <h2 className="mt-4 text-[22px] font-medium leading-[1.25] text-[var(--mw-ink)] sm:text-[24px]">
@@ -200,7 +456,7 @@ function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
           </h2>
 
           <p className="mt-3 truncate text-[14px] leading-[1.5] text-[var(--mw-muted)]">
-            {question.subjectLabel} / {subjectModuleLabel(question.module)}
+            {subjectDisplayLabel(question)} / {question.moduleLabel}
           </p>
 
           {!canAsk ? (

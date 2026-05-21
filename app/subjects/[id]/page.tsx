@@ -28,7 +28,7 @@ export default async function SubjectDetailPage({
 
   return (
     <StudentPageShell>
-      <BackLink href="/subjects" label="Back to subjects" />
+      <BackLink className="mb-6" href="/subjects" label="Back to subjects" />
       <SubjectDetailPanel subject={subject} />
     </StudentPageShell>
   );

@@ -3,7 +3,6 @@
 import {
   BookOpen,
   CalendarDays,
-  ChevronDown,
   Clock,
   Clipboard,
   Library,
@@ -49,10 +48,13 @@ import type {
   MessageFeedback,
 } from "@/types/database";
 
-const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"];
-const subjects = mockSubjects.map((subject) => subject.name);
-const moduleOptions = subjectModules.map(subjectModuleLabel);
 const answerTypes = answerTypeOptions;
+const supportedChatModules = new Set<SubjectModule>(["all", "1", "2", "3"]);
+const defaultChatContext: ChatContext = {
+  semester: "S4",
+  subject: "Object Oriented Programming",
+  module: "All modules",
+};
 const suggestedPrompts = [
   "Explain inheritance in OOP",
   "Give a Part C answer on normalization",
@@ -101,14 +103,6 @@ type ChatWorkspaceProps = {
   userId: string;
 };
 
-function normalizeOption(value: string, options: string[], fallback: string) {
-  const match = options.find(
-    (option) => option.toLowerCase() === value.trim().toLowerCase(),
-  );
-
-  return match ?? fallback;
-}
-
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -120,13 +114,13 @@ function mockAnswer(question: string, answerType: string, examMode: string) {
     `This is a placeholder answer showing how ModuleWyse will structure ${examMode.toLowerCase()} responses from curated academic content.`,
     "",
     "Definition / introduction",
-    `${question} can be answered by first defining the core concept, then connecting it to the selected module context.`,
+    `${question} can be answered by first defining the core concept, then connecting it to the reviewed notes ModuleWyse can search.`,
     "",
     "Key points",
     "- Identify the main term used in the question.",
     "- Explain the idea using syllabus-aligned language.",
     "- Add two or three exam-relevant points with clear sequencing.",
-    "- Connect the answer to the selected subject and module.",
+    "- Keep the answer grounded in the available reviewed notes.",
     "",
     "Short example",
     "For OOP questions, relate the concept to a class, object, method, or real-world model where possible.",
@@ -158,10 +152,12 @@ function shouldTriggerState(question: string): AssistantStatus | null {
 }
 
 function contextFromProps(initialContext: ChatContext) {
+  const moduleValue = moduleValueForContext(initialContext);
+
   return {
-    semester: normalizeOption(initialContext.semester, semesters, "S4"),
-    subject: normalizeOption(initialContext.subject, subjects, "Object Oriented Programming"),
-    module: normalizeOption(initialContext.module, moduleOptions, "All modules"),
+    semester: initialContext.semester || defaultChatContext.semester,
+    subject: defaultChatContext.subject,
+    module: subjectModuleLabel(moduleValue),
   };
 }
 
@@ -196,7 +192,10 @@ function subjectSlugForContext(context: ChatContext) {
 function moduleValueForContext(context: ChatContext): SubjectModule {
   const normalized = context.module.toLowerCase().replace(/^module\s+/, "");
 
-  if (subjectModules.includes(normalized as SubjectModule)) {
+  if (
+    subjectModules.includes(normalized as SubjectModule) &&
+    supportedChatModules.has(normalized as SubjectModule)
+  ) {
     return normalized as SubjectModule;
   }
 
@@ -600,7 +599,7 @@ export function ChatWorkspace({
     const loadingMessage: Message = {
       id: newId("assistant-loading"),
       role: "assistant",
-      content: "Generating from selected notes...",
+      content: "Searching reviewed notes...",
       createdAt: new Date(),
       answerType: answerTypeSnapshot,
       context: contextSnapshot,
@@ -733,7 +732,7 @@ export function ChatWorkspace({
     const loadingMessage: Message = {
       id: newId("assistant-regenerating"),
       role: "assistant",
-      content: "Generating from selected notes...",
+      content: "Searching reviewed notes...",
       createdAt: new Date(),
       answerType: answerTypeSnapshot,
       context: contextSnapshot,
@@ -799,11 +798,9 @@ export function ChatWorkspace({
         <MobileChatTopbar
           activeConversationId={activeConversationId}
           answerType={answerType}
-          context={context}
           conversations={recentConversations}
           isOpen={mobileMenuOpen}
           onAnswerTypeChange={setAnswerType}
-          onContextChange={setContext}
           onNavigate={() => setMobileMenuOpen(false)}
           onToggle={() => setMobileMenuOpen((current) => !current)}
         />
@@ -814,9 +811,7 @@ export function ChatWorkspace({
           <ContextControls
             answerType={answerType}
             className="hidden md:block md:row-start-1 md:self-start"
-            context={context}
             onAnswerTypeChange={setAnswerType}
-            onContextChange={setContext}
           />
 
           {isProfileIncomplete ? (
@@ -882,21 +877,17 @@ export function ChatWorkspace({
 function MobileChatTopbar({
   activeConversationId,
   answerType,
-  context,
   conversations,
   isOpen,
   onAnswerTypeChange,
-  onContextChange,
   onNavigate,
   onToggle,
 }: {
   activeConversationId: string;
   answerType: string;
-  context: ChatContext;
   conversations: Conversation[];
   isOpen: boolean;
   onAnswerTypeChange: (value: string) => void;
-  onContextChange: React.Dispatch<React.SetStateAction<ChatContext>>;
   onNavigate: () => void;
   onToggle: () => void;
 }) {
@@ -967,33 +958,6 @@ function MobileChatTopbar({
             </div>
           </div>
 
-          <div className="grid gap-3">
-            <ContextSelect
-              label="Semester"
-              onChange={(value) =>
-                onContextChange((current) => ({ ...current, semester: value }))
-              }
-              options={semesters}
-              value={context.semester}
-            />
-            <ContextSelect
-              label="Subject"
-              onChange={(value) =>
-                onContextChange((current) => ({ ...current, subject: value }))
-              }
-              options={subjects}
-              value={context.subject}
-            />
-            <ContextSelect
-              label="Module"
-              onChange={(value) =>
-                onContextChange((current) => ({ ...current, module: value }))
-              }
-              options={moduleOptions}
-              value={context.module}
-            />
-          </div>
-
           <nav className="grid gap-2" aria-label="Student dashboard mobile">
             {mobileNavItems.map((item) => {
               const Icon = item.icon;
@@ -1039,15 +1003,11 @@ function MobileChatTopbar({
 function ContextControls({
   answerType,
   className,
-  context,
   onAnswerTypeChange,
-  onContextChange,
 }: {
   answerType: string;
   className?: string;
-  context: ChatContext;
   onAnswerTypeChange: (value: string) => void;
-  onContextChange: React.Dispatch<React.SetStateAction<ChatContext>>;
 }) {
   return (
     <div
@@ -1056,34 +1016,7 @@ function ContextControls({
         className,
       )}
     >
-      <div className="grid gap-3 md:grid-cols-[120px_minmax(0,1fr)_140px]">
-        <ContextSelect
-          label="Semester"
-          onChange={(value) =>
-            onContextChange((current) => ({ ...current, semester: value }))
-          }
-          options={semesters}
-          value={context.semester}
-        />
-        <ContextSelect
-          label="Subject"
-          onChange={(value) =>
-            onContextChange((current) => ({ ...current, subject: value }))
-          }
-          options={subjects}
-          value={context.subject}
-        />
-        <ContextSelect
-          label="Module"
-          onChange={(value) =>
-            onContextChange((current) => ({ ...current, module: value }))
-          }
-          options={moduleOptions}
-          value={context.module}
-        />
-      </div>
-
-      <div className="mt-4">
+      <div>
         <p className="mw-label">
           Answer type
         </p>
@@ -1185,41 +1118,6 @@ function SidebarRecentConversations({
   );
 }
 
-function ContextSelect({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: string[];
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="grid gap-2">
-      <span className="mw-label">
-        {label}
-      </span>
-      <span className="relative block">
-        <select
-          className="mw-input h-11 w-full min-w-0 appearance-none py-0 pl-4 pr-10 text-[14px] font-normal [&>option]:bg-white"
-          onChange={(event) => onChange(event.target.value)}
-          value={value}
-        >
-          {options.map((option) => (
-            <option key={option}>{option}</option>
-          ))}
-        </select>
-        <ChevronDown
-          aria-hidden="true"
-          className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-[var(--mw-muted)]"
-        />
-      </span>
-    </label>
-  );
-}
-
 function SetupPrompt({ className }: { className?: string }) {
   return (
     <div
@@ -1272,7 +1170,7 @@ function Composer({
           className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Ask from selected subject..."
+          placeholder="Ask a question from your ModuleWyse notes..."
           ref={inputRef}
           rows={1}
           value={draft}
@@ -1304,7 +1202,7 @@ function EmptyConversation({
           What do you want to prepare today?
         </h2>
         <p className="mt-3 text-[15px] font-normal leading-[1.55] text-[var(--mw-body)] sm:mt-4 sm:text-[18px]">
-          Select a subject and ask from available curated notes.
+          Ask naturally. ModuleWyse will search the available reviewed notes.
         </p>
         {showSuggestedPrompts ? (
           <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
@@ -1455,7 +1353,7 @@ function AssistantMessage({
 function LoadingAnswer() {
   return (
     <div className="mw-card p-5">
-      <MinimalLoader label="Generating from selected notes" variant="inline" />
+      <MinimalLoader label="Searching reviewed notes" variant="inline" />
     </div>
   );
 }

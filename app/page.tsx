@@ -37,7 +37,7 @@ export default function HomePage() {
             <FeatureCard
               label="Module-aware"
               title="Prepare inside the right syllabus context."
-              description="Choose semester, subject, and module so answers stay close to the exam scope."
+              description="Ask naturally and let ModuleWyse search the reviewed notes that match your question."
             />
             <FeatureCard
               label="Curated notes"
