@@ -15,6 +15,10 @@ const maxQuestionLength = 3000;
 const topK = 8;
 const insufficientAnswer =
   "I don't have enough reviewed ModuleWyse notes to answer this reliably yet.";
+const module5NotInSchemeAnswer =
+  "PBCST304 under the KTU 2024 scheme does not include Module 5. I can answer from reviewed Modules 1-3, while Module 4 is still under review.";
+const module4UnderReviewAnswer =
+  "Module 4 for PBCST304 is still under review in ModuleWyse. I can answer from reviewed Modules 1-3 for now.";
 
 type ChatAnswerRequest = {
   answerType?: unknown;
@@ -110,10 +114,17 @@ function normalizeModuleHint(value: unknown) {
     };
   }
 
-  if (normalized === "4" || normalized === "5") {
+  if (normalized === "4") {
     return {
       moduleHint: "all" as const,
-      unsupportedReason: `module ${normalized} is not available as a reviewed answer source`,
+      unsupportedReason: "module 4 is still under review",
+    };
+  }
+
+  if (normalized === "5") {
+    return {
+      moduleHint: "all" as const,
+      unsupportedReason: "module 5 does not exist in the KTU 2024 scheme for PBCST304",
     };
   }
 
@@ -158,14 +169,28 @@ function unsupportedModuleReasonFromQuestion(question: string) {
   const normalized = question.toLowerCase();
 
   if (/\bmodule\s*(4|iv)\b/.test(normalized)) {
-    return "module 4 is not available as a reviewed answer source";
+    return "module 4 is still under review";
   }
 
   if (/\bmodule\s*(5|v)\b/.test(normalized)) {
-    return "module 5 is not available as a reviewed answer source";
+    return "module 5 does not exist in the KTU 2024 scheme for PBCST304";
   }
 
   return null;
+}
+
+function answerForInsufficientReason(reason: string | null) {
+  const normalized = reason?.toLowerCase() ?? "";
+
+  if (normalized.includes("module 5")) {
+    return module5NotInSchemeAnswer;
+  }
+
+  if (normalized.includes("module 4")) {
+    return module4UnderReviewAnswer;
+  }
+
+  return insufficientAnswer;
 }
 
 function sufficiencyReason(input: {
@@ -489,7 +514,7 @@ export async function POST(request: Request) {
     const answer =
       status === "answered"
         ? await generateAnswer({ answerType, chunks: retrieval.chunks, question })
-        : insufficientAnswer;
+        : answerForInsufficientReason(reason);
     if (status === "answered" && answer.trim() === insufficientAnswer) {
       status = "insufficient_source";
       reason = "model reported insufficient source support";

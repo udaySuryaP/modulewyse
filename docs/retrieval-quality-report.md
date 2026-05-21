@@ -6,7 +6,7 @@ Date: 2026-05-20
 
 This report covers vector retrieval quality for ready PBCST304 Object Oriented Programming note chunks from Modules 1-3.
 
-No chat/RAG route, answer generation, app UI change, previous-year-question embedding, Module 4 embedding, or Module 5 content was added.
+No chat/RAG route, answer generation, app UI change, previous-year-question embedding, Module 4 embedding, or Module 5 content was added. Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 
 ## Embedding Configuration
 
@@ -15,7 +15,7 @@ No chat/RAG route, answer generation, app UI change, previous-year-question embe
 - Eligible content: ready OOP PBCST304 note chunks from Modules 1, 2, and 3
 - Excluded content:
   - Module 4 draft/review notes
-  - Module 5, which does not exist for PBCST304
+  - Module 5, which does not exist in the KTU 2024 scheme for PBCST304
   - previous-year questions
   - draft content
 
@@ -144,7 +144,7 @@ Live exclusion check:
 
 - Embedded Module 1-3 chunks: 178
 - Embedded Module 4 chunks: 0
-- Embedded Module 5 chunks: 0
+- Embedded Module 5 chunks: 0, because Module 5 does not exist in the KTU 2024 scheme for PBCST304
 - Embedded previous-question chunks: 0
 - Embedded non-ready chunks: 0
 
@@ -339,4 +339,4 @@ Retrieval is clean enough to start a strict RAG MVP for PBCST304. Constructors, 
 
 1. Build retrieval-backed answer generation for PBCST304 using embedded chunks.
 2. Include citations/source chips and an insufficient-source fallback.
-3. Keep Module 4, Module 5, and previous-year questions out of retrieval until their own ingestion/embedding phase.
+3. Keep Module 4 and previous-year questions out of retrieval until their own ingestion/embedding phase. Keep Module 5 out permanently for PBCST304 because it does not exist in the KTU 2024 scheme.

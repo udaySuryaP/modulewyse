@@ -21,6 +21,16 @@ export const allowedContentStatuses = [
 
 export const pbcst304ReadyModules = [1, 2, 3] as const;
 export const pbcst304DraftModules = [4] as const;
+export const pbcst304ValidModules = [1, 2, 3, 4] as const;
+export const pbcst304NonexistentModules = [5] as const;
+
+export const pbcst304ModulePlan = {
+  draftModules: pbcst304DraftModules,
+  nonexistentModules: pbcst304NonexistentModules,
+  readyModules: pbcst304ReadyModules,
+  scheme: 2024,
+  validModules: pbcst304ValidModules,
+} as const;
 
 export function isAllowedSourceType(value: string): value is ContentSourceType {
   return allowedContentSourceTypes.includes(value as ContentSourceType);
@@ -59,10 +69,32 @@ export function validateSourceMetadata(
     issues.push({ fileName, message: "subject_code must be PBCST304.", severity: "error" });
   }
 
-  if (!Number.isInteger(metadata.module) || !metadata.module || metadata.module < 1 || metadata.module > 5) {
+  const isPbcst304 = metadata.subject_code === "PBCST304";
+  const moduleNumber = metadata.module;
+
+  if (!Number.isInteger(moduleNumber) || !moduleNumber || moduleNumber < 1) {
     issues.push({
       fileName,
-      message: "module is required and must be between 1 and 5.",
+      message: "module is required and must be a positive integer.",
+      severity: "error",
+    });
+  }
+
+  if (
+    isPbcst304 &&
+    Number.isInteger(moduleNumber) &&
+    !pbcst304ModulePlan.validModules.includes(
+      moduleNumber as (typeof pbcst304ModulePlan.validModules)[number],
+    )
+  ) {
+    const isNonexistentModule = pbcst304ModulePlan.nonexistentModules.includes(
+      moduleNumber as (typeof pbcst304ModulePlan.nonexistentModules)[number],
+    );
+    issues.push({
+      fileName,
+      message: isNonexistentModule
+        ? "Module 5 does not exist in the KTU 2024 scheme for PBCST304."
+        : "PBCST304 valid modules are 1, 2, 3, and 4 for the KTU 2024 scheme.",
       severity: "error",
     });
   }
@@ -87,16 +119,8 @@ export function validateSourceMetadata(
     });
   }
 
-  if (metadata.subject_code === "PBCST304" && metadata.module === 5) {
-    issues.push({
-      fileName,
-      message: "Module 5 is not expected for PBCST304.",
-      severity: "error",
-    });
-  }
-
   if (
-    metadata.subject_code === "PBCST304" &&
+    isPbcst304 &&
     metadata.status === "ready" &&
     !pbcst304ReadyModules.includes(metadata.module as 1 | 2 | 3)
   ) {
