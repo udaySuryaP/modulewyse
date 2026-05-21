@@ -13,7 +13,6 @@ export function AppLoading({
     <MinimalLoader
       className={className}
       label={label}
-      showBrand
       variant="page"
     />
   );

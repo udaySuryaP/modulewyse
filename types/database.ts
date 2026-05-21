@@ -46,6 +46,8 @@ export type Conversation = {
   module_value: string | null;
   access_count: number;
   last_accessed_at: string | null;
+  is_pinned: boolean;
+  pinned_at: string | null;
   created_at: string;
   updated_at: string;
 };

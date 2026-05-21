@@ -158,6 +158,8 @@ create table if not exists public.conversations (
   module_value text,
   access_count integer not null default 0,
   last_accessed_at timestamptz,
+  is_pinned boolean not null default false,
+  pinned_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint conversations_access_count_nonnegative
@@ -198,6 +200,21 @@ on public.conversations (
   updated_at desc,
   created_at desc
 );
+
+create index if not exists conversations_pinned_recent_idx
+on public.conversations (
+  user_id,
+  is_pinned desc,
+  updated_at desc,
+  created_at desc
+);
+
+create index if not exists conversations_pinned_at_idx
+on public.conversations (
+  user_id,
+  pinned_at desc
+)
+where is_pinned = true;
 
 drop trigger if exists subjects_set_updated_at on public.subjects;
 create trigger subjects_set_updated_at

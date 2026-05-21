@@ -63,8 +63,7 @@ export async function getUserConversations() {
   const { data, error } = await supabase
     .from("conversations")
     .select("*")
-    .order("access_count", { ascending: false })
-    .order("last_accessed_at", { ascending: false, nullsFirst: false })
+    .order("is_pinned", { ascending: false })
     .order("updated_at", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(10);
@@ -158,14 +157,48 @@ export async function insertMessage(input: InsertMessageInput) {
   return data as Message;
 }
 
-export async function updateConversationTitle(
+export async function renameConversation(
   conversationId: string,
   title: string,
+) {
+  const normalizedTitle = title.replace(/\s+/g, " ").trim();
+
+  if (!normalizedTitle) {
+    throw new Error("Chat title cannot be empty.");
+  }
+
+  if (normalizedTitle.length > 80) {
+    throw new Error("Chat title must be 80 characters or fewer.");
+  }
+
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("conversations")
+    .update({ title: normalizedTitle })
+    .eq("id", conversationId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as Conversation;
+}
+
+export const updateConversationTitle = renameConversation;
+
+export async function setConversationPinned(
+  conversationId: string,
+  isPinned: boolean,
 ) {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("conversations")
-    .update({ title })
+    .update({
+      is_pinned: isPinned,
+      pinned_at: isPinned ? new Date().toISOString() : null,
+    })
     .eq("id", conversationId)
     .select("*")
     .single();

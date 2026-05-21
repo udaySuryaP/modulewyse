@@ -2,6 +2,122 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-21 - Responsive Chat Placeholder
+
+### Completed
+- Made the chat composer placeholder responsive to viewport width.
+- Added desktop, tablet, mobile, and very-small-screen placeholder copy.
+- Kept chat input behavior, send behavior, persistence, RAG route, retrieval, auth, and database logic unchanged.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- UI polish only.
+- Placeholder updates on client viewport resize.
+- No RAG, retrieval, auth, or database behavior changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Add Markdown, LaTeX, code block, and Mermaid-safe answer rendering for ModuleWyse chat answers.
+
+## 2026-05-21 - Loader Copy Simplification
+
+### Completed
+- Simplified the page loader UI.
+- Removed the standalone `modulewyse` loader heading.
+- Kept only the circular iOS-style loader and `Preparing ModuleWyse` statement for page loading.
+- Preserved inline and button loader variants.
+- Preserved loading logic, routing, auth, database, chat, retrieval, and RAG behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- UI polish only.
+- No auth, database, chat, retrieval, or RAG behavior changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Add Markdown, LaTeX, code block, and Mermaid-safe answer rendering for ModuleWyse chat answers.
+
+## 2026-05-21 - Standalone Back Button Standardization
+
+### Completed
+- Standardized the reusable Back navigation component under `components/ui/back-link.tsx`.
+- Updated subject detail to use the shared UI BackLink component.
+- Moved settings subpage Back controls out of card heading rows.
+- Added consistent standalone Back spacing above the main settings cards.
+- Kept card headings focused on title/subtitle content.
+- Preserved routing, auth, database, chat, retrieval, and RAG behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- UI polish only.
+- Forgot-password keeps its existing inline `Back to login` auth cross-link because it is not a standalone page Back control.
+- No RAG, retrieval, auth, or database behavior changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Add Markdown, LaTeX, code block, and Mermaid-safe answer rendering for ModuleWyse chat answers.
+
+## 2026-05-21 - Recent Chat Options And Latest Activity Sorting
+
+### Completed
+- Changed Recent Chats ordering from frequency-first to pinned/latest-activity ordering.
+- Added conversation pin schema support with `is_pinned` and `pinned_at`.
+- Added conversation helper actions for rename, delete, pin, and unpin.
+- Added a three-dot options menu to recent chat rows.
+- Added inline rename with empty-title validation and 80-character title limit.
+- Added delete confirmation copy before removing a conversation.
+- Added pin/unpin behavior with a subtle pinned indicator.
+- Removed the chat UI's count-on-open behavior so opening an old chat no longer pushes it above newer active chats.
+- Kept message activity as the recent-chat activity signal through the existing server-side conversation usage update.
+- Preserved RAG answer generation, source chips, feedback, copy, and conversation loading behavior.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Migration file was created locally; live Supabase application was not run in this pass.
+- `access_count` and `last_accessed_at` remain for historical tracking but no longer drive Recent Chats ordering.
+- No RAG, retrieval, OpenAI prompt, auth, or secret handling behavior changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Add Markdown, LaTeX, code block, and Mermaid-safe answer rendering for ModuleWyse chat answers.
+
+## 2026-05-21 - Rich Chat Answer Rendering
+
+### Completed
+- Added reusable `AnswerRenderer` for chat assistant responses.
+- Added Markdown rendering with GitHub-flavored Markdown support.
+- Added LaTeX math rendering support with `remark-math`, `rehype-katex`, and KaTeX CSS.
+- Added editorial-styled headings, paragraphs, lists, tables, blockquotes, inline code, and fenced code blocks.
+- Added citation badge rendering for inline citation markers like `[1]` and `[2]`.
+- Added Mermaid-safe handling that displays Mermaid code blocks as readable non-executing diagram-preview blocks.
+- Kept source chips above answers.
+- Preserved RAG retrieval scope, answer route behavior, insufficient-source fallback, auth, persistence, and chat UI layout.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Mermaid diagrams are not executed/rendered visually yet; their source is displayed safely.
+- Syntax highlighting and copy buttons for code blocks are deferred.
+- Rich rendering is limited to assistant answers; user messages remain plain text.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Add verifier/evaluation layer for RAG answers.
+
 ## 2026-05-21 - Retrieval-Backed PBCST304 RAG Answer Generation
 
 ### Completed

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from "next/font/google";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const inter = Inter({
