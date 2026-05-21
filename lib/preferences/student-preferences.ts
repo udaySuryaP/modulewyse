@@ -15,20 +15,17 @@ export const studentPreferencesChangedEvent = "modulewyse:preferences-changed";
 
 export const defaultStudentPreferences: StudentPreferences = {
   compactAnswerCards: false,
-  defaultAnswerType: "Default",
+  defaultAnswerType: "Medium",
   examModeDefault: "Exam-ready",
   showSourceChips: true,
   showSuggestedPrompts: true,
 };
 
 export const answerTypeOptions = [
-  "Default",
   "Short",
   "Medium",
   "Long",
-  "Part A",
-  "Part B",
-  "Part C",
+  "Exam-ready",
 ];
 
 export const examModeOptions = ["Exam-ready", "Revision", "Practice"];

@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 
-import { BackLink } from "@/components/dashboard/back-link";
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
 import { SubjectDetailPanel } from "@/components/subjects/subject-detail-panel";
+import { BackLink } from "@/components/ui/back-link";
 import { getUserProfile } from "@/lib/auth/get-user-profile";
 import { getSubjectWithModulesAndFallback } from "@/lib/data/subjects";
 

@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 type MinimalLoaderProps = {
   className?: string;
   label?: string;
-  showBrand?: boolean;
   variant?: "page" | "inline" | "button";
 };
 
@@ -75,11 +74,12 @@ function CircularBarLoader({
 
 export function MinimalLoader({
   className,
-  label = "Loading",
-  showBrand = false,
+  label,
   variant = "inline",
 }: MinimalLoaderProps) {
   const styles = variantStyles[variant];
+  const resolvedLabel =
+    label ?? (variant === "page" ? "Preparing ModuleWyse" : "Loading");
 
   return (
     <div
@@ -89,19 +89,13 @@ export function MinimalLoader({
       role="status"
     >
       <div className={cn("flex", styles.content)}>
-        {showBrand ? (
-          <span className="mw-label text-[11px]" aria-hidden="true">
-            modulewyse
-          </span>
-        ) : null}
-
-        <CircularBarLoader label={label} variant={variant} />
+        <CircularBarLoader label={resolvedLabel} variant={variant} />
 
         <span
           aria-hidden="true"
           className={cn("font-medium leading-none", styles.label)}
         >
-          {label}
+          {resolvedLabel}
         </span>
       </div>
     </div>

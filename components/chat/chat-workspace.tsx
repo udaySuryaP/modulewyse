@@ -8,25 +8,31 @@ import {
   Library,
   Menu,
   MessageSquare,
+  MoreHorizontal,
+  Pencil,
+  Pin,
+  PinOff,
   Plus,
   RefreshCcw,
   Settings,
   ThumbsDown,
   ThumbsUp,
+  Trash2,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { AnswerRenderer } from "@/components/chat/answer-renderer";
 import { StudentSidebar } from "@/components/dashboard/student-sidebar";
 import { MinimalLoader } from "@/components/ui/minimal-loader";
 import {
-  createConversation,
+  deleteConversation,
   getConversationWithMessages,
   getUserConversations,
-  insertMessage,
-  markConversationUsed,
+  renameConversation,
   saveMessageFeedback,
+  setConversationPinned,
 } from "@/lib/data/chat";
 import { clearPendingQuestion, readPendingQuestion } from "@/lib/landing-flow";
 import {
@@ -47,6 +53,7 @@ import type {
   Message as PersistedMessage,
   MessageFeedback,
 } from "@/types/database";
+import type { RagAnswerResponse } from "@/types/chat";
 
 const answerTypes = answerTypeOptions;
 const supportedChatModules = new Set<SubjectModule>(["all", "1", "2", "3"]);
@@ -105,50 +112,6 @@ type ChatWorkspaceProps = {
 
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function mockAnswer(question: string, answerType: string, examMode: string) {
-  return [
-    "Mock exam-ready answer",
-    "",
-    `This is a placeholder answer showing how ModuleWyse will structure ${examMode.toLowerCase()} responses from curated academic content.`,
-    "",
-    "Definition / introduction",
-    `${question} can be answered by first defining the core concept, then connecting it to the reviewed notes ModuleWyse can search.`,
-    "",
-    "Key points",
-    "- Identify the main term used in the question.",
-    "- Explain the idea using syllabus-aligned language.",
-    "- Add two or three exam-relevant points with clear sequencing.",
-    "- Keep the answer grounded in the available reviewed notes.",
-    "",
-    "Short example",
-    "For OOP questions, relate the concept to a class, object, method, or real-world model where possible.",
-    "",
-    "Exam writing tip",
-    `For ${answerType} answers in ${examMode} mode, keep the structure direct: definition, points, example, and conclusion.`,
-    "",
-    "Conclusion",
-    "This local mock answer previews the response format. Real answers will later come from verified ModuleWyse academic content.",
-  ].join("\n");
-}
-
-function shouldTriggerState(question: string): AssistantStatus | null {
-  const normalized = question.toLowerCase();
-
-  if (normalized.includes("/fail")) {
-    return "failed";
-  }
-
-  if (normalized.includes("/insufficient")) {
-    return "insufficient";
-  }
-
-  if (normalized.includes("/rate")) {
-    return "rate-limited";
-  }
-
-  return null;
 }
 
 function contextFromProps(initialContext: ChatContext) {
@@ -219,36 +182,6 @@ function contextFromConversation(conversation: Conversation, fallback: ChatConte
   };
 }
 
-function titleFromQuestion(question: string) {
-  const normalized = question.replace(/\s+/g, " ").trim();
-
-  if (!normalized) {
-    return "New chat";
-  }
-
-  return normalized.length > 64 ? `${normalized.slice(0, 61)}...` : normalized;
-}
-
-function metadataForMessage(
-  status: AssistantStatus,
-  contextSnapshot: ChatContext,
-  answerTypeSnapshot: string,
-  examModeSnapshot: string,
-) {
-  return {
-    answerType: answerTypeSnapshot,
-    assistantStatus: status,
-    examMode: examModeSnapshot,
-    isMock: true,
-    moduleLabel: contextSnapshot.module,
-    moduleValue: moduleValueForContext(contextSnapshot),
-    sourceChips: sourceChipsForContext(contextSnapshot),
-    status: "BASED_ON_AVAILABLE_NOTES",
-    subjectLabel: contextSnapshot.subject,
-    subjectSlug: subjectSlugForContext(contextSnapshot),
-  };
-}
-
 function stringFromMetadata(
   metadata: Record<string, unknown>,
   key: string,
@@ -283,6 +216,14 @@ function messageFromPersisted(
     module: stringFromMetadata(metadata, "moduleLabel", conversationContext.module),
   };
   const status = stringFromMetadata(metadata, "assistantStatus", "complete");
+  const assistantStatus =
+    status === "answered"
+      ? "complete"
+      : status === "insufficient_source"
+        ? "insufficient"
+        : status === "error"
+          ? "failed"
+          : status;
 
   return {
     answerType: message.answer_type ?? stringFromMetadata(metadata, "answerType", "Default"),
@@ -296,8 +237,8 @@ function messageFromPersisted(
     sources: sourceChipsFromMetadata(metadata, sourceChipsForContext(contextSnapshot)),
     status:
       message.role === "assistant" &&
-      ["complete", "failed", "insufficient", "rate-limited"].includes(status)
-        ? (status as AssistantStatus)
+      ["complete", "failed", "insufficient", "rate-limited"].includes(assistantStatus)
+        ? (assistantStatus as AssistantStatus)
         : undefined,
   };
 }
@@ -333,7 +274,6 @@ export function ChatWorkspace({
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const openedConversationUsageRef = useRef(new Set<string>());
 
   const refreshRecentConversations = useCallback(async () => {
     try {
@@ -342,17 +282,6 @@ export function ChatWorkspace({
       setRecentConversations([]);
     }
   }, []);
-
-  const recordConversationUsage = useCallback(
-    async (conversationId: string) => {
-      const updatedConversation = await markConversationUsed(conversationId);
-
-      if (updatedConversation) {
-        void refreshRecentConversations();
-      }
-    },
-    [refreshRecentConversations],
-  );
 
   useEffect(() => {
     const desktopQuery = window.matchMedia("(min-width: 1024px)");
@@ -421,10 +350,6 @@ export function ChatWorkspace({
         setActiveConversationId(result.conversation.id);
         setConversationLoadState("idle");
 
-        if (!openedConversationUsageRef.current.has(result.conversation.id)) {
-          openedConversationUsageRef.current.add(result.conversation.id);
-          void recordConversationUsage(result.conversation.id);
-        }
       } catch {
         if (!cancelled) {
           setMessages([]);
@@ -439,7 +364,7 @@ export function ChatWorkspace({
     return () => {
       cancelled = true;
     };
-  }, [initialConversationId, initialContext, recordConversationUsage]);
+  }, [initialConversationId, initialContext]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -458,123 +383,33 @@ export function ChatWorkspace({
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
-  function assistantMessage(
-    question: string,
-    status: AssistantStatus = "complete",
-    contextSnapshot: ChatContext = context,
-    answerTypeSnapshot: string = answerType,
-    examModeSnapshot: string = preferences.examModeDefault,
-  ): Message {
-    return {
-      id: newId("assistant"),
-      role: "assistant",
-      content:
-        status === "complete"
-          ? mockAnswer(question, answerTypeSnapshot, examModeSnapshot)
-          : status === "insufficient"
-            ? "I do not have enough verified material for this answer yet."
-            : status === "rate-limited"
-              ? "Local mock rate limit reached. Try again in a moment."
-              : "The local mock answer failed to generate.",
-      createdAt: new Date(),
-      answerType: answerTypeSnapshot,
-      context: contextSnapshot,
-      sources: sourceChipsForContext(contextSnapshot),
-      status,
-    };
-  }
-
-  function finishMockAnswer(
-    question: string,
-    contextSnapshot: ChatContext,
-    answerTypeSnapshot: string,
-    examModeSnapshot: string,
-    conversationId: string | null,
-  ) {
-    const forcedState = shouldTriggerState(question);
-    const nextAssistantMessage = assistantMessage(
-      question,
-      forcedState ?? "complete",
-      contextSnapshot,
-      answerTypeSnapshot,
-      examModeSnapshot,
-    );
-
-    setMessages((current) => [
-      ...current.filter((message) => message.status !== "loading"),
-      nextAssistantMessage,
-    ]);
-
-    if (conversationId) {
-      persistAssistantMessage(
-        conversationId,
-        nextAssistantMessage,
-        forcedState ?? "complete",
-        contextSnapshot,
-        answerTypeSnapshot,
-        examModeSnapshot,
-      );
-    }
-
-    setIsGenerating(false);
-    focusComposer();
-  }
-
-  async function ensureConversation(
-    question: string,
-    contextSnapshot: ChatContext,
-  ) {
-    if (activeConversationId) {
-      return activeConversationId;
-    }
-
-    const conversation = await createConversation({
-      moduleValue: moduleValueForContext(contextSnapshot),
-      subjectSlug: subjectSlugForContext(contextSnapshot),
-      title: titleFromQuestion(question),
-      userId,
+  async function requestAnswer(input: {
+    answerType: string;
+    contextSnapshot: ChatContext;
+    question: string;
+  }) {
+    const response = await fetch("/api/chat/answer", {
+      body: JSON.stringify({
+        answerType: input.answerType,
+        conversationId: activeConversationId || null,
+        moduleHint: moduleValueForContext(input.contextSnapshot),
+        question: input.question,
+        subjectHint: subjectSlugForContext(input.contextSnapshot),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
     });
+    const payload = (await response.json()) as
+      | RagAnswerResponse
+      | { error?: string };
 
-    setActiveConversationId(conversation.id);
-    window.history.replaceState(null, "", `/chat?conversation=${conversation.id}`);
-    refreshRecentConversations();
-    return conversation.id;
-  }
-
-  async function persistAssistantMessage(
-    conversationId: string,
-    message: Message,
-    status: AssistantStatus,
-    contextSnapshot: ChatContext,
-    answerTypeSnapshot: string,
-    examModeSnapshot: string,
-  ) {
-    try {
-      const persisted = await insertMessage({
-        answerType: answerTypeSnapshot,
-        content: message.content,
-        conversationId,
-        metadata: metadataForMessage(
-          status,
-          contextSnapshot,
-          answerTypeSnapshot,
-          examModeSnapshot,
-        ),
-        role: "assistant",
-        userId,
-      });
-
-      setMessages((current) =>
-        current.map((item) =>
-          item.id === message.id
-            ? { ...item, id: persisted.id, persistedId: persisted.id }
-            : item,
-        ),
-      );
-      refreshRecentConversations();
-    } catch {
-      setToast("Answer kept locally. Persistence failed.");
+    if (!response.ok && !("status" in payload)) {
+      throw new Error(payload.error ?? "Answer generation failed.");
     }
+
+    return payload as RagAnswerResponse;
   }
 
   async function sendMessage(question: string) {
@@ -587,7 +422,6 @@ export function ChatWorkspace({
     setDraft("");
     const contextSnapshot = context;
     const answerTypeSnapshot = answerType;
-    const examModeSnapshot = preferences.examModeDefault;
     const sourceChips = sourceChipsForContext(contextSnapshot);
 
     const localUserMessage: Message = {
@@ -614,56 +448,76 @@ export function ChatWorkspace({
     ]);
     setIsGenerating(true);
 
-    let conversationId: string | null = activeConversationId || null;
-
     try {
-      conversationId = await ensureConversation(trimmedQuestion, contextSnapshot);
-      const persistedUserMessage = await insertMessage({
-        answerType: null,
-        content: trimmedQuestion,
-        conversationId,
-        metadata: {
-          moduleLabel: contextSnapshot.module,
-          moduleValue: moduleValueForContext(contextSnapshot),
-          subjectLabel: contextSnapshot.subject,
-          subjectSlug: subjectSlugForContext(contextSnapshot),
-        },
-        role: "user",
-        userId,
+      const response = await requestAnswer({
+        answerType: answerTypeSnapshot,
+        contextSnapshot,
+        question: trimmedQuestion,
       });
+      const nextSources =
+        response.sources.length > 0
+          ? response.sources.map(
+              (source) => `Module ${source.moduleNumber} · ${source.topicTitle}`,
+            )
+          : sourceChips;
+      const assistantStatus: AssistantStatus =
+        response.status === "answered"
+          ? "complete"
+          : response.status === "insufficient_source"
+            ? "insufficient"
+            : "failed";
 
       setMessages((current) =>
         current.map((message) =>
           message.id === localUserMessage.id
             ? {
                 ...message,
-                id: persistedUserMessage.id,
-                persistedId: persistedUserMessage.id,
+                id: response.userMessageId ?? message.id,
+                persistedId: response.userMessageId ?? undefined,
               }
+            : message.id === loadingMessage.id
+              ? {
+                  ...message,
+                  answerType: answerTypeSnapshot,
+                  content: response.answer,
+                  id: response.assistantMessageId ?? message.id,
+                  persistedId: response.assistantMessageId ?? undefined,
+                  sources: nextSources,
+                  status: assistantStatus,
+                }
             : message,
         ),
       );
 
-      if (conversationId) {
-        void recordConversationUsage(conversationId);
+      if (response.conversationId) {
+        setActiveConversationId(response.conversationId);
+        window.history.replaceState(
+          null,
+          "",
+          `/chat?conversation=${response.conversationId}`,
+        );
       }
-    } catch {
-      conversationId = null;
-      setToast("Chat is continuing locally. Persistence failed.");
-    }
+      void refreshRecentConversations();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Answer generation failed.";
 
-    const delay = 700 + Math.round(Math.random() * 500);
-    window.setTimeout(
-      () =>
-        finishMockAnswer(
-          trimmedQuestion,
-          contextSnapshot,
-          answerTypeSnapshot,
-          examModeSnapshot,
-          conversationId,
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === loadingMessage.id
+            ? {
+                ...item,
+                content: "The answer could not be generated right now.",
+                status: "failed",
+              }
+            : item,
         ),
-      delay,
-    );
+      );
+      setToast(message);
+    } finally {
+      setIsGenerating(false);
+      focusComposer();
+    }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -715,63 +569,9 @@ export function ChatWorkspace({
   }
 
   function regenerate(messageId: string) {
-    const index = messages.findIndex((message) => message.id === messageId);
-    const previousQuestion = [...messages]
-      .slice(0, index)
-      .reverse()
-      .find((message) => message.role === "user")?.content;
-
-    if (!previousQuestion || isGenerating) {
-      return;
+    if (messages.some((message) => message.id === messageId)) {
+      setToast("Regenerate will be added after the RAG route is verified.");
     }
-
-    const targetMessage = messages[index];
-    const contextSnapshot = targetMessage?.context ?? context;
-    const answerTypeSnapshot = targetMessage?.answerType ?? answerType;
-    const examModeSnapshot = preferences.examModeDefault;
-    const loadingMessage: Message = {
-      id: newId("assistant-regenerating"),
-      role: "assistant",
-      content: "Searching reviewed notes...",
-      createdAt: new Date(),
-      answerType: answerTypeSnapshot,
-      context: contextSnapshot,
-      status: "loading",
-      sources: sourceChipsForContext(contextSnapshot),
-    };
-
-    setMessages((current) => [...current, loadingMessage]);
-    setIsGenerating(true);
-
-    window.setTimeout(() => {
-      const regeneratedMessage = assistantMessage(
-        previousQuestion,
-        "complete",
-        contextSnapshot,
-        answerTypeSnapshot,
-        examModeSnapshot,
-      );
-
-      setMessages((current) =>
-        current.map((message) =>
-          message.id === loadingMessage.id ? regeneratedMessage : message,
-        ),
-      );
-
-      if (activeConversationId) {
-        persistAssistantMessage(
-          activeConversationId,
-          regeneratedMessage,
-          "complete",
-          contextSnapshot,
-          answerTypeSnapshot,
-          examModeSnapshot,
-        );
-      }
-
-      setIsGenerating(false);
-      setToast("Answer regenerated.");
-    }, 850);
   }
 
   const canSend = draft.trim().length > 0 && !isGenerating;
@@ -791,6 +591,13 @@ export function ChatWorkspace({
         <SidebarRecentConversations
           activeConversationId={activeConversationId}
           conversations={recentConversations}
+          onActiveConversationDeleted={() => {
+            setActiveConversationId("");
+            setMessages([]);
+            setConversationLoadState("idle");
+            window.history.replaceState(null, "", "/chat");
+          }}
+          onRefresh={refreshRecentConversations}
         />
       </StudentSidebar>
 
@@ -801,7 +608,14 @@ export function ChatWorkspace({
           conversations={recentConversations}
           isOpen={mobileMenuOpen}
           onAnswerTypeChange={setAnswerType}
+          onActiveConversationDeleted={() => {
+            setActiveConversationId("");
+            setMessages([]);
+            setConversationLoadState("idle");
+            window.history.replaceState(null, "", "/chat");
+          }}
           onNavigate={() => setMobileMenuOpen(false)}
+          onRefresh={refreshRecentConversations}
           onToggle={() => setMobileMenuOpen((current) => !current)}
         />
 
@@ -880,7 +694,9 @@ function MobileChatTopbar({
   conversations,
   isOpen,
   onAnswerTypeChange,
+  onActiveConversationDeleted,
   onNavigate,
+  onRefresh,
   onToggle,
 }: {
   activeConversationId: string;
@@ -888,7 +704,9 @@ function MobileChatTopbar({
   conversations: Conversation[];
   isOpen: boolean;
   onAnswerTypeChange: (value: string) => void;
+  onActiveConversationDeleted: () => void;
   onNavigate: () => void;
+  onRefresh: () => Promise<void> | void;
   onToggle: () => void;
 }) {
   const [dateTime, setDateTime] = useState({ date: "", time: "" });
@@ -981,7 +799,12 @@ function MobileChatTopbar({
             className="border-t border-[var(--mw-hairline)] pt-4"
             conversations={conversations}
             listClassName="max-h-[220px]"
+            onActiveConversationDeleted={() => {
+              onActiveConversationDeleted();
+              onNavigate();
+            }}
             onNavigate={onNavigate}
+            onRefresh={onRefresh}
           />
 
           <div className="grid gap-1.5 text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)]">
@@ -1045,14 +868,104 @@ function SidebarRecentConversations({
   className,
   conversations,
   listClassName,
+  onActiveConversationDeleted,
   onNavigate,
+  onRefresh,
 }: {
   activeConversationId: string;
   className?: string;
   conversations: Conversation[];
   listClassName?: string;
+  onActiveConversationDeleted?: () => void;
   onNavigate?: () => void;
+  onRefresh: () => Promise<void> | void;
 }) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Conversation | null>(null);
+  const [actionError, setActionError] = useState("");
+  const [isSavingAction, setIsSavingAction] = useState(false);
+
+  function startRename(conversation: Conversation) {
+    setActionError("");
+    setOpenMenuId(null);
+    setDeleteTarget(null);
+    setRenamingId(conversation.id);
+    setRenameDraft(conversation.title);
+  }
+
+  function cancelRename() {
+    setRenamingId(null);
+    setRenameDraft("");
+    setActionError("");
+  }
+
+  async function saveRename(conversation: Conversation) {
+    const nextTitle = renameDraft.replace(/\s+/g, " ").trim();
+
+    if (!nextTitle) {
+      setActionError("Chat title cannot be empty.");
+      return;
+    }
+
+    setIsSavingAction(true);
+    setActionError("");
+
+    try {
+      await renameConversation(conversation.id, nextTitle);
+      cancelRename();
+      await onRefresh();
+    } catch (error) {
+      setActionError(
+        error instanceof Error ? error.message : "Chat could not be renamed.",
+      );
+    } finally {
+      setIsSavingAction(false);
+    }
+  }
+
+  async function togglePinned(conversation: Conversation) {
+    setIsSavingAction(true);
+    setActionError("");
+    setOpenMenuId(null);
+
+    try {
+      await setConversationPinned(conversation.id, !conversation.is_pinned);
+      await onRefresh();
+    } catch {
+      setActionError("Pin status could not be updated.");
+    } finally {
+      setIsSavingAction(false);
+    }
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) {
+      return;
+    }
+
+    const deletedConversationId = deleteTarget.id;
+    setIsSavingAction(true);
+    setActionError("");
+
+    try {
+      await deleteConversation(deletedConversationId);
+      setDeleteTarget(null);
+      await onRefresh();
+
+      if (deletedConversationId === activeConversationId) {
+        onActiveConversationDeleted?.();
+      }
+
+      onNavigate?.();
+    } catch {
+      setActionError("Chat could not be deleted.");
+    } finally {
+      setIsSavingAction(false);
+    }
+  }
+
   return (
     <section className={cn("grid min-w-0 gap-3", className)}>
       <div className="px-2">
@@ -1089,31 +1002,176 @@ function SidebarRecentConversations({
             month: "short",
             hour: "2-digit",
             minute: "2-digit",
-          }).format(
-            new Date(conversation.last_accessed_at ?? conversation.updated_at),
-          );
+          }).format(new Date(conversation.updated_at));
 
           return (
-            <Link
+            <div
               className={cn(
-                "min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-white px-3 py-2.5 transition-colors hover:bg-[var(--mw-surface-strong)]",
+                "group relative min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-white transition-colors hover:bg-[var(--mw-surface-strong)]",
                 isActive && "border-[var(--mw-hairline-strong)] bg-[var(--mw-surface-strong)]",
               )}
-              href={`/chat?conversation=${conversation.id}`}
               key={conversation.id}
-              onClick={onNavigate}
             >
-              <p className="truncate text-[12px] font-medium leading-[1.35] text-[var(--mw-ink)]">
-                {conversation.title}
-              </p>
-              <p className="mt-1.5 truncate text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--mw-muted)]">
-                {subject} / {moduleLabel}
-              </p>
-              <p className="mt-1 text-[11px] text-[var(--mw-muted)]">{updatedAt}</p>
-            </Link>
+              {renamingId === conversation.id ? (
+                <div className="grid gap-2 px-3 py-2.5">
+                  <input
+                    aria-label="Rename chat"
+                    autoFocus
+                    className="h-9 min-w-0 mw-radius-card border border-[var(--mw-hairline-strong)] bg-white px-2.5 text-[12px] font-medium text-[var(--mw-ink)] outline-none focus:border-[var(--mw-primary)]"
+                    disabled={isSavingAction}
+                    maxLength={80}
+                    onChange={(event) => setRenameDraft(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void saveRename(conversation);
+                      }
+
+                      if (event.key === "Escape") {
+                        cancelRename();
+                      }
+                    }}
+                    value={renameDraft}
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="h-7 mw-radius-pill bg-[var(--mw-primary)] px-3 text-[11px] font-medium text-white disabled:opacity-60"
+                      disabled={isSavingAction}
+                      onClick={() => void saveRename(conversation)}
+                      type="button"
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="h-7 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[11px] font-medium text-[var(--mw-body)]"
+                      disabled={isSavingAction}
+                      onClick={cancelRename}
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  className="block min-w-0 px-3 py-2.5 pr-10"
+                  href={`/chat?conversation=${conversation.id}`}
+                  onClick={onNavigate}
+                >
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    {conversation.is_pinned ? (
+                      <Pin className="size-3 shrink-0 text-[var(--mw-muted)]" />
+                    ) : null}
+                    <span className="truncate text-[12px] font-medium leading-[1.35] text-[var(--mw-ink)]">
+                      {conversation.title}
+                    </span>
+                  </span>
+                  <span className="mt-1.5 block truncate text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--mw-muted)]">
+                    {subject} / {moduleLabel}
+                  </span>
+                  <span className="mt-1 block text-[11px] text-[var(--mw-muted)]">
+                    {updatedAt}
+                  </span>
+                </Link>
+              )}
+
+              {renamingId !== conversation.id ? (
+                <button
+                  aria-expanded={openMenuId === conversation.id}
+                  aria-label="Chat options"
+                  className="absolute right-2 top-2 grid size-7 place-items-center mw-radius-pill text-[var(--mw-muted)] opacity-100 transition hover:bg-white hover:text-[var(--mw-ink)] focus:bg-white focus:text-[var(--mw-ink)] focus:opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setActionError("");
+                    setOpenMenuId((current) =>
+                      current === conversation.id ? null : conversation.id,
+                    );
+                  }}
+                  type="button"
+                >
+                  <MoreHorizontal className="size-4" />
+                </button>
+              ) : null}
+
+              {openMenuId === conversation.id ? (
+                <div className="absolute right-2 top-10 z-20 w-40 overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-white py-1 shadow-[0_18px_42px_rgba(12,10,9,0.14)]">
+                  <button
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-[var(--mw-body)] hover:bg-[var(--mw-surface-strong)]"
+                    onClick={() => startRename(conversation)}
+                    type="button"
+                  >
+                    <Pencil className="size-3.5" />
+                    Rename
+                  </button>
+                  <button
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-[var(--mw-body)] hover:bg-[var(--mw-surface-strong)]"
+                    disabled={isSavingAction}
+                    onClick={() => void togglePinned(conversation)}
+                    type="button"
+                  >
+                    {conversation.is_pinned ? (
+                      <PinOff className="size-3.5" />
+                    ) : (
+                      <Pin className="size-3.5" />
+                    )}
+                    {conversation.is_pinned ? "Unpin chat" : "Pin chat"}
+                  </button>
+                  <button
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-red-700 hover:bg-red-50"
+                    onClick={() => {
+                      setOpenMenuId(null);
+                      setRenamingId(null);
+                      setActionError("");
+                      setDeleteTarget(conversation);
+                    }}
+                    type="button"
+                  >
+                    <Trash2 className="size-3.5" />
+                    Delete
+                  </button>
+                </div>
+              ) : null}
+            </div>
           );
         })}
       </div>
+
+      {actionError ? (
+        <p className="px-2 text-[11px] leading-[1.4] text-red-700">{actionError}</p>
+      ) : null}
+
+      {deleteTarget ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-stone-950/20 px-4">
+          <div className="w-full max-w-sm mw-radius-card border border-[var(--mw-hairline)] bg-white p-5 shadow-[0_24px_70px_rgba(12,10,9,0.18)]">
+            <h3 className="text-[18px] font-medium text-[var(--mw-ink)]">
+              Delete chat?
+            </h3>
+            <p className="mt-2 text-[13px] leading-[1.55] text-[var(--mw-body)]">
+              This will remove the conversation and its messages. This action
+              cannot be undone.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                className="h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)]"
+                disabled={isSavingAction}
+                onClick={() => setDeleteTarget(null)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="h-9 mw-radius-pill bg-red-700 px-4 text-[12px] font-medium text-white disabled:opacity-60"
+                disabled={isSavingAction}
+                onClick={() => void confirmDelete()}
+                type="button"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -1144,6 +1202,44 @@ function SetupPrompt({ className }: { className?: string }) {
   );
 }
 
+function placeholderForWidth(width: number) {
+  if (width < 380) {
+    return "Ask...";
+  }
+
+  if (width < 640) {
+    return "Ask a question...";
+  }
+
+  if (width < 1024) {
+    return "Ask from your notes...";
+  }
+
+  return "Ask anything from your available notes...";
+}
+
+function useResponsiveChatPlaceholder() {
+  const [placeholder, setPlaceholder] = useState(
+    "Ask anything from your available notes...",
+  );
+
+  useEffect(() => {
+    function updatePlaceholder() {
+      const nextPlaceholder = placeholderForWidth(window.innerWidth);
+      setPlaceholder((current) =>
+        current === nextPlaceholder ? current : nextPlaceholder,
+      );
+    }
+
+    updatePlaceholder();
+    window.addEventListener("resize", updatePlaceholder);
+
+    return () => window.removeEventListener("resize", updatePlaceholder);
+  }, []);
+
+  return placeholder;
+}
+
 function Composer({
   canSend,
   draft,
@@ -1159,6 +1255,8 @@ function Composer({
   onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }) {
+  const placeholder = useResponsiveChatPlaceholder();
+
   return (
     <form
       className="fixed bottom-5 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 sm:bottom-6 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
@@ -1166,22 +1264,22 @@ function Composer({
     >
       <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
         <div className="flex min-h-[52px] items-end gap-2 mw-radius-input border border-[var(--mw-hairline)] bg-white py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
-        <textarea
-          className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
-          onChange={(event) => onChange(event.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder="Ask a question from your ModuleWyse notes..."
-          ref={inputRef}
-          rows={1}
-          value={draft}
-        />
-        <button
-          className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
-          disabled={!canSend}
-          type="submit"
-        >
-          Ask
-        </button>
+          <textarea
+            className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
+            onChange={(event) => onChange(event.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            ref={inputRef}
+            rows={1}
+            value={draft}
+          />
+          <button
+            className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
+            disabled={!canSend}
+            type="submit"
+          >
+            Ask
+          </button>
         </div>
       </div>
     </form>
@@ -1202,7 +1300,7 @@ function EmptyConversation({
           What do you want to prepare today?
         </h2>
         <p className="mt-3 text-[15px] font-normal leading-[1.55] text-[var(--mw-body)] sm:mt-4 sm:text-[18px]">
-          Ask naturally. ModuleWyse will search the available reviewed notes.
+          Ask naturally. ModuleWyse will search the available reviewed notes and answer with sources.
         </p>
         {showSuggestedPrompts ? (
           <div className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-3">
@@ -1271,8 +1369,7 @@ function AssistantMessage({
   if (message.status === "failed") {
     return (
       <EdgeCard
-        action="Try Again"
-        body="The local mock answer failed to generate."
+        body={message.content || "The answer could not be generated right now."}
         onAction={() => onRegenerate(message.id)}
         title="Answer failed"
       />
@@ -1282,8 +1379,7 @@ function AssistantMessage({
   if (message.status === "insufficient") {
     return (
       <EdgeCard
-        action="Try Another Question"
-        body="I do not have enough verified material for this answer yet."
+        body={message.content}
         onAction={() => undefined}
         title="Not enough verified content"
       />
@@ -1294,7 +1390,7 @@ function AssistantMessage({
     return (
       <EdgeCard
         action="Try Again"
-        body="Local mock rate limit reached. Try again in a moment."
+        body="Answer generation is rate limited. Try again in a moment."
         onAction={() => onRegenerate(message.id)}
         title="Rate limited"
       />
@@ -1303,24 +1399,24 @@ function AssistantMessage({
 
   return (
     <article className={cn("mw-card", preferences.compactAnswerCards ? "p-4" : "p-5")}>
-      {preferences.showSourceChips ? (
-        <div className="text-[14px] leading-[1.4] text-[var(--mw-muted)]">
-          {message.context?.subject ?? "Object Oriented Programming"} /{" "}
-          {message.context?.module ?? "Module 3"}
+      {preferences.showSourceChips && message.sources?.length ? (
+        <div className="flex flex-wrap gap-2">
+          {message.sources.map((source) => (
+            <span
+              className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]"
+              key={source}
+            >
+              {source}
+            </span>
+          ))}
         </div>
       ) : null}
 
-      <div
-        className={cn(
-          "whitespace-pre-wrap text-[var(--mw-body)]",
-          preferences.showSourceChips && "mt-5",
-          preferences.compactAnswerCards
-            ? "text-[14px] leading-[1.5]"
-            : "text-[15px] leading-[1.6]",
-        )}
-      >
-        {message.content}
-      </div>
+      <AnswerRenderer
+        className={preferences.showSourceChips && message.sources?.length ? "mt-5" : undefined}
+        compact={preferences.compactAnswerCards}
+        content={message.content}
+      />
 
       <div className={cn("flex flex-wrap gap-2", preferences.compactAnswerCards ? "mt-4" : "mt-5")}>
         <ActionButton onClick={() => onCopy(message)}>
@@ -1366,7 +1462,7 @@ function EdgeCard({
 }: {
   title: string;
   body: string;
-  action: string;
+  action?: string;
   onAction: () => void;
 }) {
   return (
@@ -1375,13 +1471,15 @@ function EdgeCard({
         {title}
       </h3>
       <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-body)]">{body}</p>
-      <button
-        className="mw-pill-primary mt-5"
-        onClick={onAction}
-        type="button"
-      >
-        {action}
-      </button>
+      {action ? (
+        <button
+          className="mw-pill-primary mt-5"
+          onClick={onAction}
+          type="button"
+        >
+          {action}
+        </button>
+      ) : null}
     </div>
   );
 }
