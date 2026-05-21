@@ -154,6 +154,20 @@ function isClearlyOutsideScope(question: string) {
   return outsidePatterns.some((pattern) => normalized.includes(pattern));
 }
 
+function unsupportedModuleReasonFromQuestion(question: string) {
+  const normalized = question.toLowerCase();
+
+  if (/\bmodule\s*(4|iv)\b/.test(normalized)) {
+    return "module 4 is not available as a reviewed answer source";
+  }
+
+  if (/\bmodule\s*(5|v)\b/.test(normalized)) {
+    return "module 5 is not available as a reviewed answer source";
+  }
+
+  return null;
+}
+
 function sufficiencyReason(input: {
   answerType: RagAnswerType;
   question: string;
@@ -162,6 +176,12 @@ function sufficiencyReason(input: {
 }) {
   if (input.unsupportedReason) {
     return input.unsupportedReason;
+  }
+
+  const unsupportedModuleReason = unsupportedModuleReasonFromQuestion(input.question);
+
+  if (unsupportedModuleReason) {
+    return unsupportedModuleReason;
   }
 
   if (isClearlyOutsideScope(input.question)) {
@@ -217,6 +237,30 @@ ${chunk.content}`,
     .join("\n\n");
 }
 
+function ensureCitationMarkers(answer: string, chunks: RetrievedRagChunk[]) {
+  if (/\[\d+\]/.test(answer) || chunks.length === 0) {
+    return answer;
+  }
+
+  const citations = chunks
+    .slice(0, 3)
+    .map((chunk) => `[${chunk.sourceNumber}]`)
+    .join(", ");
+
+  return `${answer.trim()}\n\n_Source references: ${citations}_`;
+}
+
+function isInsufficientAnswerText(answer: string) {
+  const normalize = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[’']/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  return normalize(answer).startsWith(normalize(insufficientAnswer));
+}
+
 async function generateAnswer(input: {
   answerType: RagAnswerType;
   chunks: RetrievedRagChunk[];
@@ -226,21 +270,24 @@ async function generateAnswer(input: {
     apiKey: serverEnv.OPENAI_API_KEY,
   });
   const model = serverEnv.OPENAI_ANSWER_MODEL;
-  const prompt = `System:
-You are ModuleWyse, a KTU exam-prep AI assistant.
+  const systemPrompt = `You are ModuleWyse, a KTU exam-prep AI assistant.
 Answer only using the provided reviewed source chunks.
 Do not use outside knowledge.
 Do not invent facts, examples, marks, years, diagrams, or equations.
 If the sources are insufficient, return exactly: ${insufficientAnswer}
+The retrieval gate has already checked that the provided chunks are relevant unless
+they clearly do not address the question. When the chunks contain supported
+definitions, examples, or topic details for the question, answer from those
+chunks instead of refusing.
 Preserve academic terminology.
 Write clearly for students preparing for exams.
 Cite sources using [1], [2], etc.
 Do not cite sources that are not used.
 The answer must be Markdown.
 Avoid unsupported claims.
-Do not mention internal retrieval implementation, embeddings, or vector search.
+Do not mention internal retrieval implementation, embeddings, or vector search.`;
 
-Answer format:
+  const userPrompt = `Answer format:
 ${answerInstructions(input.answerType)}
 
 Reviewed source chunks:
@@ -250,13 +297,28 @@ Student question:
 ${input.question}`;
 
   const response = await client.responses.create({
-    input: prompt,
+    input: [
+      {
+        content: [{ text: systemPrompt, type: "input_text" }],
+        role: "system",
+      },
+      {
+        content: [{ text: userPrompt, type: "input_text" }],
+        role: "user",
+      },
+    ],
     max_output_tokens:
       input.answerType === "short" ? 450 : input.answerType === "medium" ? 800 : 1200,
     model,
   });
 
-  return response.output_text.trim() || insufficientAnswer;
+  const answer = response.output_text.trim() || insufficientAnswer;
+
+  if (isInsufficientAnswerText(answer)) {
+    return insufficientAnswer;
+  }
+
+  return ensureCitationMarkers(answer, input.chunks);
 }
 
 async function resolveConversation(input: {

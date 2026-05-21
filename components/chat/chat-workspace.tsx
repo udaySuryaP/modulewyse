@@ -634,7 +634,7 @@ export function ChatWorkspace({
 
           <div
             className={cn(
-              "mw-card min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
+              "mw-card min-w-0 max-w-full min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -648,7 +648,7 @@ export function ChatWorkspace({
                 showSuggestedPrompts={preferences.showSuggestedPrompts}
               />
             ) : (
-              <div className="grid gap-4">
+              <div className="grid min-w-0 max-w-full gap-4">
                 {messages.map((message) =>
                   message.role === "user" ? (
                     <UserMessage key={message.id} message={message} />
@@ -1341,7 +1341,7 @@ function ConversationNotFound() {
 
 function UserMessage({ message }: { message: Message }) {
   return (
-    <div className="ml-auto w-fit max-w-[min(860px,88%)] mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
+    <div className="ml-auto w-fit max-w-[min(860px,88%)] min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
       <p className="whitespace-pre-wrap text-[16px] leading-[1.5] text-[var(--mw-ink)]">
         {message.content}
       </p>
@@ -1398,7 +1398,12 @@ function AssistantMessage({
   }
 
   return (
-    <article className={cn("mw-card", preferences.compactAnswerCards ? "p-4" : "p-5")}>
+    <article
+      className={cn(
+        "mw-card min-w-0 max-w-full overflow-hidden",
+        preferences.compactAnswerCards ? "p-4" : "p-5",
+      )}
+    >
       {preferences.showSourceChips && message.sources?.length ? (
         <div className="flex flex-wrap gap-2">
           {message.sources.map((source) => (
@@ -1448,7 +1453,7 @@ function AssistantMessage({
 
 function LoadingAnswer() {
   return (
-    <div className="mw-card p-5">
+    <div className="mw-card min-w-0 max-w-full p-5">
       <MinimalLoader label="Searching reviewed notes" variant="inline" />
     </div>
   );
@@ -1466,7 +1471,7 @@ function EdgeCard({
   onAction: () => void;
 }) {
   return (
-    <div className="mw-card p-5">
+    <div className="mw-card min-w-0 max-w-full p-5">
       <h3 className="text-[20px] font-medium leading-[1.2]">
         {title}
       </h3>

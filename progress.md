@@ -2,6 +2,31 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-21 - RAG Answer Completion Check
+
+### Completed
+- Reviewed the post-push local changes and confirmed the previous prompt was not fully finished locally.
+- Added question-text guardrails for unsupported Module 4 and Module 5 requests.
+- Split the OpenAI answer request into explicit system and user messages.
+- Added citation fallback so grounded answers include source references even if the model omits inline markers.
+- Preserved insufficient-source fallback behavior when the model returns the fallback text.
+- Added chat answer/card width containment to prevent rendered Markdown/code/table content from overflowing the message area.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- No retrieval scope expansion was added.
+- Module 4 remains excluded.
+- Module 5 remains absent/excluded.
+- Previous-year questions remain excluded as answer sources.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Apply the conversation pin migration live before relying on pinned chat actions in production.
+- Add verifier/evaluation layer for RAG answers.
+
 ## 2026-05-21 - Responsive Chat Placeholder
 
 ### Completed
