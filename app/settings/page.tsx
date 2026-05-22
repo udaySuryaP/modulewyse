@@ -201,6 +201,27 @@ export default async function SettingsPage() {
           </div>
           <SignoutButton />
         </section>
+
+        <section className="mw-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div>
+            <p className="mw-label text-[11px]">Legal</p>
+            <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+              Policies and terms
+            </h2>
+            <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-[var(--mw-body)]">
+              Review how ModuleWyse handles privacy, AI study support, and
+              service terms.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link className="mw-pill-outline h-10" href="/privacy">
+              Privacy
+            </Link>
+            <Link className="mw-pill-outline h-10" href="/terms">
+              Terms
+            </Link>
+          </div>
+        </section>
       </div>
     </StudentPageShell>
   );

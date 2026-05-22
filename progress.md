@@ -2,6 +2,28 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-22 - Terms and Privacy Pages
+
+### Completed
+- Added public Privacy Policy page at `/privacy`.
+- Added public Terms of Service page at `/terms`.
+- Included ModuleWyse-specific AI, data, academic, analytics, and third-party-service disclosures.
+- Added legal links to the landing footer, auth shell, and settings page.
+- Added `/privacy` and `/terms` to the public route allowlist so they do not require login.
+- Preserved protected-route behavior for `/chat`, `/subjects`, `/library`, `/profile`, and `/settings`.
+- Preserved RAG retrieval scope and source restrictions.
+
+### Issues / Notes
+- Policies are practical launch drafts and should be reviewed before wider public launch.
+- Operator/legal contact details still need final confirmation before launch.
+- Rate limiting remains next.
+- Module 4 remains draft/review.
+- Module 5 does not exist under KTU 2024.
+- Previous-year questions remain excluded as answer sources.
+
+### Next
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
 ## 2026-05-22 - Re-enable RAG Regenerate
 
 ### Completed

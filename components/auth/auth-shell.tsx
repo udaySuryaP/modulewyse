@@ -57,6 +57,15 @@ export function AuthShell({
           <div className={showHeader ? "mt-5 text-left sm:mt-8" : "text-left"}>
             {children}
           </div>
+
+          <div className="mt-6 flex justify-center gap-4 border-t border-[var(--mw-hairline)] pt-4 text-[12px] font-medium text-[var(--mw-muted)]">
+            <Link className="hover:text-[var(--mw-ink)]" href="/privacy">
+              Privacy
+            </Link>
+            <Link className="hover:text-[var(--mw-ink)]" href="/terms">
+              Terms
+            </Link>
+          </div>
         </LiquidReveal>
       </main>
     </>

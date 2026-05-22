@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { FeatureCard } from "@/components/landing/feature-card";
 import { HeroAskBox } from "@/components/landing/hero-ask-box";
 import { HeroBadge } from "@/components/landing/hero-badge";
@@ -52,11 +54,19 @@ export default function HomePage() {
           </LiquidReveal>
         </section>
 
-        <footer className="mw-section relative z-10 flex flex-col gap-2 pb-8 text-[13px] font-normal leading-[1.5] text-[var(--mw-muted)] lg:flex-row lg:justify-between">
+        <footer className="mw-section relative z-10 flex flex-col gap-3 pb-8 text-[13px] font-normal leading-[1.5] text-[var(--mw-muted)] lg:flex-row lg:items-center lg:justify-between">
           <p>
             CURATED NOTES / MODULE-AWARE ANSWERS / KTU BASED EXAM PREP COMPANION
           </p>
-          <p>© 2026 MODULEWYSE / STUDENT BETA</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            <p>© 2026 MODULEWYSE / STUDENT BETA</p>
+            <Link className="hover:text-[var(--mw-ink)]" href="/privacy">
+              Privacy
+            </Link>
+            <Link className="hover:text-[var(--mw-ink)]" href="/terms">
+              Terms
+            </Link>
+          </div>
         </footer>
       </main>
     </>
