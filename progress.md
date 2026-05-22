@@ -2,6 +2,197 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-22 - Re-enable RAG Regenerate
+
+### Completed
+- Re-enabled Regenerate for persisted real RAG assistant answers.
+- Added a server-side regenerate path to `/api/chat/answer` that verifies the target assistant message belongs to the authenticated user.
+- Reused the original user question and the original answer type for regeneration.
+- Reran retrieval and answer generation through the existing source-restricted RAG flow.
+- Updated the existing assistant message in place instead of appending a duplicate assistant answer.
+- Cleared feedback for regenerated answers so old feedback does not apply to the new answer.
+- Added per-answer loading state while regeneration is running.
+- Preserved source chips, citations, rich answer rendering, copy, feedback, recent chats, and conversation reload behavior.
+- Preserved RAG source restrictions: PBCST304 Modules 1-3 only; Module 4 excluded; Module 5 non-existent under KTU 2024; previous-year questions excluded.
+
+### Issues / Notes
+- Regenerate still uses the existing non-streaming `/api/chat/answer` flow.
+- Rate limiting remains deferred.
+- Verifier/evaluation layer remains deferred.
+- No retrieval scope expansion was added.
+
+### Next
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
+## 2026-05-21 - Authenticated RAG Chat Browser QA
+
+### Completed
+- Ran authenticated browser QA using a disposable confirmed Supabase QA account.
+- Verified login redirects to `/chat` and the protected chat page loads with no auth error.
+- Confirmed Chat keeps Answer Type as the only visible context control; Semester, Subject, and Module dropdowns are not visible.
+- Tested supported PBCST304 questions:
+  - `Explain classes and objects`: answered with citations and Module 1/2 sources.
+  - `What is inheritance?`: answered with citations and Module 1/2/3 sources.
+  - `Explain constructors in OOP`: fixed QA failure and now answers with constructor sources from Modules 1/2.
+  - `Explain dynamic binding`: answered with citations and Module 1/2 sources.
+  - `Explain access specifiers`: answered with citations and Module 1/2/3 sources.
+  - `Difference between method overloading and overriding`: answered with citations and Module 1/2 sources.
+- Tested fallback/out-of-scope behavior:
+  - operating system deadlock: insufficient-source fallback.
+  - DBMS normalization: insufficient-source fallback.
+  - Module 4 request: review-state fallback; no Module 4 source chips.
+  - Module 5 request: states PBCST304 under KTU 2024 does not include Module 5.
+  - latest news: insufficient-source fallback.
+  - whitespace-only question: rejected with 400.
+  - `moduleHint: 5`: Module 5 non-existent fallback.
+  - unsupported subject hint: insufficient-source fallback.
+- Verified persisted chat reload keeps user messages, assistant answers, source chips, citations, code blocks, and tables.
+- Tested recent chat options in the authenticated mobile browser:
+  - three-dot menu opens.
+  - pin and unpin update the live conversation row.
+  - rename updates title and rejects blank input.
+  - delete confirmation appears, cancel works, and confirmed delete removes the disposable conversation.
+- Tested copy, feedback, and disabled regenerate behavior:
+  - copy action returns a safe toast.
+  - feedback action returns a safe toast.
+  - regenerate remains disabled with the expected message.
+- Tested rich answer rendering in browser using a temporary QA conversation, then deleted it:
+  - Markdown headings, lists, tables, inline code, fenced code blocks, citations, KaTeX math, and Mermaid-safe blocks render.
+  - Mermaid content shows the safe diagram-preview/code block rather than executing a diagram.
+- Tested mobile rendering at 390x844, 412x914, and 360px width:
+  - no whole-page horizontal overflow.
+  - composer remains visible.
+  - source chips and rendered content stay inside the page.
+  - placeholder uses `Ask a question...` on mobile and `Ask...` at very small width.
+- Verified live conversation pin migration readiness through Supabase:
+  - migration exists in live migration history.
+  - `is_pinned` and `pinned_at` columns exist.
+  - pinned/recent indexes exist.
+  - RLS is enabled on `public.conversations`.
+  - select/insert/update/delete policies are owner-scoped for authenticated users.
+- Preserved retrieval scope and source restrictions:
+  - Modules 1-3 only.
+  - Module 4 remains draft/review and excluded.
+  - Module 5 does not exist for PBCST304 under the KTU 2024 scheme.
+  - previous-year questions remain excluded as answer sources.
+
+### Bugs Fixed
+- Fixed constructor RAG QA failure where the model returned insufficient-source despite relevant constructor chunks.
+- Moved normal insufficiency decisions to the server-side retrieval gate after retrieval has passed.
+- Added source-bound constructor guidance and a narrow citation-backed constructor fallback if the model still self-refuses after sufficient retrieval.
+- Added prompt wording to avoid wrapping the whole answer in a fenced `markdown` code block.
+
+### Issues / Notes
+- Browser text entry required coordinate/key automation because the in-app browser virtual clipboard is unavailable.
+- Disposable QA accounts and their cascaded QA conversations were cleaned up after the pass.
+- Regenerate remains disabled.
+- Rate limiting remains deferred.
+- Visual Mermaid rendering remains deferred; Mermaid blocks are safely shown as code/preview.
+- One access-specifier retrieval result still includes a copied-note artifact topic (`Compile B.java File`), but it did not break source restrictions.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Re-enable regenerate for real RAG answers with safe retry/update semantics.
+- Add Upstash/per-user rate limiting.
+- Add verifier/evaluation layer.
+
+## 2026-05-21 - PBCST304 2024 Module Count Clarification
+
+### Completed
+- Clarified that PBCST304 / Object Oriented Programming under the KTU 2024 scheme has no Module 5.
+- Updated project memory, README, authoring guide, OOP content README, retrieval quality report, eval testset, and master plan wording.
+- Added an explicit PBCST304 module plan in content validation:
+  - valid modules: 1, 2, 3, 4
+  - ready modules: 1, 2, 3
+  - draft/review modules: 4
+  - nonexistent modules: 5
+- Updated content preview validation so Module 5 is treated as outside the scheme, not missing or pending.
+- Updated previous-year-question preparation so Module 5 gets a specific non-existent-module skip reason.
+- Updated RAG fallback wording so Module 5 questions state that PBCST304 under the KTU 2024 scheme does not include Module 5.
+- Preserved current valid state: Modules 1-3 ready, Module 4 draft/review, Module 5 non-existent.
+- Preserved retrieval source scope: Modules 1-3 only.
+- Ran `npm run content:preview`: passed with 4 sources and 178 chunks.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Module 4 remains draft/review.
+- Module 5 is not part of the KTU 2024 scheme for PBCST304.
+- No retrieval expansion, embedding generation, or OpenAI answer behavior changed beyond Module 5 wording clarification.
+- The generated preview timestamp was not kept as a source change.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Continue authenticated browser E2E QA for real RAG chat.
+- Re-enable regenerate later.
+- Add rate limiting later.
+
+## 2026-05-21 - Live Conversation Pin Migration Verification
+
+### Completed
+- Inspected the local conversation pin migration:
+  - `supabase/migrations/20260521111520_add_conversation_pin_and_title_actions.sql`
+  - adds `is_pinned boolean not null default false`
+  - adds `pinned_at timestamptz`
+  - adds pinned/recent conversation indexes
+- Checked live Supabase migration history through MCP.
+- Confirmed live migration history already includes `add_conversation_pin_and_title_actions`.
+- Verified live `public.conversations` can select:
+  - `id`
+  - `user_id`
+  - `title`
+  - `created_at`
+  - `updated_at`
+  - `access_count`
+  - `last_accessed_at`
+  - `is_pinned`
+  - `pinned_at`
+- Preserved RAG retrieval, answer generation, rendering, auth, and source restrictions.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Supabase MCP SQL execution currently requires reauthentication, so direct SQL verification of indexes/RLS policies could not be completed in this pass.
+- The live column check passed via the Supabase REST API using local server-only credentials without printing secrets.
+- Functional pin/rename/delete smoke testing with an authenticated browser session was not run.
+- `access_count` and `last_accessed_at` remain for historical tracking but do not drive Recent Chats order.
+- No RAG/OpenAI behavior changed.
+- No secrets changed.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Reauthenticate Supabase MCP and run direct SQL verification for conversation indexes and RLS policies.
+- Run authenticated browser E2E QA for real ModuleWyse RAG chat and verify supported/fallback answer behavior.
+
+## 2026-05-21 - RAG Answer Completion Check
+
+### Completed
+- Reviewed the post-push local changes and confirmed the previous prompt was not fully finished locally.
+- Added question-text guardrails for Module 4 review-state requests and Module 5 non-existent-module requests.
+- Split the OpenAI answer request into explicit system and user messages.
+- Added citation fallback so grounded answers include source references even if the model omits inline markers.
+- Preserved insufficient-source fallback behavior when the model returns the fallback text.
+- Added chat answer/card width containment to prevent rendered Markdown/code/table content from overflowing the message area.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- No retrieval scope expansion was added.
+- Module 4 remains excluded.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304 and remains excluded.
+- Previous-year questions remain excluded as answer sources.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Apply the conversation pin migration live before relying on pinned chat actions in production.
+- Add verifier/evaluation layer for RAG answers.
+
 ## 2026-05-21 - Responsive Chat Placeholder
 
 ### Completed
@@ -126,7 +317,7 @@ This file is updated at the end of each working session.
 - Added `OPENAI_ANSWER_MODEL` server env support and placeholder documentation in `.env.example`.
 - Added server-only PBCST304 retrieval helper using existing embedded chunks and `match_content_chunks`.
 - Kept retrieval scoped to OOP/PBCST304 ready notes from Modules 1-3.
-- Excluded Module 4, absent Module 5, previous-year questions, draft chunks, and non-note sources from answer retrieval.
+- Excluded Module 4, Module 5, previous-year questions, draft chunks, and non-note sources from answer retrieval; Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Added strict insufficient-source fallback before answer generation for unsupported subjects/modules, weak retrieval, no chunks, and obvious out-of-scope questions.
 - Connected Chat UI sends to `/api/chat/answer` instead of normal mock answer generation.
 - Persisted real user and assistant messages through the authenticated server route.
@@ -144,7 +335,7 @@ This file is updated at the end of each working session.
 ### Issues / Notes
 - Only PBCST304 Modules 1-3 are supported answer sources.
 - Module 4 remains draft/review and excluded.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions are not answer sources yet.
 - Rich Markdown, LaTeX, code block, and Mermaid-safe rendering remains a next phase; answers are currently rendered as preserved text.
 - Regenerate is temporarily disabled with a user-facing toast until the RAG route is verified for update/retry semantics.
@@ -1890,7 +2081,7 @@ create table if not exists public.message_feedback (
   - `oop` is `available`.
   - `dbms` is `beta`.
   - `os`, `cn`, and `ds` are `coming-soon`.
-  - OOP has 5 modules.
+  - OOP/PBCST304 now has 4 modules under the KTU 2024 scheme; Module 5 does not exist in the KTU 2024 scheme for PBCST304.
   - OOP has 8 starter topics.
   - DBMS has 5 starter topics.
 - Verified authenticated-role read access through SQL role simulation:
@@ -2452,7 +2643,7 @@ create table if not exists public.message_feedback (
   - `content/oop/module-2.md`
   - `content/oop/module-3.md`
   - `content/oop/module-4.md`
-- Confirmed Module 5 is not required for PBCST304 and removed the old `content/oop/module-5.md` template from the content workspace.
+- Confirmed Module 5 does not exist in the KTU 2024 scheme for PBCST304 and removed the old `content/oop/module-5.md` template from the content workspace.
 - Normalized Module 1, Module 2, and Module 3 frontmatter:
   - `subject: oop`
   - `subject_name: "Object Oriented Programming"`
@@ -2464,12 +2655,12 @@ create table if not exists public.message_feedback (
   - `status: draft`
   - `needs_review: true`
   - no chunks generated
-- Updated content tooling so PBCST304 does not require Module 5.
+- Updated content tooling so PBCST304 treats Module 5 as non-existent, not missing or pending.
 - Updated preview tooling to:
   - process existing module files
   - generate chunks only for ready OOP PBCST304 notes in Modules 1-3
   - skip draft/review sources
-  - warn, not fail, when Module 5 is absent
+  - avoid warnings/errors when Module 5 is absent because it does not exist in the KTU 2024 scheme
   - validate local figure links
   - preserve `subjectCode`, source type, status, module, topic, and source metadata in generated chunks
 - Updated ingestion tooling so it only ingests ready OOP PBCST304 note chunks from Modules 1-3.
@@ -2491,7 +2682,7 @@ create table if not exists public.message_feedback (
   - Module 2 chunks: 84
   - Module 3 chunks: 64
   - Module 4 chunks: 0
-  - Module 5 chunks: 0
+  - Module 5 chunks: 0 (Module 5 does not exist in the KTU 2024 scheme for PBCST304)
   - fatal errors: 0
 - Ran `npx tsc --noEmit`; passed.
 - Ran `npm run lint`; passed.
@@ -2505,7 +2696,7 @@ create table if not exists public.message_feedback (
   - many headings are short
   - several extracted headings have no body content
   - no fatal metadata errors were found
-  - no Module 5 chunks were generated
+  - no Module 5 chunks were generated because Module 5 does not exist in the KTU 2024 scheme for PBCST304
   - no draft Module 4 chunks were generated
 - Module 4 still needs cleanup and review before it can be marked ready.
 - Previous-year questions remain staged only and need a dedicated question-library schema/ingestion phase.
@@ -2530,7 +2721,7 @@ create table if not exists public.message_feedback (
   - Module 2: ready
   - Module 3: ready
   - Module 4: draft/review
-  - Module 5: not part of PBCST304
+  - Module 5: does not exist in the KTU 2024 scheme for PBCST304
 - Confirmed previous-year question files remain staged only under `content/oop/questions-staging/`.
 - Verified `content/oop/questions-staging/previous-year-questions.json` is valid JSON.
 - Added a conservative ready-note chunk filter:
@@ -2544,7 +2735,7 @@ create table if not exists public.message_feedback (
   - Module 2 chunks: 53
   - Module 3 chunks: 45
   - Module 4 chunks: 0
-  - Module 5 chunks: 0
+  - Module 5 chunks: 0 (Module 5 does not exist in the KTU 2024 scheme for PBCST304)
   - fatal errors: 0
   - previous-year question chunks: 0
 - Ran `npm run content:ingest`; passed.
@@ -2557,7 +2748,7 @@ create table if not exists public.message_feedback (
   - `module-2.md`: 53 ready note chunks
   - `module-3.md`: 45 ready note chunks
   - no Module 4 chunks
-  - no Module 5 chunks
+  - no Module 5 chunks because Module 5 does not exist in the KTU 2024 scheme for PBCST304
   - no previous-year question chunks
   - no TODO chunks
   - all inserted chunks have `subjectCode: PBCST304`, `subjectSlug: oop`, and `sourceType: notes`
@@ -2573,7 +2764,7 @@ create table if not exists public.message_feedback (
   - 164 short-but-ingested chunks under the general 80-word warning threshold
   - 0 long chunk warnings
   - 0 TODO warnings
-  - 0 Module 5 warnings/errors
+  - 0 missing-Module-5 warnings/errors because Module 5 does not exist in the KTU 2024 scheme for PBCST304
   - 0 broken image link warnings
 - The remaining warnings are content-quality cleanup items from copied notes, not ingestion blockers.
 - Module 4 still needs review before it can be marked ready.
@@ -2636,7 +2827,7 @@ create table if not exists public.message_feedback (
   - Module 2 questions: 11
   - Module 4 questions: 26
   - appearances: 125
-  - no Module 5 rows
+  - no Module 5 rows because Module 5 does not exist in the KTU 2024 scheme for PBCST304
   - no low-confidence rows
   - no needs-review rows
   - no non-ready rows
@@ -2720,7 +2911,7 @@ create table if not exists public.message_feedback (
 - Retrieval tests were not run because the vector RPC/embedding columns are not live yet.
 - Only ready PBCST304 Module 1-3 note chunks should be embedded after migration application.
 - Module 4 remains draft/review and must not be embedded.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions are not embedded in this phase.
 - No chat answer generation, RAG route, app UI change, admin UI, upload UI, or payment work was added.
 
@@ -2747,7 +2938,7 @@ create table if not exists public.message_feedback (
   - embedding dimensions: `1536`
   - migration uses `vector(1536)`
 - Verified scripts target only ready OOP PBCST304 Module 1-3 notes.
-- Verified Module 4, Module 5, draft content, and previous-year questions are excluded from embedding generation.
+- Verified Module 4, previous-year questions, draft content, and Module 5 are excluded from embedding generation; Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Applied live migration:
   - `supabase/migrations/20260520163826_add_content_chunk_embeddings.sql`
 - Verified live Supabase:
@@ -2782,7 +2973,7 @@ create table if not exists public.message_feedback (
 - Retrieval quality verdict is currently:
   - `NOT READY - EMBEDDINGS/RETRIEVAL BROKEN`
 - Module 4 remains draft/review and was not embedded.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions are not embedded.
 - No chat/RAG route, answer generation, UI change, admin UI, upload UI, or payment work was added.
 
@@ -2839,7 +3030,7 @@ create table if not exists public.message_feedback (
 - Verified live Supabase exclusions:
   - embedded Module 1-3 chunks: 242
   - embedded Module 4 chunks: 0
-  - embedded Module 5 chunks: 0
+  - embedded Module 5 chunks: 0 (Module 5 does not exist in the KTU 2024 scheme for PBCST304)
   - embedded previous-question chunks: 0
   - embedded non-ready chunks: 0
 - Ran `npm run retrieval:test` with:
@@ -2868,7 +3059,7 @@ create table if not exists public.message_feedback (
   - dynamic binding, because direct topic coverage is weak and results are indirect
 - Some chunks still contain noisy extracted headings, page markers, syllabus fragments, or OCR/copied-note artifacts.
 - Module 4 remains draft/review and was not embedded.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions were not embedded.
 - No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
 
@@ -2944,7 +3135,7 @@ create table if not exists public.message_feedback (
 - Verified live exclusions:
   - embedded Module 1-3 chunks: 175
   - embedded Module 4 chunks: 0
-  - embedded Module 5 chunks: 0
+  - embedded Module 5 chunks: 0 (Module 5 does not exist in the KTU 2024 scheme for PBCST304)
   - embedded previous-question chunks: 0
   - embedded non-ready chunks: 0
 - Ran `npm run retrieval:test` with 12 queries.
@@ -2964,7 +3155,7 @@ create table if not exists public.message_feedback (
 - Access-modifier retrieval is relevant but still table-like/fragmented.
 - Method-overloading retrieval still pulls related overriding/dynamic-dispatch chunks after the strongest result.
 - Module 4 remains draft/review and was not embedded.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions remain unembedded.
 - No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
 
@@ -3023,7 +3214,7 @@ create table if not exists public.message_feedback (
 - Verified live exclusions:
   - embedded Module 1-3 chunks: 178
   - embedded Module 4 chunks: 0
-  - embedded Module 5 chunks: 0
+  - embedded Module 5 chunks: 0 (Module 5 does not exist in the KTU 2024 scheme for PBCST304)
   - embedded previous-question chunks: 0
   - embedded non-ready chunks: 0
 - Ran `npm run retrieval:test` with final query set.
@@ -3057,7 +3248,7 @@ create table if not exists public.message_feedback (
 - Some source chunks remain compact/OCR-like because no academic content was invented or rewritten beyond source-supported restructuring.
 - General constructor queries still need strict answer synthesis from multiple chunks.
 - Module 4 remains draft/review and was not embedded.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions remain unembedded.
 - No chat/RAG route, answer generation, app UI change, admin UI, upload UI, or payment work was added.
 - `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
@@ -3065,7 +3256,7 @@ create table if not exists public.message_feedback (
 ### Next
 - Build retrieval-backed answer generation for PBCST304 using embedded chunks.
 - Add citations/source chips and a strict insufficient-source fallback.
-- Keep Module 4, Module 5, and previous-year questions excluded until their own ingestion/embedding phase.
+- Keep Module 4 and previous-year questions excluded until their own ingestion/embedding phase; keep Module 5 excluded permanently for PBCST304 because it does not exist in the KTU 2024 scheme.
 
 ## 2026-05-20 - Vercel Web Analytics Integration
 
@@ -3134,7 +3325,7 @@ create table if not exists public.message_feedback (
 - Preserved `/chat?subject=oop&module=...` and `/chat?q=...&subject=oop&module=...` route compatibility as silent context hints.
 - Preserved Library and Subjects Ask AI / Start Chat route shapes.
 - Prepared the current chat context to default to reviewed PBCST304 OOP notes across supported Modules 1-3.
-- Excluded unsupported Module 4 and absent Module 5 from the sanitized chat context.
+- Excluded Module 4 review-state and Module 5 non-existent-module requests from the sanitized chat context; Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Updated chat copy and loading copy so students can ask naturally without selecting subject/module first.
 - Preserved chat persistence, recent chats, feedback, regenerate, source display, and auth behavior.
 - Preserved answer type persistence in message metadata.
@@ -3147,7 +3338,7 @@ create table if not exists public.message_feedback (
 ### Issues / Notes
 - Current automatic retrieval scope is prepared for PBCST304 OOP Modules 1-3.
 - Module 4 remains draft/review and excluded from answer context.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions are not answer sources yet.
 - Full RAG answer generation is still not wired in this prompt.
 - `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
@@ -3171,7 +3362,7 @@ create table if not exists public.message_feedback (
   - 4 total modules
   - 3 ready modules
   - 1 review module
-  - no Module 5
+  - no Module 5 because Module 5 does not exist in the KTU 2024 scheme for PBCST304
 - Preserved existing auth, chat persistence, content ingestion, retrieval, and route behavior.
 - Ran `npx tsc --noEmit`: passed.
 - Ran `npm run lint`: passed.
@@ -3182,7 +3373,7 @@ create table if not exists public.message_feedback (
 - RAG answer generation is not built yet.
 - No `/api/chat` RAG route exists yet.
 - Module 4 remains draft/review.
-- Module 5 does not exist for PBCST304.
+- Module 5 does not exist in the KTU 2024 scheme for PBCST304.
 - Previous-year questions remain unembedded.
 - `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
 
@@ -3348,7 +3539,7 @@ create table if not exists public.message_feedback (
   - 4 total modules
   - 3 ready modules
   - 1 in review
-  - no Module 5
+  - no Module 5 because Module 5 does not exist in the KTU 2024 scheme for PBCST304
 - Preserved static fallback only for missing Supabase env, failed Supabase queries, unavailable tables, or no DB subject data.
 - Preserved existing editorial UI style and protected route behavior.
 - Ran `npx tsc --noEmit`: passed.

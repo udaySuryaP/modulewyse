@@ -386,7 +386,8 @@ export function ChatWorkspace({
   async function requestAnswer(input: {
     answerType: string;
     contextSnapshot: ChatContext;
-    question: string;
+    question?: string;
+    regenerateAssistantMessageId?: string;
   }) {
     const response = await fetch("/api/chat/answer", {
       body: JSON.stringify({
@@ -394,6 +395,7 @@ export function ChatWorkspace({
         conversationId: activeConversationId || null,
         moduleHint: moduleValueForContext(input.contextSnapshot),
         question: input.question,
+        regenerateAssistantMessageId: input.regenerateAssistantMessageId,
         subjectHint: subjectSlugForContext(input.contextSnapshot),
       }),
       headers: {
@@ -410,6 +412,25 @@ export function ChatWorkspace({
     }
 
     return payload as RagAnswerResponse;
+  }
+
+  function sourcesFromResponse(
+    response: RagAnswerResponse,
+    fallback: SourceChip[],
+  ) {
+    return response.sources.length > 0
+      ? response.sources.map(
+          (source) => `Module ${source.moduleNumber} · ${source.topicTitle}`,
+        )
+      : fallback;
+  }
+
+  function statusFromResponse(response: RagAnswerResponse): AssistantStatus {
+    return response.status === "answered"
+      ? "complete"
+      : response.status === "insufficient_source"
+        ? "insufficient"
+        : "failed";
   }
 
   async function sendMessage(question: string) {
@@ -568,9 +589,94 @@ export function ChatWorkspace({
     }
   }
 
-  function regenerate(messageId: string) {
-    if (messages.some((message) => message.id === messageId)) {
-      setToast("Regenerate will be added after the RAG route is verified.");
+  async function regenerate(messageId: string) {
+    if (isGenerating) {
+      return;
+    }
+
+    const targetIndex = messages.findIndex((message) => message.id === messageId);
+    const targetMessage = messages[targetIndex];
+    const persistedId = targetMessage?.persistedId;
+    const originalQuestion = [...messages.slice(0, targetIndex)]
+      .reverse()
+      .find((message) => message.role === "user");
+
+    if (!targetMessage || targetMessage.role !== "assistant" || !persistedId) {
+      setToast("This answer cannot be regenerated yet.");
+      return;
+    }
+
+    if (!originalQuestion) {
+      setToast("Original question could not be found.");
+      return;
+    }
+
+    const contextSnapshot = targetMessage.context ?? context;
+    const answerTypeSnapshot = targetMessage.answerType ?? answerType;
+    const fallbackSources =
+      targetMessage.sources?.length
+        ? targetMessage.sources
+        : sourceChipsForContext(contextSnapshot);
+
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === messageId
+          ? {
+              ...message,
+              content: "Searching reviewed notes...",
+              feedback: undefined,
+              status: "loading",
+            }
+          : message,
+      ),
+    );
+    setIsGenerating(true);
+
+    try {
+      const response = await requestAnswer({
+        answerType: answerTypeSnapshot,
+        contextSnapshot,
+        regenerateAssistantMessageId: persistedId,
+      });
+      const nextSources = sourcesFromResponse(response, fallbackSources);
+      const assistantStatus = statusFromResponse(response);
+
+      setMessages((current) =>
+        current.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                answerType: answerTypeSnapshot,
+                content: response.answer,
+                id: response.assistantMessageId ?? message.id,
+                persistedId: response.assistantMessageId ?? persistedId,
+                sources: nextSources,
+                status: assistantStatus,
+              }
+            : message,
+        ),
+      );
+      void refreshRecentConversations();
+      setToast("Answer regenerated.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Answer regeneration failed.";
+
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === messageId
+            ? {
+                ...item,
+                content: "The answer could not be generated right now.",
+                status: "failed",
+              }
+            : item,
+        ),
+      );
+      setToast(message);
+    } finally {
+      setIsGenerating(false);
+      focusComposer();
     }
   }
 
@@ -634,7 +740,7 @@ export function ChatWorkspace({
 
           <div
             className={cn(
-              "mw-card min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
+              "mw-card min-w-0 max-w-full min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -648,7 +754,7 @@ export function ChatWorkspace({
                 showSuggestedPrompts={preferences.showSuggestedPrompts}
               />
             ) : (
-              <div className="grid gap-4">
+              <div className="grid min-w-0 max-w-full gap-4">
                 {messages.map((message) =>
                   message.role === "user" ? (
                     <UserMessage key={message.id} message={message} />
@@ -1341,7 +1447,7 @@ function ConversationNotFound() {
 
 function UserMessage({ message }: { message: Message }) {
   return (
-    <div className="ml-auto w-fit max-w-[min(860px,88%)] mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
+    <div className="ml-auto w-fit max-w-[min(860px,88%)] min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[var(--mw-ink)]">
       <p className="whitespace-pre-wrap text-[16px] leading-[1.5] text-[var(--mw-ink)]">
         {message.content}
       </p>
@@ -1398,7 +1504,12 @@ function AssistantMessage({
   }
 
   return (
-    <article className={cn("mw-card", preferences.compactAnswerCards ? "p-4" : "p-5")}>
+    <article
+      className={cn(
+        "mw-card min-w-0 max-w-full overflow-hidden",
+        preferences.compactAnswerCards ? "p-4" : "p-5",
+      )}
+    >
       {preferences.showSourceChips && message.sources?.length ? (
         <div className="flex flex-wrap gap-2">
           {message.sources.map((source) => (
@@ -1448,7 +1559,7 @@ function AssistantMessage({
 
 function LoadingAnswer() {
   return (
-    <div className="mw-card p-5">
+    <div className="mw-card min-w-0 max-w-full p-5">
       <MinimalLoader label="Searching reviewed notes" variant="inline" />
     </div>
   );
@@ -1466,7 +1577,7 @@ function EdgeCard({
   onAction: () => void;
 }) {
   return (
-    <div className="mw-card p-5">
+    <div className="mw-card min-w-0 max-w-full p-5">
       <h3 className="text-[20px] font-medium leading-[1.2]">
         {title}
       </h3>

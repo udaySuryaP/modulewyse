@@ -17,7 +17,7 @@ Supabase pgvector vector(1536)
 ```
 
 ## Why this scope
-CSE alone can easily become 8 semesters × about 8 papers × 5 modules = around 320 module-level content buckets. Building all of it before launch is the wrong move. The right move is to prove answer quality on important subjects first.
+CSE subject module counts vary by scheme. PBCST304 under the KTU 2024 scheme has Modules 1-4 only, so Module 5 must not be assumed for every subject. Building all subjects before launch is the wrong move. The right move is to prove answer quality on important subjects first.
 
 ## First subject rollout
 1. Object Oriented Programming

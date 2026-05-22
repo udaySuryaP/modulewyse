@@ -7,7 +7,12 @@ No subject should be marked available without eval.
 Object Oriented Programming.
 
 ## Minimum OOP beta eval
-50 total questions covering all 5 modules.
+For PBCST304 under the KTU 2024 scheme, cover Modules 1-4 only. Module 5 does not exist in the KTU 2024 scheme for PBCST304 and must not be included in QA prompts or expected-source checks.
+
+Minimum beta coverage:
+- Modules 1-3: supported answer tests from reviewed notes.
+- Module 4: insufficient-source or review-state tests until reviewed notes are ready.
+- Module 5: non-existent-module fallback test only.
 
 ## Full subject eval
 30 short, 30 medium, 20 long, 20 previous-question style prompts.
@@ -19,4 +24,4 @@ question, subject, module, topic, answer_type, expected_keywords, must_not_inclu
 0 wrong, 1 weak, 2 usable, 3 good, 4 excellent.
 
 ## Pass gate
-80%+ score 3+, no critical wrong answers, all modules represented, insufficient-source behavior works.
+80%+ score 3+, no critical wrong answers, all valid PBCST304 modules represented, insufficient-source behavior works, and Module 5 questions explicitly state that PBCST304 under the KTU 2024 scheme does not include Module 5.

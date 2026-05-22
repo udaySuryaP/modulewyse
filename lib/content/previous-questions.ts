@@ -9,10 +9,11 @@ import type {
   PreviousQuestionType,
   QuestionConfidence,
 } from "@/types/database";
+import { pbcst304ModulePlan } from "@/lib/content/validation";
 
 const expectedSubjectCode = "PBCST304";
 const expectedSubjectSlug = "oop";
-const validModules = new Set([1, 2, 3, 4]);
+const validModules = new Set<number>(pbcst304ModulePlan.validModules);
 
 export type StagedPreviousQuestion = {
   answerAvailable?: boolean;
@@ -230,15 +231,18 @@ export function preparePreviousQuestions(source: StagedPreviousQuestionFile): Pr
       continue;
     }
 
-    if (!moduleNumber || !validModules.has(moduleNumber)) {
-      increment(skippedReasons, "invalid or missing module");
-      invalidRecords.push({ id, reason: "invalid or missing module" });
+    if (moduleNumber === 5) {
+      increment(skippedReasons, "module 5 does not exist in PBCST304 2024 scheme");
+      invalidRecords.push({
+        id,
+        reason: "module 5 does not exist in PBCST304 2024 scheme",
+      });
       continue;
     }
 
-    if (moduleNumber === 5) {
-      increment(skippedReasons, "module 5 not part of PBCST304");
-      invalidRecords.push({ id, reason: "module 5 not part of PBCST304" });
+    if (!moduleNumber || !validModules.has(moduleNumber)) {
+      increment(skippedReasons, "invalid or missing module");
+      invalidRecords.push({ id, reason: "invalid or missing module" });
       continue;
     }
 

@@ -48,7 +48,7 @@ export function AnswerRenderer({
   return (
     <div
       className={cn(
-        "mw-answer-renderer text-[var(--mw-body)]",
+        "mw-answer-renderer min-w-0 max-w-full overflow-hidden text-[var(--mw-body)]",
         compact ? "text-[14px] leading-[1.55]" : "text-[15px] leading-[1.65]",
         className,
       )}

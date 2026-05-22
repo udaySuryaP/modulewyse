@@ -6,7 +6,7 @@ ModuleWyse uses developer/admin-curated academic material. Students do not uploa
 
 ## OOP-First Plan
 
-Start with Object Oriented Programming for PBCST304. Module 1, Module 2, and Module 3 are the current ready candidates. Module 4 should remain draft/review until cleaned and checked. Module 5 is not part of PBCST304 and should not be created, required, previewed as an error, or ingested.
+Start with Object Oriented Programming for PBCST304 under the KTU 2024 scheme. PBCST304 currently has Modules 1-4 in the syllabus/content model. Modules 1, 2, and 3 are ready. Module 4 should remain draft/review until cleaned and checked. Module 5 does not exist in the KTU 2024 scheme for PBCST304 and should not be created, required, or ingested. If a Module 5 file appears accidentally, validation should fail because it is outside the scheme.
 
 Split each module by topic and keep content close to KTU syllabus language and exam expectations.
 
@@ -57,7 +57,7 @@ Required metadata:
 - Mark uncertain or incomplete content as `TODO`.
 - Do not mark content as `ready` until manually reviewed.
 - Keep Module 4 as `status: draft` and `needs_review: true` until reviewed.
-- Do not create or ingest Module 5 for PBCST304.
+- Do not create or ingest Module 5 for PBCST304 because it does not exist in the KTU 2024 scheme.
 
 ## Chunking Guidelines
 

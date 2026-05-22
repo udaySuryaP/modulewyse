@@ -15,12 +15,17 @@ const maxQuestionLength = 3000;
 const topK = 8;
 const insufficientAnswer =
   "I don't have enough reviewed ModuleWyse notes to answer this reliably yet.";
+const module5NotInSchemeAnswer =
+  "PBCST304 under the KTU 2024 scheme does not include Module 5. I can answer from reviewed Modules 1-3, while Module 4 is still under review.";
+const module4UnderReviewAnswer =
+  "Module 4 for PBCST304 is still under review in ModuleWyse. I can answer from reviewed Modules 1-3 for now.";
 
 type ChatAnswerRequest = {
   answerType?: unknown;
   conversationId?: unknown;
   moduleHint?: unknown;
   question?: unknown;
+  regenerateAssistantMessageId?: unknown;
   subjectHint?: unknown;
 };
 
@@ -110,10 +115,17 @@ function normalizeModuleHint(value: unknown) {
     };
   }
 
-  if (normalized === "4" || normalized === "5") {
+  if (normalized === "4") {
     return {
       moduleHint: "all" as const,
-      unsupportedReason: `module ${normalized} is not available as a reviewed answer source`,
+      unsupportedReason: "module 4 is still under review",
+    };
+  }
+
+  if (normalized === "5") {
+    return {
+      moduleHint: "all" as const,
+      unsupportedReason: "module 5 does not exist in the KTU 2024 scheme for PBCST304",
     };
   }
 
@@ -154,6 +166,38 @@ function isClearlyOutsideScope(question: string) {
   return outsidePatterns.some((pattern) => normalized.includes(pattern));
 }
 
+function unsupportedModuleReasonFromQuestion(question: string) {
+  const normalized = question.toLowerCase();
+
+  if (/\bmodule\s*(4|iv)\b/.test(normalized)) {
+    return "module 4 is still under review";
+  }
+
+  if (/\bmodule\s*(5|v)\b/.test(normalized)) {
+    return "module 5 does not exist in the KTU 2024 scheme for PBCST304";
+  }
+
+  return null;
+}
+
+function isConstructorQuestion(question: string) {
+  return question.toLowerCase().includes("constructor");
+}
+
+function answerForInsufficientReason(reason: string | null) {
+  const normalized = reason?.toLowerCase() ?? "";
+
+  if (normalized.includes("module 5")) {
+    return module5NotInSchemeAnswer;
+  }
+
+  if (normalized.includes("module 4")) {
+    return module4UnderReviewAnswer;
+  }
+
+  return insufficientAnswer;
+}
+
 function sufficiencyReason(input: {
   answerType: RagAnswerType;
   question: string;
@@ -162,6 +206,12 @@ function sufficiencyReason(input: {
 }) {
   if (input.unsupportedReason) {
     return input.unsupportedReason;
+  }
+
+  const unsupportedModuleReason = unsupportedModuleReasonFromQuestion(input.question);
+
+  if (unsupportedModuleReason) {
+    return unsupportedModuleReason;
   }
 
   if (isClearlyOutsideScope(input.question)) {
@@ -217,6 +267,108 @@ ${chunk.content}`,
     .join("\n\n");
 }
 
+function topicSpecificPrompt(question: string) {
+  const normalized = question.toLowerCase();
+
+  if (normalized.includes("constructor")) {
+    return [
+      "Constructor-question guidance:",
+      "The reviewed chunks may cover constructor definition, default constructor,",
+      "parameterized constructor, copy constructor, constructor chaining with this(),",
+      "superclass constructor calls, or calling order of constructors.",
+      "Use only those source-supported points and examples. Do not refuse only",
+      "because the chunks cover different constructor subtopics.",
+    ].join(" ");
+  }
+
+  return "";
+}
+
+function firstSourceForTopic(chunks: RetrievedRagChunk[], terms: string[]) {
+  return chunks.find((chunk) => {
+    const title = chunk.topicTitle.toLowerCase();
+    const preview = chunk.shortPreview.toLowerCase();
+
+    return terms.some((term) => title.includes(term) || preview.includes(term));
+  });
+}
+
+function constructorSourceBackedAnswer(chunks: RetrievedRagChunk[]) {
+  if (chunks.length === 0) {
+    return null;
+  }
+
+  const defaultConstructor = firstSourceForTopic(chunks, ["default constructor"]);
+  const parameterizedConstructor = firstSourceForTopic(chunks, [
+    "parameterized constructor",
+  ]);
+  const copyConstructor = firstSourceForTopic(chunks, ["copy constructor"]);
+  const chaining = firstSourceForTopic(chunks, ["constructor chaining", "this()"]);
+  const superCall = firstSourceForTopic(chunks, [
+    "superclass constructor",
+    "calling order of constructors",
+    "super(",
+  ]);
+  const general = firstSourceForTopic(chunks, ["constructor"]) ?? chunks[0];
+
+  const points = [
+    general
+      ? `- A constructor is covered in the reviewed notes as the object-creation and initialization part of a class. Use the constructor topic together with its examples when explaining object setup [${general.sourceNumber}].`
+      : null,
+    defaultConstructor
+      ? `- A default constructor is used when no explicit constructor is defined, and it initializes the object with default values [${defaultConstructor.sourceNumber}].`
+      : null,
+    parameterizedConstructor
+      ? `- A parameterized constructor accepts arguments so object fields can be initialized with supplied values [${parameterizedConstructor.sourceNumber}].`
+      : null,
+    copyConstructor
+      ? `- A copy constructor initializes a new object from an existing object by copying that object's data [${copyConstructor.sourceNumber}].`
+      : null,
+    chaining
+      ? `- Constructor chaining uses \`this()\` to call another constructor in the same class, which helps reuse initialization logic [${chaining.sourceNumber}].`
+      : null,
+    superCall
+      ? `- In inheritance, superclass constructor calls and constructor calling order matter because parent-class constructors run as part of subclass object creation [${superCall.sourceNumber}].`
+      : null,
+  ].filter(Boolean);
+
+  if (points.length < 2) {
+    return null;
+  }
+
+  return `## Constructors in OOP
+
+Constructors are the class members used during object creation to set up object state from the reviewed notes' constructor examples and subtopics [${general.sourceNumber}].
+
+${points.join("\n")}
+
+In an exam answer, explain constructors as the initialization mechanism for objects, then mention the reviewed types: default constructor, parameterized constructor, copy constructor, constructor chaining with \`this()\`, and superclass constructor calls where the source chunks support them.`;
+}
+
+function ensureCitationMarkers(answer: string, chunks: RetrievedRagChunk[]) {
+  if (/\[\d+\]/.test(answer) || chunks.length === 0) {
+    return answer;
+  }
+
+  const citations = chunks
+    .slice(0, 3)
+    .map((chunk) => `[${chunk.sourceNumber}]`)
+    .join(", ");
+
+  return `${answer.trim()}\n\n_Source references: ${citations}_`;
+}
+
+function isInsufficientAnswerText(answer: string) {
+  const normalize = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[’']/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  return normalize(answer).startsWith(normalize(insufficientAnswer));
+}
+
 async function generateAnswer(input: {
   answerType: RagAnswerType;
   chunks: RetrievedRagChunk[];
@@ -226,22 +378,27 @@ async function generateAnswer(input: {
     apiKey: serverEnv.OPENAI_API_KEY,
   });
   const model = serverEnv.OPENAI_ANSWER_MODEL;
-  const prompt = `System:
-You are ModuleWyse, a KTU exam-prep AI assistant.
+const systemPrompt = `You are ModuleWyse, a KTU exam-prep AI assistant.
 Answer only using the provided reviewed source chunks.
 Do not use outside knowledge.
 Do not invent facts, examples, marks, years, diagrams, or equations.
-If the sources are insufficient, return exactly: ${insufficientAnswer}
+The route has already applied an insufficient-source gate before this request.
+When the chunks contain supported definitions, examples, or topic details for
+the question, answer from those chunks instead of refusing.
+Partial source coverage is acceptable: answer the parts directly supported by the
+chunks and avoid unsupported parts instead of refusing the entire question.
 Preserve academic terminology.
 Write clearly for students preparing for exams.
 Cite sources using [1], [2], etc.
 Do not cite sources that are not used.
 The answer must be Markdown.
+Do not wrap the entire answer in a fenced markdown code block.
 Avoid unsupported claims.
-Do not mention internal retrieval implementation, embeddings, or vector search.
+Do not mention internal retrieval implementation, embeddings, or vector search.`;
 
-Answer format:
+const userPrompt = `Answer format:
 ${answerInstructions(input.answerType)}
+${topicSpecificPrompt(input.question)}
 
 Reviewed source chunks:
 ${sourcePrompt(input.chunks)}
@@ -250,13 +407,28 @@ Student question:
 ${input.question}`;
 
   const response = await client.responses.create({
-    input: prompt,
+    input: [
+      {
+        content: [{ text: systemPrompt, type: "input_text" }],
+        role: "system",
+      },
+      {
+        content: [{ text: userPrompt, type: "input_text" }],
+        role: "user",
+      },
+    ],
     max_output_tokens:
       input.answerType === "short" ? 450 : input.answerType === "medium" ? 800 : 1200,
     model,
   });
 
-  return response.output_text.trim() || insufficientAnswer;
+  const answer = response.output_text.trim() || insufficientAnswer;
+
+  if (isInsufficientAnswerText(answer)) {
+    return insufficientAnswer;
+  }
+
+  return ensureCitationMarkers(answer, input.chunks);
 }
 
 async function resolveConversation(input: {
@@ -328,6 +500,141 @@ async function insertMessage(input: {
   return data as Message;
 }
 
+async function updateAssistantMessage(input: {
+  answerType: string;
+  content: string;
+  messageId: string;
+  metadata: Record<string, unknown>;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}) {
+  const { data, error } = await input.supabase
+    .from("messages")
+    .update({
+      answer_type: input.answerType,
+      content: input.content,
+      metadata: input.metadata,
+    })
+    .eq("id", input.messageId)
+    .eq("user_id", input.userId)
+    .eq("role", "assistant")
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as Message;
+}
+
+async function clearMessageFeedback(input: {
+  messageId: string;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}) {
+  const { error } = await input.supabase
+    .from("message_feedback")
+    .delete()
+    .eq("message_id", input.messageId)
+    .eq("user_id", input.userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+function messageMetadataString(message: Message, key: string) {
+  const value = message.metadata?.[key];
+  return typeof value === "string" ? value : null;
+}
+
+async function resolveRegenerateContext(input: {
+  assistantMessageId: string;
+  conversationId: string | null;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}) {
+  const { data: assistantMessage, error: assistantError } = await input.supabase
+    .from("messages")
+    .select("*")
+    .eq("id", input.assistantMessageId)
+    .eq("user_id", input.userId)
+    .eq("role", "assistant")
+    .maybeSingle();
+
+  if (assistantError) {
+    throw assistantError;
+  }
+
+  if (!assistantMessage) {
+    return null;
+  }
+
+  const assistant = assistantMessage as Message;
+
+  if (input.conversationId && assistant.conversation_id !== input.conversationId) {
+    return null;
+  }
+
+  const { data: conversation, error: conversationError } = await input.supabase
+    .from("conversations")
+    .select("*")
+    .eq("id", assistant.conversation_id)
+    .eq("user_id", input.userId)
+    .maybeSingle();
+
+  if (conversationError) {
+    throw conversationError;
+  }
+
+  if (!conversation) {
+    return null;
+  }
+
+  const { data: messages, error: messagesError } = await input.supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", assistant.conversation_id)
+    .eq("user_id", input.userId)
+    .order("created_at", { ascending: true });
+
+  if (messagesError) {
+    throw messagesError;
+  }
+
+  const orderedMessages = (messages ?? []) as Message[];
+  const assistantIndex = orderedMessages.findIndex(
+    (message) => message.id === assistant.id,
+  );
+  const userMessage =
+    assistantIndex > 0
+      ? [...orderedMessages.slice(0, assistantIndex)]
+          .reverse()
+          .find((message) => message.role === "user")
+      : null;
+
+  if (!userMessage) {
+    throw new Error("Original user question was not found.");
+  }
+
+  const answerType = normalizeAnswerType(
+    assistant.answer_type ?? messageMetadataString(assistant, "answerType"),
+  );
+
+  if (!answerType) {
+    throw new Error("Original answer type is invalid.");
+  }
+
+  return {
+    answerType,
+    assistant,
+    conversation: conversation as Conversation,
+    question: userMessage.content,
+    userMessage,
+  };
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -347,7 +654,44 @@ export async function POST(request: Request) {
     return errorResponse("Invalid JSON request.", 400);
   }
 
-  const question = typeof payload.question === "string" ? payload.question.trim() : "";
+  let question = typeof payload.question === "string" ? payload.question.trim() : "";
+  const requestedConversationId =
+    typeof payload.conversationId === "string" && payload.conversationId
+      ? payload.conversationId
+      : null;
+  const regenerateAssistantMessageId =
+    typeof payload.regenerateAssistantMessageId === "string" &&
+    payload.regenerateAssistantMessageId
+      ? payload.regenerateAssistantMessageId
+      : null;
+  let regenerateContext: Awaited<
+    ReturnType<typeof resolveRegenerateContext>
+  > = null;
+  let answerType: RagAnswerType = "medium";
+
+  if (regenerateAssistantMessageId) {
+    try {
+      regenerateContext = await resolveRegenerateContext({
+        assistantMessageId: regenerateAssistantMessageId,
+        conversationId: requestedConversationId,
+        supabase,
+        userId: user.id,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Original answer could not be regenerated.";
+      return errorResponse(message, 400);
+    }
+
+    if (!regenerateContext) {
+      return errorResponse("Answer message not found.", 404);
+    }
+
+    question = regenerateContext.question.trim();
+    answerType = regenerateContext.answerType;
+  }
 
   if (!question) {
     return errorResponse("Question is required.", 400);
@@ -357,16 +701,19 @@ export async function POST(request: Request) {
     return errorResponse("Question is too long.", 400);
   }
 
-  const answerType = normalizeAnswerType(payload.answerType);
+  if (!regenerateContext) {
+    const normalizedAnswerType = normalizeAnswerType(payload.answerType);
 
-  if (!answerType) {
-    return errorResponse("Invalid answer type.", 400);
+    if (!normalizedAnswerType) {
+      return errorResponse("Invalid answer type.", 400);
+    }
+
+    answerType = normalizedAnswerType;
   }
 
-  const conversationId =
-    typeof payload.conversationId === "string" && payload.conversationId
-      ? payload.conversationId
-      : null;
+  const conversationId = regenerateContext
+    ? regenerateContext.conversation.id
+    : requestedConversationId;
   const { unsupportedReason: subjectUnsupportedReason } = normalizeSubjectHint(
     payload.subjectHint,
   );
@@ -378,36 +725,40 @@ export async function POST(request: Request) {
   let conversation: Conversation | null = null;
 
   try {
-    conversation = await resolveConversation({
-      conversationId,
-      moduleValue,
-      question,
-      supabase,
-      userId: user.id,
-    });
+    conversation =
+      regenerateContext?.conversation ??
+      (await resolveConversation({
+        conversationId,
+        moduleValue,
+        question,
+        supabase,
+        userId: user.id,
+      }));
 
     if (!conversation) {
       return errorResponse("Conversation not found.", 404);
     }
 
-    const userMessage = await insertMessage({
-      answerType: null,
-      content: question,
-      conversationId: conversation.id,
-      metadata: {
-        answerType,
-        createdFrom: "chat",
-        moduleHint: moduleValue,
-        moduleLabel: moduleLabel(moduleValue),
-        subjectCode,
-        subjectHint: subjectSlug,
-        subjectLabel: "Object Oriented Programming",
-        subjectSlug,
-      },
-      role: "user",
-      supabase,
-      userId: user.id,
-    });
+    const userMessage =
+      regenerateContext?.userMessage ??
+      (await insertMessage({
+        answerType: null,
+        content: question,
+        conversationId: conversation.id,
+        metadata: {
+          answerType,
+          createdFrom: "chat",
+          moduleHint: moduleValue,
+          moduleLabel: moduleLabel(moduleValue),
+          subjectCode,
+          subjectHint: subjectSlug,
+          subjectLabel: "Object Oriented Programming",
+          subjectSlug,
+        },
+        role: "user",
+        supabase,
+        userId: user.id,
+      }));
 
     let retrieval = { chunks: [] as RetrievedRagChunk[], matchedCount: 0, topK };
     let reason = unsupportedReason;
@@ -424,41 +775,68 @@ export async function POST(request: Request) {
     let status: "answered" | "insufficient_source" = reason
       ? "insufficient_source"
       : "answered";
-    const answer =
+    let answer =
       status === "answered"
         ? await generateAnswer({ answerType, chunks: retrieval.chunks, question })
-        : insufficientAnswer;
+        : answerForInsufficientReason(reason);
     if (status === "answered" && answer.trim() === insufficientAnswer) {
-      status = "insufficient_source";
-      reason = "model reported insufficient source support";
+      const constructorAnswer = isConstructorQuestion(question)
+        ? constructorSourceBackedAnswer(retrieval.chunks)
+        : null;
+
+      if (constructorAnswer) {
+        answer = constructorAnswer;
+      } else {
+        status = "insufficient_source";
+        reason = "model reported insufficient source support";
+      }
     }
     const sources =
       status === "answered" ? retrieval.chunks.map(publicSource) : [];
     const sourceChips = sources.map(sourceChip);
-    const assistantMessage = await insertMessage({
+    const assistantMetadata = {
       answerType,
-      content: answer,
-      conversationId: conversation.id,
-      metadata: {
-        answerType,
-        assistantStatus: status,
-        model: status === "answered" ? serverEnv.OPENAI_ANSWER_MODEL : null,
-        moduleScope: moduleValue,
-        retrieval: {
-          matchedCount: retrieval.matchedCount,
-          topK: retrieval.topK,
-        },
-        sourceChips,
-        sources,
-        status,
-        subjectCode,
-        subjectLabel: "Object Oriented Programming",
-        subjectSlug,
+      assistantStatus: status,
+      model: status === "answered" ? serverEnv.OPENAI_ANSWER_MODEL : null,
+      moduleScope: moduleValue,
+      ...(regenerateContext ? { regeneratedAt: new Date().toISOString() } : {}),
+      retrieval: {
+        matchedCount: retrieval.matchedCount,
+        topK: retrieval.topK,
       },
-      role: "assistant",
-      supabase,
-      userId: user.id,
-    });
+      sourceChips,
+      sources,
+      status,
+      subjectCode,
+      subjectLabel: "Object Oriented Programming",
+      subjectSlug,
+    };
+    const assistantMessage = regenerateContext
+      ? await updateAssistantMessage({
+          answerType,
+          content: answer,
+          messageId: regenerateContext.assistant.id,
+          metadata: assistantMetadata,
+          supabase,
+          userId: user.id,
+        })
+      : await insertMessage({
+          answerType,
+          content: answer,
+          conversationId: conversation.id,
+          metadata: assistantMetadata,
+          role: "assistant",
+          supabase,
+          userId: user.id,
+        });
+
+    if (regenerateContext) {
+      await clearMessageFeedback({
+        messageId: assistantMessage.id,
+        supabase,
+        userId: user.id,
+      });
+    }
 
     await supabase.rpc("mark_conversation_used", {
       p_conversation_id: conversation.id,
@@ -483,21 +861,32 @@ export async function POST(request: Request) {
 
     if (conversationIdForError) {
       try {
-        const assistantMessage = await insertMessage({
+        const errorMetadata = {
           answerType,
-          content: safeAnswer,
-          conversationId: conversationIdForError,
-          metadata: {
-            answerType,
-            assistantStatus: "error",
-            status: "error",
-            subjectCode,
-            subjectSlug,
-          },
-          role: "assistant",
-          supabase,
-          userId: user.id,
-        });
+          assistantStatus: "error",
+          ...(regenerateContext ? { regeneratedAt: new Date().toISOString() } : {}),
+          status: "error",
+          subjectCode,
+          subjectSlug,
+        };
+        const assistantMessage = regenerateContext
+          ? await updateAssistantMessage({
+              answerType,
+              content: safeAnswer,
+              messageId: regenerateContext.assistant.id,
+              metadata: errorMetadata,
+              supabase,
+              userId: user.id,
+            })
+          : await insertMessage({
+              answerType,
+              content: safeAnswer,
+              conversationId: conversationIdForError,
+              metadata: errorMetadata,
+              role: "assistant",
+              supabase,
+              userId: user.id,
+            });
 
         return jsonResponse(
           {

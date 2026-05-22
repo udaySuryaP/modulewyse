@@ -4,11 +4,11 @@ This folder holds curated Object Oriented Programming notes for PBCST304. Studen
 
 ## Current ingestion status
 
-- Module 1: ready candidate
-- Module 2: ready candidate
-- Module 3: ready candidate
+- Module 1: ready
+- Module 2: ready
+- Module 3: ready
 - Module 4: draft/review
-- Module 5: not part of PBCST304 and should not be created or ingested
+- Module 5: does not exist in the KTU 2024 scheme for PBCST304 and should not be created or ingested
 
 ## File rules
 
