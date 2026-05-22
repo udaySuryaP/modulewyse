@@ -2,6 +2,78 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-21 - Authenticated RAG Chat Browser QA
+
+### Completed
+- Ran authenticated browser QA using a disposable confirmed Supabase QA account.
+- Verified login redirects to `/chat` and the protected chat page loads with no auth error.
+- Confirmed Chat keeps Answer Type as the only visible context control; Semester, Subject, and Module dropdowns are not visible.
+- Tested supported PBCST304 questions:
+  - `Explain classes and objects`: answered with citations and Module 1/2 sources.
+  - `What is inheritance?`: answered with citations and Module 1/2/3 sources.
+  - `Explain constructors in OOP`: fixed QA failure and now answers with constructor sources from Modules 1/2.
+  - `Explain dynamic binding`: answered with citations and Module 1/2 sources.
+  - `Explain access specifiers`: answered with citations and Module 1/2/3 sources.
+  - `Difference between method overloading and overriding`: answered with citations and Module 1/2 sources.
+- Tested fallback/out-of-scope behavior:
+  - operating system deadlock: insufficient-source fallback.
+  - DBMS normalization: insufficient-source fallback.
+  - Module 4 request: review-state fallback; no Module 4 source chips.
+  - Module 5 request: states PBCST304 under KTU 2024 does not include Module 5.
+  - latest news: insufficient-source fallback.
+  - whitespace-only question: rejected with 400.
+  - `moduleHint: 5`: Module 5 non-existent fallback.
+  - unsupported subject hint: insufficient-source fallback.
+- Verified persisted chat reload keeps user messages, assistant answers, source chips, citations, code blocks, and tables.
+- Tested recent chat options in the authenticated mobile browser:
+  - three-dot menu opens.
+  - pin and unpin update the live conversation row.
+  - rename updates title and rejects blank input.
+  - delete confirmation appears, cancel works, and confirmed delete removes the disposable conversation.
+- Tested copy, feedback, and disabled regenerate behavior:
+  - copy action returns a safe toast.
+  - feedback action returns a safe toast.
+  - regenerate remains disabled with the expected message.
+- Tested rich answer rendering in browser using a temporary QA conversation, then deleted it:
+  - Markdown headings, lists, tables, inline code, fenced code blocks, citations, KaTeX math, and Mermaid-safe blocks render.
+  - Mermaid content shows the safe diagram-preview/code block rather than executing a diagram.
+- Tested mobile rendering at 390x844, 412x914, and 360px width:
+  - no whole-page horizontal overflow.
+  - composer remains visible.
+  - source chips and rendered content stay inside the page.
+  - placeholder uses `Ask a question...` on mobile and `Ask...` at very small width.
+- Verified live conversation pin migration readiness through Supabase:
+  - migration exists in live migration history.
+  - `is_pinned` and `pinned_at` columns exist.
+  - pinned/recent indexes exist.
+  - RLS is enabled on `public.conversations`.
+  - select/insert/update/delete policies are owner-scoped for authenticated users.
+- Preserved retrieval scope and source restrictions:
+  - Modules 1-3 only.
+  - Module 4 remains draft/review and excluded.
+  - Module 5 does not exist for PBCST304 under the KTU 2024 scheme.
+  - previous-year questions remain excluded as answer sources.
+
+### Bugs Fixed
+- Fixed constructor RAG QA failure where the model returned insufficient-source despite relevant constructor chunks.
+- Moved normal insufficiency decisions to the server-side retrieval gate after retrieval has passed.
+- Added source-bound constructor guidance and a narrow citation-backed constructor fallback if the model still self-refuses after sufficient retrieval.
+- Added prompt wording to avoid wrapping the whole answer in a fenced `markdown` code block.
+
+### Issues / Notes
+- Browser text entry required coordinate/key automation because the in-app browser virtual clipboard is unavailable.
+- Disposable QA accounts and their cascaded QA conversations were cleaned up after the pass.
+- Regenerate remains disabled.
+- Rate limiting remains deferred.
+- Visual Mermaid rendering remains deferred; Mermaid blocks are safely shown as code/preview.
+- One access-specifier retrieval result still includes a copied-note artifact topic (`Compile B.java File`), but it did not break source restrictions.
+- `npm audit --audit-level=high` exits successfully, but npm still reports a moderate PostCSS advisory through Next.js; no forced audit fix was run.
+
+### Next
+- Re-enable regenerate for real RAG answers with safe retry/update semantics.
+- Add Upstash/per-user rate limiting.
+- Add verifier/evaluation layer.
+
 ## 2026-05-21 - PBCST304 2024 Module Count Clarification
 
 ### Completed

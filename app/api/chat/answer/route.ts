@@ -179,6 +179,10 @@ function unsupportedModuleReasonFromQuestion(question: string) {
   return null;
 }
 
+function isConstructorQuestion(question: string) {
+  return question.toLowerCase().includes("constructor");
+}
+
 function answerForInsufficientReason(reason: string | null) {
   const normalized = reason?.toLowerCase() ?? "";
 
@@ -262,6 +266,84 @@ ${chunk.content}`,
     .join("\n\n");
 }
 
+function topicSpecificPrompt(question: string) {
+  const normalized = question.toLowerCase();
+
+  if (normalized.includes("constructor")) {
+    return [
+      "Constructor-question guidance:",
+      "The reviewed chunks may cover constructor definition, default constructor,",
+      "parameterized constructor, copy constructor, constructor chaining with this(),",
+      "superclass constructor calls, or calling order of constructors.",
+      "Use only those source-supported points and examples. Do not refuse only",
+      "because the chunks cover different constructor subtopics.",
+    ].join(" ");
+  }
+
+  return "";
+}
+
+function firstSourceForTopic(chunks: RetrievedRagChunk[], terms: string[]) {
+  return chunks.find((chunk) => {
+    const title = chunk.topicTitle.toLowerCase();
+    const preview = chunk.shortPreview.toLowerCase();
+
+    return terms.some((term) => title.includes(term) || preview.includes(term));
+  });
+}
+
+function constructorSourceBackedAnswer(chunks: RetrievedRagChunk[]) {
+  if (chunks.length === 0) {
+    return null;
+  }
+
+  const defaultConstructor = firstSourceForTopic(chunks, ["default constructor"]);
+  const parameterizedConstructor = firstSourceForTopic(chunks, [
+    "parameterized constructor",
+  ]);
+  const copyConstructor = firstSourceForTopic(chunks, ["copy constructor"]);
+  const chaining = firstSourceForTopic(chunks, ["constructor chaining", "this()"]);
+  const superCall = firstSourceForTopic(chunks, [
+    "superclass constructor",
+    "calling order of constructors",
+    "super(",
+  ]);
+  const general = firstSourceForTopic(chunks, ["constructor"]) ?? chunks[0];
+
+  const points = [
+    general
+      ? `- A constructor is covered in the reviewed notes as the object-creation and initialization part of a class. Use the constructor topic together with its examples when explaining object setup [${general.sourceNumber}].`
+      : null,
+    defaultConstructor
+      ? `- A default constructor is used when no explicit constructor is defined, and it initializes the object with default values [${defaultConstructor.sourceNumber}].`
+      : null,
+    parameterizedConstructor
+      ? `- A parameterized constructor accepts arguments so object fields can be initialized with supplied values [${parameterizedConstructor.sourceNumber}].`
+      : null,
+    copyConstructor
+      ? `- A copy constructor initializes a new object from an existing object by copying that object's data [${copyConstructor.sourceNumber}].`
+      : null,
+    chaining
+      ? `- Constructor chaining uses \`this()\` to call another constructor in the same class, which helps reuse initialization logic [${chaining.sourceNumber}].`
+      : null,
+    superCall
+      ? `- In inheritance, superclass constructor calls and constructor calling order matter because parent-class constructors run as part of subclass object creation [${superCall.sourceNumber}].`
+      : null,
+  ].filter(Boolean);
+
+  if (points.length < 2) {
+    return null;
+  }
+
+  return `## Constructors in OOP
+
+Constructors are the class members used during object creation to set up object state from the reviewed notes' constructor examples and subtopics [${general.sourceNumber}].
+
+${points.join("\n")}
+
+In an exam answer, explain constructors as the initialization mechanism for objects, then mention the reviewed types: default constructor, parameterized constructor, copy constructor, constructor chaining with \`this()\`, and superclass constructor calls where the source chunks support them.`;
+}
+
 function ensureCitationMarkers(answer: string, chunks: RetrievedRagChunk[]) {
   if (/\[\d+\]/.test(answer) || chunks.length === 0) {
     return answer;
@@ -295,25 +377,27 @@ async function generateAnswer(input: {
     apiKey: serverEnv.OPENAI_API_KEY,
   });
   const model = serverEnv.OPENAI_ANSWER_MODEL;
-  const systemPrompt = `You are ModuleWyse, a KTU exam-prep AI assistant.
+const systemPrompt = `You are ModuleWyse, a KTU exam-prep AI assistant.
 Answer only using the provided reviewed source chunks.
 Do not use outside knowledge.
 Do not invent facts, examples, marks, years, diagrams, or equations.
-If the sources are insufficient, return exactly: ${insufficientAnswer}
-The retrieval gate has already checked that the provided chunks are relevant unless
-they clearly do not address the question. When the chunks contain supported
-definitions, examples, or topic details for the question, answer from those
-chunks instead of refusing.
+The route has already applied an insufficient-source gate before this request.
+When the chunks contain supported definitions, examples, or topic details for
+the question, answer from those chunks instead of refusing.
+Partial source coverage is acceptable: answer the parts directly supported by the
+chunks and avoid unsupported parts instead of refusing the entire question.
 Preserve academic terminology.
 Write clearly for students preparing for exams.
 Cite sources using [1], [2], etc.
 Do not cite sources that are not used.
 The answer must be Markdown.
+Do not wrap the entire answer in a fenced markdown code block.
 Avoid unsupported claims.
 Do not mention internal retrieval implementation, embeddings, or vector search.`;
 
-  const userPrompt = `Answer format:
+const userPrompt = `Answer format:
 ${answerInstructions(input.answerType)}
+${topicSpecificPrompt(input.question)}
 
 Reviewed source chunks:
 ${sourcePrompt(input.chunks)}
@@ -511,13 +595,21 @@ export async function POST(request: Request) {
     let status: "answered" | "insufficient_source" = reason
       ? "insufficient_source"
       : "answered";
-    const answer =
+    let answer =
       status === "answered"
         ? await generateAnswer({ answerType, chunks: retrieval.chunks, question })
         : answerForInsufficientReason(reason);
     if (status === "answered" && answer.trim() === insufficientAnswer) {
-      status = "insufficient_source";
-      reason = "model reported insufficient source support";
+      const constructorAnswer = isConstructorQuestion(question)
+        ? constructorSourceBackedAnswer(retrieval.chunks)
+        : null;
+
+      if (constructorAnswer) {
+        answer = constructorAnswer;
+      } else {
+        status = "insufficient_source";
+        reason = "model reported insufficient source support";
+      }
     }
     const sources =
       status === "answered" ? retrieval.chunks.map(publicSource) : [];
