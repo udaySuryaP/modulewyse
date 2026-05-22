@@ -10,6 +10,8 @@ const publicRoutes = new Set([
   "/signup",
   "/forgot-password",
   "/auth/callback",
+  "/privacy",
+  "/terms",
 ]);
 
 const onboardingRoutes = new Set([
