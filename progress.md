@@ -2,6 +2,28 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-22 - Re-enable RAG Regenerate
+
+### Completed
+- Re-enabled Regenerate for persisted real RAG assistant answers.
+- Added a server-side regenerate path to `/api/chat/answer` that verifies the target assistant message belongs to the authenticated user.
+- Reused the original user question and the original answer type for regeneration.
+- Reran retrieval and answer generation through the existing source-restricted RAG flow.
+- Updated the existing assistant message in place instead of appending a duplicate assistant answer.
+- Cleared feedback for regenerated answers so old feedback does not apply to the new answer.
+- Added per-answer loading state while regeneration is running.
+- Preserved source chips, citations, rich answer rendering, copy, feedback, recent chats, and conversation reload behavior.
+- Preserved RAG source restrictions: PBCST304 Modules 1-3 only; Module 4 excluded; Module 5 non-existent under KTU 2024; previous-year questions excluded.
+
+### Issues / Notes
+- Regenerate still uses the existing non-streaming `/api/chat/answer` flow.
+- Rate limiting remains deferred.
+- Verifier/evaluation layer remains deferred.
+- No retrieval scope expansion was added.
+
+### Next
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
 ## 2026-05-21 - Authenticated RAG Chat Browser QA
 
 ### Completed

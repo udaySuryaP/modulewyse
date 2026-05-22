@@ -25,6 +25,7 @@ type ChatAnswerRequest = {
   conversationId?: unknown;
   moduleHint?: unknown;
   question?: unknown;
+  regenerateAssistantMessageId?: unknown;
   subjectHint?: unknown;
 };
 
@@ -499,6 +500,141 @@ async function insertMessage(input: {
   return data as Message;
 }
 
+async function updateAssistantMessage(input: {
+  answerType: string;
+  content: string;
+  messageId: string;
+  metadata: Record<string, unknown>;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}) {
+  const { data, error } = await input.supabase
+    .from("messages")
+    .update({
+      answer_type: input.answerType,
+      content: input.content,
+      metadata: input.metadata,
+    })
+    .eq("id", input.messageId)
+    .eq("user_id", input.userId)
+    .eq("role", "assistant")
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as Message;
+}
+
+async function clearMessageFeedback(input: {
+  messageId: string;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}) {
+  const { error } = await input.supabase
+    .from("message_feedback")
+    .delete()
+    .eq("message_id", input.messageId)
+    .eq("user_id", input.userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+function messageMetadataString(message: Message, key: string) {
+  const value = message.metadata?.[key];
+  return typeof value === "string" ? value : null;
+}
+
+async function resolveRegenerateContext(input: {
+  assistantMessageId: string;
+  conversationId: string | null;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}) {
+  const { data: assistantMessage, error: assistantError } = await input.supabase
+    .from("messages")
+    .select("*")
+    .eq("id", input.assistantMessageId)
+    .eq("user_id", input.userId)
+    .eq("role", "assistant")
+    .maybeSingle();
+
+  if (assistantError) {
+    throw assistantError;
+  }
+
+  if (!assistantMessage) {
+    return null;
+  }
+
+  const assistant = assistantMessage as Message;
+
+  if (input.conversationId && assistant.conversation_id !== input.conversationId) {
+    return null;
+  }
+
+  const { data: conversation, error: conversationError } = await input.supabase
+    .from("conversations")
+    .select("*")
+    .eq("id", assistant.conversation_id)
+    .eq("user_id", input.userId)
+    .maybeSingle();
+
+  if (conversationError) {
+    throw conversationError;
+  }
+
+  if (!conversation) {
+    return null;
+  }
+
+  const { data: messages, error: messagesError } = await input.supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", assistant.conversation_id)
+    .eq("user_id", input.userId)
+    .order("created_at", { ascending: true });
+
+  if (messagesError) {
+    throw messagesError;
+  }
+
+  const orderedMessages = (messages ?? []) as Message[];
+  const assistantIndex = orderedMessages.findIndex(
+    (message) => message.id === assistant.id,
+  );
+  const userMessage =
+    assistantIndex > 0
+      ? [...orderedMessages.slice(0, assistantIndex)]
+          .reverse()
+          .find((message) => message.role === "user")
+      : null;
+
+  if (!userMessage) {
+    throw new Error("Original user question was not found.");
+  }
+
+  const answerType = normalizeAnswerType(
+    assistant.answer_type ?? messageMetadataString(assistant, "answerType"),
+  );
+
+  if (!answerType) {
+    throw new Error("Original answer type is invalid.");
+  }
+
+  return {
+    answerType,
+    assistant,
+    conversation: conversation as Conversation,
+    question: userMessage.content,
+    userMessage,
+  };
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -518,7 +654,44 @@ export async function POST(request: Request) {
     return errorResponse("Invalid JSON request.", 400);
   }
 
-  const question = typeof payload.question === "string" ? payload.question.trim() : "";
+  let question = typeof payload.question === "string" ? payload.question.trim() : "";
+  const requestedConversationId =
+    typeof payload.conversationId === "string" && payload.conversationId
+      ? payload.conversationId
+      : null;
+  const regenerateAssistantMessageId =
+    typeof payload.regenerateAssistantMessageId === "string" &&
+    payload.regenerateAssistantMessageId
+      ? payload.regenerateAssistantMessageId
+      : null;
+  let regenerateContext: Awaited<
+    ReturnType<typeof resolveRegenerateContext>
+  > = null;
+  let answerType: RagAnswerType = "medium";
+
+  if (regenerateAssistantMessageId) {
+    try {
+      regenerateContext = await resolveRegenerateContext({
+        assistantMessageId: regenerateAssistantMessageId,
+        conversationId: requestedConversationId,
+        supabase,
+        userId: user.id,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Original answer could not be regenerated.";
+      return errorResponse(message, 400);
+    }
+
+    if (!regenerateContext) {
+      return errorResponse("Answer message not found.", 404);
+    }
+
+    question = regenerateContext.question.trim();
+    answerType = regenerateContext.answerType;
+  }
 
   if (!question) {
     return errorResponse("Question is required.", 400);
@@ -528,16 +701,19 @@ export async function POST(request: Request) {
     return errorResponse("Question is too long.", 400);
   }
 
-  const answerType = normalizeAnswerType(payload.answerType);
+  if (!regenerateContext) {
+    const normalizedAnswerType = normalizeAnswerType(payload.answerType);
 
-  if (!answerType) {
-    return errorResponse("Invalid answer type.", 400);
+    if (!normalizedAnswerType) {
+      return errorResponse("Invalid answer type.", 400);
+    }
+
+    answerType = normalizedAnswerType;
   }
 
-  const conversationId =
-    typeof payload.conversationId === "string" && payload.conversationId
-      ? payload.conversationId
-      : null;
+  const conversationId = regenerateContext
+    ? regenerateContext.conversation.id
+    : requestedConversationId;
   const { unsupportedReason: subjectUnsupportedReason } = normalizeSubjectHint(
     payload.subjectHint,
   );
@@ -549,36 +725,40 @@ export async function POST(request: Request) {
   let conversation: Conversation | null = null;
 
   try {
-    conversation = await resolveConversation({
-      conversationId,
-      moduleValue,
-      question,
-      supabase,
-      userId: user.id,
-    });
+    conversation =
+      regenerateContext?.conversation ??
+      (await resolveConversation({
+        conversationId,
+        moduleValue,
+        question,
+        supabase,
+        userId: user.id,
+      }));
 
     if (!conversation) {
       return errorResponse("Conversation not found.", 404);
     }
 
-    const userMessage = await insertMessage({
-      answerType: null,
-      content: question,
-      conversationId: conversation.id,
-      metadata: {
-        answerType,
-        createdFrom: "chat",
-        moduleHint: moduleValue,
-        moduleLabel: moduleLabel(moduleValue),
-        subjectCode,
-        subjectHint: subjectSlug,
-        subjectLabel: "Object Oriented Programming",
-        subjectSlug,
-      },
-      role: "user",
-      supabase,
-      userId: user.id,
-    });
+    const userMessage =
+      regenerateContext?.userMessage ??
+      (await insertMessage({
+        answerType: null,
+        content: question,
+        conversationId: conversation.id,
+        metadata: {
+          answerType,
+          createdFrom: "chat",
+          moduleHint: moduleValue,
+          moduleLabel: moduleLabel(moduleValue),
+          subjectCode,
+          subjectHint: subjectSlug,
+          subjectLabel: "Object Oriented Programming",
+          subjectSlug,
+        },
+        role: "user",
+        supabase,
+        userId: user.id,
+      }));
 
     let retrieval = { chunks: [] as RetrievedRagChunk[], matchedCount: 0, topK };
     let reason = unsupportedReason;
@@ -614,30 +794,49 @@ export async function POST(request: Request) {
     const sources =
       status === "answered" ? retrieval.chunks.map(publicSource) : [];
     const sourceChips = sources.map(sourceChip);
-    const assistantMessage = await insertMessage({
+    const assistantMetadata = {
       answerType,
-      content: answer,
-      conversationId: conversation.id,
-      metadata: {
-        answerType,
-        assistantStatus: status,
-        model: status === "answered" ? serverEnv.OPENAI_ANSWER_MODEL : null,
-        moduleScope: moduleValue,
-        retrieval: {
-          matchedCount: retrieval.matchedCount,
-          topK: retrieval.topK,
-        },
-        sourceChips,
-        sources,
-        status,
-        subjectCode,
-        subjectLabel: "Object Oriented Programming",
-        subjectSlug,
+      assistantStatus: status,
+      model: status === "answered" ? serverEnv.OPENAI_ANSWER_MODEL : null,
+      moduleScope: moduleValue,
+      ...(regenerateContext ? { regeneratedAt: new Date().toISOString() } : {}),
+      retrieval: {
+        matchedCount: retrieval.matchedCount,
+        topK: retrieval.topK,
       },
-      role: "assistant",
-      supabase,
-      userId: user.id,
-    });
+      sourceChips,
+      sources,
+      status,
+      subjectCode,
+      subjectLabel: "Object Oriented Programming",
+      subjectSlug,
+    };
+    const assistantMessage = regenerateContext
+      ? await updateAssistantMessage({
+          answerType,
+          content: answer,
+          messageId: regenerateContext.assistant.id,
+          metadata: assistantMetadata,
+          supabase,
+          userId: user.id,
+        })
+      : await insertMessage({
+          answerType,
+          content: answer,
+          conversationId: conversation.id,
+          metadata: assistantMetadata,
+          role: "assistant",
+          supabase,
+          userId: user.id,
+        });
+
+    if (regenerateContext) {
+      await clearMessageFeedback({
+        messageId: assistantMessage.id,
+        supabase,
+        userId: user.id,
+      });
+    }
 
     await supabase.rpc("mark_conversation_used", {
       p_conversation_id: conversation.id,
@@ -662,21 +861,32 @@ export async function POST(request: Request) {
 
     if (conversationIdForError) {
       try {
-        const assistantMessage = await insertMessage({
+        const errorMetadata = {
           answerType,
-          content: safeAnswer,
-          conversationId: conversationIdForError,
-          metadata: {
-            answerType,
-            assistantStatus: "error",
-            status: "error",
-            subjectCode,
-            subjectSlug,
-          },
-          role: "assistant",
-          supabase,
-          userId: user.id,
-        });
+          assistantStatus: "error",
+          ...(regenerateContext ? { regeneratedAt: new Date().toISOString() } : {}),
+          status: "error",
+          subjectCode,
+          subjectSlug,
+        };
+        const assistantMessage = regenerateContext
+          ? await updateAssistantMessage({
+              answerType,
+              content: safeAnswer,
+              messageId: regenerateContext.assistant.id,
+              metadata: errorMetadata,
+              supabase,
+              userId: user.id,
+            })
+          : await insertMessage({
+              answerType,
+              content: safeAnswer,
+              conversationId: conversationIdForError,
+              metadata: errorMetadata,
+              role: "assistant",
+              supabase,
+              userId: user.id,
+            });
 
         return jsonResponse(
           {

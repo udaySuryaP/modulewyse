@@ -386,7 +386,8 @@ export function ChatWorkspace({
   async function requestAnswer(input: {
     answerType: string;
     contextSnapshot: ChatContext;
-    question: string;
+    question?: string;
+    regenerateAssistantMessageId?: string;
   }) {
     const response = await fetch("/api/chat/answer", {
       body: JSON.stringify({
@@ -394,6 +395,7 @@ export function ChatWorkspace({
         conversationId: activeConversationId || null,
         moduleHint: moduleValueForContext(input.contextSnapshot),
         question: input.question,
+        regenerateAssistantMessageId: input.regenerateAssistantMessageId,
         subjectHint: subjectSlugForContext(input.contextSnapshot),
       }),
       headers: {
@@ -410,6 +412,25 @@ export function ChatWorkspace({
     }
 
     return payload as RagAnswerResponse;
+  }
+
+  function sourcesFromResponse(
+    response: RagAnswerResponse,
+    fallback: SourceChip[],
+  ) {
+    return response.sources.length > 0
+      ? response.sources.map(
+          (source) => `Module ${source.moduleNumber} · ${source.topicTitle}`,
+        )
+      : fallback;
+  }
+
+  function statusFromResponse(response: RagAnswerResponse): AssistantStatus {
+    return response.status === "answered"
+      ? "complete"
+      : response.status === "insufficient_source"
+        ? "insufficient"
+        : "failed";
   }
 
   async function sendMessage(question: string) {
@@ -568,9 +589,94 @@ export function ChatWorkspace({
     }
   }
 
-  function regenerate(messageId: string) {
-    if (messages.some((message) => message.id === messageId)) {
-      setToast("Regenerate will be added after the RAG route is verified.");
+  async function regenerate(messageId: string) {
+    if (isGenerating) {
+      return;
+    }
+
+    const targetIndex = messages.findIndex((message) => message.id === messageId);
+    const targetMessage = messages[targetIndex];
+    const persistedId = targetMessage?.persistedId;
+    const originalQuestion = [...messages.slice(0, targetIndex)]
+      .reverse()
+      .find((message) => message.role === "user");
+
+    if (!targetMessage || targetMessage.role !== "assistant" || !persistedId) {
+      setToast("This answer cannot be regenerated yet.");
+      return;
+    }
+
+    if (!originalQuestion) {
+      setToast("Original question could not be found.");
+      return;
+    }
+
+    const contextSnapshot = targetMessage.context ?? context;
+    const answerTypeSnapshot = targetMessage.answerType ?? answerType;
+    const fallbackSources =
+      targetMessage.sources?.length
+        ? targetMessage.sources
+        : sourceChipsForContext(contextSnapshot);
+
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === messageId
+          ? {
+              ...message,
+              content: "Searching reviewed notes...",
+              feedback: undefined,
+              status: "loading",
+            }
+          : message,
+      ),
+    );
+    setIsGenerating(true);
+
+    try {
+      const response = await requestAnswer({
+        answerType: answerTypeSnapshot,
+        contextSnapshot,
+        regenerateAssistantMessageId: persistedId,
+      });
+      const nextSources = sourcesFromResponse(response, fallbackSources);
+      const assistantStatus = statusFromResponse(response);
+
+      setMessages((current) =>
+        current.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                answerType: answerTypeSnapshot,
+                content: response.answer,
+                id: response.assistantMessageId ?? message.id,
+                persistedId: response.assistantMessageId ?? persistedId,
+                sources: nextSources,
+                status: assistantStatus,
+              }
+            : message,
+        ),
+      );
+      void refreshRecentConversations();
+      setToast("Answer regenerated.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Answer regeneration failed.";
+
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === messageId
+            ? {
+                ...item,
+                content: "The answer could not be generated right now.",
+                status: "failed",
+              }
+            : item,
+        ),
+      );
+      setToast(message);
+    } finally {
+      setIsGenerating(false);
+      focusComposer();
     }
   }
 
