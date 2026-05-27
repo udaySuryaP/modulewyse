@@ -2,6 +2,80 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - Production Smoke QA After Upstash Fix
+
+### Completed
+- Verified local `.env.local` has non-empty Upstash, Supabase, OpenAI, and embedding env values without printing secrets.
+- Redeployed Production after the Upstash env update.
+- Initial redeploy confirmed the previous Upstash blocker was fixed: `/api/chat/answer` no longer failed closed with `RAG rate limiting is not configured.`
+- Found and fixed two production smoke blockers:
+  - regenerate needed an ownership-scoped `public.messages` update policy/grant because regenerated answers update assistant messages in place
+  - common supported OOP questions for classes/objects and dynamic binding could be over-refused by the model after retrieval passed
+- Added and applied live Supabase migration `allow_owned_assistant_message_update`.
+- Added source-backed guarded fallback answers for supported classes/objects and dynamic-binding questions using retrieved Modules 1-3 chunks and citations.
+- Redeployed fixed commit `6ed764c` to Production.
+- Production URL: `https://modulewyse.vercel.app`.
+- Deployment URL: `https://modulewyse-gntkdrk8z-udaysuryapworkspace-1684s-projects.vercel.app`.
+- Verified public logged-out routes:
+  - `/`
+  - `/login`
+  - `/signup`
+  - `/privacy`
+  - `/terms`
+- Verified protected logged-out routes redirect to `/login?next=...`:
+  - `/chat`
+  - `/subjects`
+  - `/library`
+  - `/settings`
+- Verified authenticated disposable QA access to:
+  - `/chat`
+  - `/subjects`
+  - `/library`
+  - `/settings`
+- Verified authenticated users redirect from `/`, `/login`, and `/signup` to `/chat`.
+- Verified authenticated empty answer request returns `400`.
+- Verified supported production RAG answers for:
+  - `Explain classes and objects`
+  - `Explain constructors in OOP`
+  - `Explain dynamic binding`
+- Verified supported answers return citations and source chips from Modules 1-3 only.
+- Verified fallback behavior for:
+  - `Explain DBMS normalization`
+  - `Explain Module 4 topics in OOP`
+  - `Explain Module 5 in OOP`
+  - `Tell me the latest news`
+- Verified Module 4 remains review/draft fallback only.
+- Verified Module 5 is described as non-existent under KTU 2024 for PBCST304.
+- Verified regenerate updates the same assistant message instead of creating a duplicate.
+- Verified logged-out `/api/feedback` returns `401`.
+- Verified authenticated Settings app feedback submission succeeds and the row appears in Supabase.
+- Verified true Redis-backed rate limiting returns `429` with `status: "rate_limited"` and `retryAfter`.
+- Reviewed Vercel runtime logs after final smoke testing:
+  - normal answer requests returned `200`
+  - invalid request returned `400`
+  - feedback unauthenticated/authenticated returned `401`/`200`
+  - rate-limit exhaustion returned `429`
+  - no repeated `500` or missing-Upstash errors appeared after the fix
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+
+### Issues / Notes
+- Mobile visual browser automation was not available in this environment, so the final mobile visual pass remains a manual/private-beta checklist item.
+- The true `429` test used a disposable QA user and low-cost Module 5 fallback requests to avoid unnecessary OpenAI calls after normal RAG checks.
+- Existing moderate PostCSS advisory remains; no forced audit fix was run.
+- Verifier/evaluation remains deferred.
+- RAG source restrictions remain unchanged:
+  - PBCST304 Modules 1-3 only
+  - Module 4 excluded
+  - Module 5 non-existent under KTU 2024
+  - previous-year questions excluded
+
+### Next
+- Prepare controlled private beta launch checklist and tester instructions.
+- Include a manual mobile visual smoke checklist before inviting testers.
+
 ## 2026-05-27 - Production Smoke QA Blocked By Upstash Runtime Config
 
 ### Completed
