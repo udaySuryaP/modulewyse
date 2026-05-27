@@ -2,6 +2,31 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - Live Feedback Migrations Applied
+
+### Completed
+- Applied the live `add_app_feedback` migration to the Supabase `modulewyse` project.
+- Applied the live `allow_message_feedback_delete` migration for regenerated-answer feedback cleanup.
+- Added and applied a follow-up `harden_app_feedback_grants` migration because live table privileges still allowed broad anon/authenticated actions after the new table was created.
+- Verified `public.app_feedback` exists with RLS enabled and only authenticated `select, insert` table privileges.
+- Verified `public.message_feedback` has the owner-scoped delete policy and authenticated delete grant.
+- Ran live Supabase smoke tests with disposable confirmed auth users:
+  - owner app feedback insert/read succeeded.
+  - another user could not read the owner feedback.
+  - anon app feedback select/insert was blocked.
+  - another user could not delete message feedback.
+  - the owning user could delete message feedback.
+- Verified logged-out `/api/feedback` returns 401 locally.
+- Preserved RAG retrieval scope and source restrictions.
+
+### Issues / Notes
+- The SQL editor/MCP executor bypasses RLS, so RLS behavior was verified with real Supabase auth clients instead.
+- Existing moderate `postcss` and `qs` advisories remain; no forced audit fix was run.
+- Rate limiting and verifier/evaluation remain deferred.
+
+### Next
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
 ## 2026-05-27 - Local RAG Polish Commit
 
 ### Completed
