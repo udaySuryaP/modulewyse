@@ -2,6 +2,27 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - Settings App Feedback Flow
+
+### Completed
+- Added app-level feedback backend storage with `public.app_feedback`.
+- Added RLS policies so authenticated users can insert and read only their own app feedback.
+- Added server-side `/api/feedback` route with authenticated user checks and validation for subject, feedback, and reply email.
+- Added a responsive feedback panel to Settings with subject, feedback input, reply email, and send button.
+- Prefilled reply email from the signed-in user's profile/account email.
+- Preserved RAG retrieval scope, chat behavior, auth route protection, and existing message feedback.
+- Verified logged-out `/api/feedback` returns 401 and logged-out `/settings` still redirects to login.
+- Ran TypeScript/lint/build/audit checks.
+
+### Issues / Notes
+- The migration is committed locally and still needs to be applied to live Supabase before production feedback submissions will persist.
+- Feedback is stored in the database; no outbound email notification/reply automation was added.
+- Rate limiting remains deferred.
+
+### Next
+- Apply the app feedback migration to live Supabase.
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
 ## 2026-05-22 - Terms and Privacy Pages
 
 ### Completed

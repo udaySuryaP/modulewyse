@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { SignoutButton } from "@/components/auth/signout-button";
 import { StudentPageShell } from "@/components/dashboard/student-page-shell";
+import { AppFeedbackForm } from "@/components/settings/app-feedback-form";
 import { PreferencesSummary } from "@/components/settings/preferences-summary";
 import { getUserProfile } from "@/lib/auth/get-user-profile";
 import { getStudentActivityStats } from "@/lib/data/activity";
@@ -200,6 +201,22 @@ export default async function SettingsPage() {
             </p>
           </div>
           <SignoutButton />
+        </section>
+
+        <section className="mw-card p-5 sm:p-6">
+          <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div>
+              <p className="mw-label text-[11px]">Feedback</p>
+              <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+                Help improve ModuleWyse
+              </h2>
+              <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-[var(--mw-body)]">
+                Share product feedback, bugs, confusing answers, or requests.
+                Add a reply email if you want us to follow up.
+              </p>
+            </div>
+            <AppFeedbackForm defaultReplyEmail={email} />
+          </div>
         </section>
 
         <section className="mw-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">

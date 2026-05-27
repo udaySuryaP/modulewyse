@@ -102,6 +102,28 @@ type Message = {
   persistedId?: string;
 };
 
+function answerTypeLabel(value: string | null | undefined) {
+  if (!value) {
+    return "Medium";
+  }
+
+  const normalized = value.trim().toLowerCase();
+
+  if (["short", "part a", "part_a"].includes(normalized)) {
+    return "Short";
+  }
+
+  if (["long"].includes(normalized)) {
+    return "Long";
+  }
+
+  if (["exam", "exam-ready", "exam ready", "part c", "part_c"].includes(normalized)) {
+    return "Exam-ready";
+  }
+
+  return "Medium";
+}
+
 type ChatWorkspaceProps = {
   initialConversationId: string;
   initialQuestion: string;
@@ -1510,21 +1532,17 @@ function AssistantMessage({
         preferences.compactAnswerCards ? "p-4" : "p-5",
       )}
     >
-      {preferences.showSourceChips && message.sources?.length ? (
-        <div className="flex flex-wrap gap-2">
-          {message.sources.map((source) => (
-            <span
-              className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]"
-              key={source}
-            >
-              {source}
-            </span>
-          ))}
-        </div>
-      ) : null}
+      <div className="flex flex-wrap gap-2">
+        <span className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]">
+          {message.context?.subject ?? "Object Oriented Programming"}
+        </span>
+        <span className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]">
+          {answerTypeLabel(message.answerType)}
+        </span>
+      </div>
 
       <AnswerRenderer
-        className={preferences.showSourceChips && message.sources?.length ? "mt-5" : undefined}
+        className="mt-5"
         compact={preferences.compactAnswerCards}
         content={message.content}
       />

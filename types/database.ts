@@ -76,6 +76,20 @@ export type MessageFeedback = {
   created_at: string;
 };
 
+export type AppFeedbackStatus = "open" | "reviewed" | "closed";
+
+export type AppFeedback = {
+  id: string;
+  user_id: string;
+  subject: string;
+  feedback: string;
+  reply_email: string;
+  status: AppFeedbackStatus;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
 export type ContentSourceType =
   | "notes"
   | "syllabus"
