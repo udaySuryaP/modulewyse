@@ -402,6 +402,32 @@ with check (
   )
 );
 
+drop policy if exists "Users can update assistant messages in own conversations" on public.messages;
+create policy "Users can update assistant messages in own conversations"
+on public.messages
+for update
+to authenticated
+using (
+  user_id = (select auth.uid())
+  and role = 'assistant'
+  and exists (
+    select 1
+    from public.conversations
+    where conversations.id = messages.conversation_id
+      and conversations.user_id = (select auth.uid())
+  )
+)
+with check (
+  user_id = (select auth.uid())
+  and role = 'assistant'
+  and exists (
+    select 1
+    from public.conversations
+    where conversations.id = messages.conversation_id
+      and conversations.user_id = (select auth.uid())
+  )
+);
+
 drop policy if exists "Users can select their own feedback" on public.message_feedback;
 create policy "Users can select their own feedback"
 on public.message_feedback
@@ -831,7 +857,7 @@ grant select, insert, update, delete
 on public.conversations
 to authenticated;
 
-grant select, insert
+grant select, insert, update
 on public.messages
 to authenticated;
 
