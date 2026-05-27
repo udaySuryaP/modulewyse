@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { retrievePbcst304Chunks, type RetrievedRagChunk } from "@/lib/data/retrieval";
 import { serverEnv } from "@/lib/env/server";
+import { checkRagAnswerRateLimit } from "@/lib/rate-limit/rag-rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import type { Conversation, Message } from "@/types/database";
 import type { RagAnswerResponse, RagAnswerType, RagSource } from "@/types/chat";
@@ -46,6 +47,31 @@ function jsonResponse(body: RagAnswerResponse, init?: ResponseInit) {
 
 function errorResponse(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
+}
+
+function rateLimitedResponse(input: {
+  conversationId: string | null;
+  retryAfter?: number;
+}) {
+  return jsonResponse(
+    {
+      answer:
+        "You've reached the current ModuleWyse answer limit. Please try again later.",
+      assistantMessageId: null,
+      conversationId: input.conversationId,
+      reason: "rate limit exceeded",
+      retryAfter: input.retryAfter,
+      sources: [],
+      status: "rate_limited",
+      userMessageId: null,
+    },
+    {
+      headers: input.retryAfter
+        ? { "Retry-After": String(input.retryAfter) }
+        : undefined,
+      status: 429,
+    },
+  );
 }
 
 function titleFromQuestion(question: string) {
@@ -887,6 +913,22 @@ export async function POST(request: Request) {
     normalizeModuleHint(payload.moduleHint);
   const unsupportedReason = subjectUnsupportedReason ?? moduleUnsupportedReason;
   const moduleValue = typeof moduleHint === "number" ? String(moduleHint) : "all";
+
+  try {
+    const rateLimit = await checkRagAnswerRateLimit(user.id);
+
+    if (!rateLimit.allowed) {
+      return rateLimitedResponse({
+        conversationId,
+        retryAfter: rateLimit.retryAfter,
+      });
+    }
+  } catch (error) {
+    console.error(
+      error instanceof Error ? error.message : "RAG rate limit check failed.",
+    );
+    return errorResponse("Answer generation is temporarily unavailable.", 500);
+  }
 
   let conversation: Conversation | null = null;
 

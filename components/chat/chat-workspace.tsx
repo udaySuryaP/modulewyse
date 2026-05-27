@@ -452,7 +452,15 @@ export function ChatWorkspace({
       ? "complete"
       : response.status === "insufficient_source"
         ? "insufficient"
-        : "failed";
+        : response.status === "rate_limited"
+          ? "rate-limited"
+          : "failed";
+  }
+
+  function rateLimitMessage(response: RagAnswerResponse) {
+    return response.retryAfter && response.retryAfter > 60
+      ? "You've reached the current ModuleWyse answer limit. Try again in a few minutes."
+      : "You've reached the current ModuleWyse answer limit. Please try again later.";
   }
 
   async function sendMessage(question: string) {
@@ -503,12 +511,7 @@ export function ChatWorkspace({
               (source) => `Module ${source.moduleNumber} · ${source.topicTitle}`,
             )
           : sourceChips;
-      const assistantStatus: AssistantStatus =
-        response.status === "answered"
-          ? "complete"
-          : response.status === "insufficient_source"
-            ? "insufficient"
-            : "failed";
+      const assistantStatus = statusFromResponse(response);
 
       setMessages((current) =>
         current.map((message) =>
@@ -541,6 +544,9 @@ export function ChatWorkspace({
         );
       }
       void refreshRecentConversations();
+      if (response.status === "rate_limited") {
+        setToast(rateLimitMessage(response));
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Answer generation failed.";
@@ -665,6 +671,25 @@ export function ChatWorkspace({
         contextSnapshot,
         regenerateAssistantMessageId: persistedId,
       });
+
+      if (response.status === "rate_limited") {
+        setMessages((current) =>
+          current.map((message) =>
+            message.id === messageId
+              ? {
+                  ...previousMessageSnapshot,
+                  status:
+                    previousMessageSnapshot.status === "loading"
+                      ? "complete"
+                      : previousMessageSnapshot.status,
+                }
+              : message,
+          ),
+        );
+        setToast(rateLimitMessage(response));
+        return;
+      }
+
       const nextSources = sourcesFromResponse(response, fallbackSources);
       const assistantStatus = statusFromResponse(response);
 

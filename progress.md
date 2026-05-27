@@ -2,6 +2,32 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - RAG Answer Rate Limiting
+
+### Completed
+- Added server-side per-user rate limiting for RAG answer generation and regeneration.
+- Implemented a fixed-window Upstash Redis REST limiter at 20 valid answer/regenerate attempts per authenticated user per hour.
+- Checked the rate limit after authentication and request validation, but before conversation writes, retrieval, embeddings, or OpenAI calls.
+- Added safe `429` response handling with `status: "rate_limited"` and `retryAfter` metadata.
+- Updated Chat UI handling so normal rate-limited sends show a clean rate-limit state and regenerate rate limits restore the previous answer.
+- Preserved RAG retrieval scope and source restrictions: PBCST304 Modules 1-3 only; Module 4 excluded; Module 5 non-existent under KTU 2024; previous-year questions excluded.
+- Verified logged-out `/api/chat/answer` still returns 401.
+- Verified authenticated empty/invalid requests still return 400 before rate limiting.
+- Verified local development missing-Upstash behavior fails open without crashing.
+- Verified production/start missing-Upstash behavior fails closed with a safe server error before generation.
+
+### Issues / Notes
+- Local `.env.local` does not include Upstash values, so a true local `429` Redis-backed route test could not be executed here.
+- In development, missing Upstash env vars fail open and log a server warning.
+- In production, missing Upstash env vars fail closed with a safe generic server error.
+- Existing moderate `postcss` and `qs` advisories remain; no forced audit fix was run.
+- Verifier/evaluation remains deferred.
+
+### Next
+- Deploy latest branch and run production smoke QA with Vercel Upstash env enabled.
+- Start controlled private beta after production smoke passes.
+- Add verifier/evaluation layer after beta signal.
+
 ## 2026-05-27 - Live Feedback Migrations Applied
 
 ### Completed
