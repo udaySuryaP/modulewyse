@@ -2,6 +2,57 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - Production Smoke QA Blocked By Upstash Runtime Config
+
+### Completed
+- Deployed the latest `rate-limiting` branch to Vercel Production.
+- Deployment URL: `https://modulewyse-fszinqg2x-udaysuryapworkspace-1684s-projects.vercel.app`.
+- Production alias: `https://modulewyse.vercel.app`.
+- Deployed commit: `fcaefb1`.
+- Verified public logged-out routes:
+  - `/`
+  - `/login`
+  - `/signup`
+  - `/privacy`
+  - `/terms`
+- Verified protected logged-out routes redirect to `/login?next=...`:
+  - `/chat`
+  - `/subjects`
+  - `/library`
+  - `/settings`
+- Verified authenticated disposable QA access to:
+  - `/chat`
+  - `/subjects`
+  - `/library`
+  - `/settings`
+- Verified authenticated users are redirected from `/`, `/login`, and `/signup` to `/chat`.
+- Verified logged-out `/api/feedback` returns `401`.
+- Verified authenticated Settings app feedback submission succeeds.
+- Verified the submitted app feedback row appears in Supabase for the disposable QA user.
+- Reviewed Vercel runtime logs after smoke testing.
+
+### Issues / Notes
+- Production RAG answer smoke testing is blocked.
+- Every `/api/chat/answer` request returned `500` during production smoke QA.
+- Vercel runtime logs show: `RAG rate limiting is not configured.`
+- The Vercel environment keys are present by name, but the production runtime is not receiving usable `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` values.
+- Because RAG answer requests fail before rate limiting/retrieval, the following smoke checks could not pass:
+  - supported PBCST304 answers
+  - fallback/out-of-scope answers
+  - regenerate
+  - true Redis-backed `429`
+  - source restriction verification in production
+- No RAG source restrictions were changed.
+- Module 4 remains excluded.
+- Module 5 remains non-existent under KTU 2024 for PBCST304.
+- Previous-year questions remain excluded as answer sources.
+- No code changes were made during this smoke pass.
+- Existing moderate PostCSS advisory remains documented; no forced audit fix was run.
+
+### Next
+- Fix production Upstash environment configuration so `/api/chat/answer` can run.
+- Redeploy and rerun production smoke QA before private beta.
+
 ## 2026-05-27 - RAG Answer Rate Limiting
 
 ### Completed
