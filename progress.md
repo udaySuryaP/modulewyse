@@ -2,6 +2,90 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - Local RAG Polish Commit
+
+### Completed
+- Prepared the current local polish set for commit: answer-length criteria, regenerate stability, feedback-guided answer improvement, auth navigation state alignment, and feedback-delete schema/migration update.
+- Confirmed RAG retrieval scope remains unchanged: PBCST304 Modules 1-3 only; Module 4 excluded; Module 5 non-existent under KTU 2024; previous-year questions excluded.
+- Confirmed `.env.local` remains ignored and no real secret values are staged.
+- Reran TypeScript, lint, build, and high-severity audit checks successfully.
+
+### Issues / Notes
+- Pending live Supabase migrations remain for app feedback and message-feedback cleanup.
+- Existing moderate `postcss` and `qs` advisories remain; no forced audit fix was run.
+
+### Next
+- Apply pending Supabase migrations for app feedback and feedback cleanup.
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation after migration verification.
+
+## 2026-05-27 - Authenticated Navigation State Alignment
+
+### Completed
+- Updated the route proxy so authenticated users are redirected from `/`, `/login`, and `/signup` into `/chat`.
+- Redirected authenticated users away from `/forgot-password` to `/settings/account`.
+- Switched login, immediate-session signup, and signout navigation to `router.replace()` so auth transitions do not leave stale logged-in/logged-out pages in browser history.
+- Made landing navigation auth-aware so logged-in users choosing Login or Get Started are sent to `/chat`.
+- Preserved protected-route behavior for `/chat`, `/subjects`, `/library`, `/profile`, and `/settings`.
+
+### Issues / Notes
+- Public legal pages remain accessible while logged in and logged out.
+- No RAG retrieval, answer generation, database schema, or source restrictions changed.
+
+### Next
+- Apply pending Supabase migrations to live production.
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
+## 2026-05-27 - Answer Feedback Guidance
+
+### Completed
+- Used persisted thumbs up/down answer feedback as generation guidance for regenerated RAG answers.
+- Added recent feedback trend guidance so future answers can become more direct and source-grounded when prior feedback skews negative.
+- Kept feedback guidance server-side and source-restricted; it cannot expand retrieval scope or add unsupported content.
+- Updated chat feedback toast copy so students understand thumbs feedback helps tune future/regenerated answers.
+- Preserved Module 4 exclusion, Module 5 non-existence handling, previous-year question exclusion, citations, source chips, and answer-length criteria.
+
+### Issues / Notes
+- This uses lightweight per-user feedback signals at generation time; it does not fine-tune models or train on user data.
+- Feedback notes are supported by the backend schema but the chat thumbs UI still collects only up/down ratings.
+
+### Next
+- Apply the feedback-delete migration to live Supabase.
+- Apply the app feedback migration to live Supabase.
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
+## 2026-05-27 - RAG Regenerate Stability Fix
+
+### Completed
+- Fixed regeneration so a failed feedback-reset cleanup no longer breaks an otherwise successful regenerated answer.
+- Added a `message_feedback` delete RLS policy and authenticated delete grant so regenerated answers can clear stale feedback safely.
+- Preserved the previous assistant answer in the client if regeneration fails instead of replacing it with a generic failure message.
+- Preserved RAG retrieval scope, answer-length criteria, source restrictions, citations, persistence, copy, and feedback behavior.
+
+### Issues / Notes
+- The new feedback-delete migration must be applied to live Supabase for persisted feedback rows to be deleted in production.
+- Before that migration is applied, regeneration still completes; stale feedback cleanup is logged and skipped instead of failing the request.
+
+### Next
+- Apply the feedback-delete migration to live Supabase.
+- Apply the app feedback migration to live Supabase.
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
+## 2026-05-27 - Answer Length Criteria Tightening
+
+### Completed
+- Tightened RAG answer-length instructions for Short, Medium, Long, and Exam-ready responses.
+- Made Short answers explicitly compact with a word limit and no long examples or exam sections.
+- Made Long answers explicitly detailed and elaborated with Markdown sections and source-supported depth.
+- Added answer-type-specific output token budgets so Short and Long choices produce more distinct response lengths.
+- Preserved retrieval scope, source restrictions, citations, persistence, regenerate, and feedback behavior.
+
+### Issues / Notes
+- Actual answer length still depends on available reviewed source support and insufficient-source gating.
+
+### Next
+- Apply the app feedback migration to live Supabase.
+- Add Upstash per-user rate limiting for ModuleWyse RAG answer generation.
+
 ## 2026-05-27 - Settings App Feedback Flow
 
 ### Completed

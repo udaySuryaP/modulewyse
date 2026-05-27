@@ -91,7 +91,7 @@ export function SignupForm() {
       if (data.session && data.user) {
         await ensureProfile(supabase, data.user);
         const pendingQuestion = readPendingQuestion();
-        router.push(
+        router.replace(
           pendingDestinationRoute() ??
             (pendingQuestion ? chatHrefWithQuestion(pendingQuestion) : "/chat"),
         );

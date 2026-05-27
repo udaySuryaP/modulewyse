@@ -605,7 +605,11 @@ export function ChatWorkspace({
         rating: feedback,
         userId,
       });
-      setToast("Feedback submitted.");
+      setToast(
+        feedback === "up"
+          ? "Thanks - this helps tune future answers."
+          : "Thanks - regenerate can use this signal to improve the answer.",
+      );
     } catch {
       setToast("Feedback saved locally for this session.");
     }
@@ -635,6 +639,7 @@ export function ChatWorkspace({
 
     const contextSnapshot = targetMessage.context ?? context;
     const answerTypeSnapshot = targetMessage.answerType ?? answerType;
+    const previousMessageSnapshot = targetMessage;
     const fallbackSources =
       targetMessage.sources?.length
         ? targetMessage.sources
@@ -688,9 +693,11 @@ export function ChatWorkspace({
         current.map((item) =>
           item.id === messageId
             ? {
-                ...item,
-                content: "The answer could not be generated right now.",
-                status: "failed",
+                ...previousMessageSnapshot,
+                status:
+                  previousMessageSnapshot.status === "loading"
+                    ? "complete"
+                    : previousMessageSnapshot.status,
               }
             : item,
         ),

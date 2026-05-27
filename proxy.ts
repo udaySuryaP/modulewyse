@@ -60,10 +60,12 @@ export async function proxy(request: NextRequest) {
   const isOnboarding = onboardingRoutes.has(pathname);
   const isProtected = isProtectedRoute(pathname);
   const shouldCheckSession =
+    pathname === "/" ||
     isProtected ||
     isOnboarding ||
     pathname === "/login" ||
-    pathname === "/signup";
+    pathname === "/signup" ||
+    pathname === "/forgot-password";
 
   if (!shouldCheckSession) {
     return NextResponse.next();
@@ -82,8 +84,17 @@ export async function proxy(request: NextRequest) {
     return getResponse();
   }
 
-  if ((pathname === "/login" || pathname === "/signup") && user) {
+  if (
+    (pathname === "/" ||
+      pathname === "/login" ||
+      pathname === "/signup") &&
+    user
+  ) {
     return redirect(request, "/chat", getResponse());
+  }
+
+  if (pathname === "/forgot-password" && user) {
+    return redirect(request, "/settings/account", getResponse());
   }
 
   if (isPublic || isOnboarding || isProtected) {
