@@ -345,6 +345,20 @@ ${chunk.content}`,
 function topicSpecificPrompt(question: string) {
   const normalized = question.toLowerCase();
 
+  if (
+    normalized.includes("class") ||
+    normalized.includes("classes") ||
+    normalized.includes("object")
+  ) {
+    return [
+      "Classes-and-objects guidance:",
+      "The reviewed chunks may cover class definitions, object creation, fields,",
+      "methods, constructors, encapsulation, or class/object examples.",
+      "Use only those source-supported points and examples. Do not refuse only",
+      "because the chunks split class and object details across multiple topics.",
+    ].join(" ");
+  }
+
   if (normalized.includes("constructor")) {
     return [
       "Constructor-question guidance:",
@@ -353,6 +367,20 @@ function topicSpecificPrompt(question: string) {
       "superclass constructor calls, or calling order of constructors.",
       "Use only those source-supported points and examples. Do not refuse only",
       "because the chunks cover different constructor subtopics.",
+    ].join(" ");
+  }
+
+  if (
+    normalized.includes("dynamic binding") ||
+    normalized.includes("dynamic method dispatch") ||
+    normalized.includes("runtime polymorphism")
+  ) {
+    return [
+      "Dynamic-binding guidance:",
+      "The reviewed chunks may describe dynamic binding as runtime method",
+      "selection through overriding, dynamic method dispatch, or runtime",
+      "polymorphism. Use only source-supported wording and cite the relevant",
+      "chunks instead of refusing when those related topics are present.",
     ].join(" ");
   }
 
@@ -478,7 +506,10 @@ function firstSourceForTopic(chunks: RetrievedRagChunk[], terms: string[]) {
   });
 }
 
-function constructorSourceBackedAnswer(chunks: RetrievedRagChunk[]) {
+function constructorSourceBackedAnswer(
+  chunks: RetrievedRagChunk[],
+  answerType: RagAnswerType,
+) {
   if (chunks.length === 0) {
     return null;
   }
@@ -521,13 +552,208 @@ function constructorSourceBackedAnswer(chunks: RetrievedRagChunk[]) {
     return null;
   }
 
-  return `## Constructors in OOP
+  if (answerType === "short") {
+    return `## Constructors in OOP
+
+- Constructors are class members used during object creation to initialize object state [${general.sourceNumber}].
+${defaultConstructor ? `- A default constructor initializes an object when no explicit constructor is defined [${defaultConstructor.sourceNumber}].` : ""}
+${parameterizedConstructor ? `- A parameterized constructor accepts values for initialization [${parameterizedConstructor.sourceNumber}].` : ""}
+${copyConstructor ? `- A copy constructor creates a new object from an existing object [${copyConstructor.sourceNumber}].` : ""}`.trim();
+  }
+
+  const baseAnswer = `## Constructors in OOP
 
 Constructors are the class members used during object creation to set up object state from the reviewed notes' constructor examples and subtopics [${general.sourceNumber}].
 
 ${points.join("\n")}
 
 In an exam answer, explain constructors as the initialization mechanism for objects, then mention the reviewed types: default constructor, parameterized constructor, copy constructor, constructor chaining with \`this()\`, and superclass constructor calls where the source chunks support them.`;
+
+  if (answerType === "long" || answerType === "exam") {
+    return `${baseAnswer}
+
+### How to present it in detail
+
+Start with the purpose: a constructor prepares an object when it is created, so the object begins with a valid initial state [${general.sourceNumber}]. Then describe each reviewed constructor form separately. A default constructor is useful for basic object creation, while a parameterized constructor is useful when values must be supplied at creation time [${defaultConstructor?.sourceNumber ?? general.sourceNumber}], [${parameterizedConstructor?.sourceNumber ?? general.sourceNumber}]. If the reviewed chunks include copying, mention that a copy constructor initializes one object using another object's data [${copyConstructor?.sourceNumber ?? general.sourceNumber}].
+
+For inheritance-related answers, add that constructor chaining with \`this()\` and superclass constructor calls help organize initialization order across related constructors where the notes support those points [${chaining?.sourceNumber ?? general.sourceNumber}], [${superCall?.sourceNumber ?? general.sourceNumber}]. Conclude by saying constructors are central to object initialization, not ordinary methods called after the object is already ready.`;
+  }
+
+  return baseAnswer;
+}
+
+function classesObjectsSourceBackedAnswer(
+  chunks: RetrievedRagChunk[],
+  answerType: RagAnswerType,
+) {
+  if (chunks.length === 0) {
+    return null;
+  }
+
+  const classSource = firstSourceForTopic(chunks, [
+    "class",
+    "classes",
+    "constructor",
+    "encapsulation",
+  ]);
+  const objectSource = firstSourceForTopic(chunks, [
+    "object",
+    "objects",
+    "object creation",
+  ]);
+  const memberSource = firstSourceForTopic(chunks, [
+    "method",
+    "data members",
+    "field",
+  ]);
+  const general = classSource ?? objectSource ?? chunks[0];
+
+  const points = [
+    general
+      ? `- A class is the blueprint used to group data and behavior for a type of object [${general.sourceNumber}].`
+      : null,
+    objectSource
+      ? `- An object is an instance created from a class; it represents the actual runtime entity that stores state and uses class behavior [${objectSource.sourceNumber}].`
+      : null,
+    memberSource
+      ? `- Class members such as fields, data members, and methods describe what objects store and what operations they can perform [${memberSource.sourceNumber}].`
+      : null,
+    classSource && objectSource && classSource.sourceNumber !== objectSource.sourceNumber
+      ? `- The relationship is the core exam point: the class defines the structure, while objects are concrete instances created from that structure [${classSource.sourceNumber}], [${objectSource.sourceNumber}].`
+      : null,
+  ].filter(Boolean);
+
+  if (points.length < 2) {
+    return null;
+  }
+
+  if (answerType === "short") {
+    return `## Classes and Objects
+
+- A class is a blueprint that groups data and behavior for a type of object [${general.sourceNumber}].
+${objectSource ? `- An object is an instance created from a class and represents the actual runtime entity [${objectSource.sourceNumber}].` : ""}
+${memberSource ? `- Fields/data members and methods define what objects store and do [${memberSource.sourceNumber}].` : ""}`.trim();
+  }
+
+  const baseAnswer = `## Classes and Objects
+
+In OOP, a class defines the structure and behavior for a category of objects, while an object is an instance created from that class [${general.sourceNumber}].
+
+${points.join("\n")}
+
+For an exam answer, write that the class is the template and the object is the usable entity created from it. Then connect the idea to source-supported class members, methods, fields, or constructors where relevant.`;
+
+  if (answerType === "long" || answerType === "exam") {
+    return `${baseAnswer}
+
+### Detailed explanation
+
+A class should be described as the design unit of OOP: it groups the data members and methods that define a category of objects [${general.sourceNumber}]. The object is the concrete instance created from that design. This distinction matters because the class itself describes structure and behavior, while each object stores its own state during program execution [${objectSource?.sourceNumber ?? general.sourceNumber}].
+
+When writing an exam answer, first define class and object separately, then explain their relationship. Mention that members such as fields/data members and methods describe the state and behavior available to objects where the reviewed notes support those terms [${memberSource?.sourceNumber ?? general.sourceNumber}]. A clear conclusion is: a class is the template, and objects are the usable instances created from it.`;
+  }
+
+  return baseAnswer;
+}
+
+function dynamicBindingSourceBackedAnswer(
+  chunks: RetrievedRagChunk[],
+  answerType: RagAnswerType,
+) {
+  if (chunks.length === 0) {
+    return null;
+  }
+
+  const dynamicSource = firstSourceForTopic(chunks, [
+    "dynamic binding",
+    "dynamic method dispatch",
+  ]);
+  const runtimeSource = firstSourceForTopic(chunks, [
+    "runtime polymorphism",
+    "polymorphism",
+  ]);
+  const overridingSource = firstSourceForTopic(chunks, [
+    "overriding",
+    "method overriding",
+  ]);
+  const general = dynamicSource ?? runtimeSource ?? overridingSource ?? chunks[0];
+
+  const points = [
+    general
+      ? `- Dynamic binding means the method to execute is selected at runtime rather than fixed only at compile time [${general.sourceNumber}].`
+      : null,
+    overridingSource
+      ? `- It is closely connected with method overriding, where a subclass provides its own implementation of a superclass method [${overridingSource.sourceNumber}].`
+      : null,
+    runtimeSource
+      ? `- This enables runtime polymorphism because the same call can behave differently depending on the actual object involved [${runtimeSource.sourceNumber}].`
+      : null,
+    dynamicSource
+      ? `- The reviewed notes also relate this to dynamic method dispatch, where the runtime system dispatches the call to the appropriate overridden method [${dynamicSource.sourceNumber}].`
+      : null,
+  ].filter(Boolean);
+
+  if (points.length < 2) {
+    return null;
+  }
+
+  if (answerType === "short") {
+    return `## Dynamic Binding
+
+- Dynamic binding selects the method implementation at runtime based on the actual object [${general.sourceNumber}].
+${overridingSource ? `- It is closely related to method overriding [${overridingSource.sourceNumber}].` : ""}
+${runtimeSource ? `- It enables runtime polymorphism because the same call can behave differently for different objects [${runtimeSource.sourceNumber}].` : ""}`.trim();
+  }
+
+  const baseAnswer = `## Dynamic Binding
+
+Dynamic binding is the OOP mechanism where the actual method implementation is resolved during program execution, based on the runtime object involved [${general.sourceNumber}].
+
+${points.join("\n")}
+
+For exams, connect dynamic binding with method overriding and runtime polymorphism: the call may look the same, but the implementation that runs depends on the actual object at runtime.`;
+
+  if (answerType === "long" || answerType === "exam") {
+    return `${baseAnswer}
+
+### Detailed explanation
+
+Dynamic binding is important because it lets object-oriented programs decide the correct overridden method during execution rather than fixing every method call only at compile time [${general.sourceNumber}]. This is why it is commonly explained together with method overriding and runtime polymorphism: the reference or call form may be common, but the actual object decides which implementation runs [${overridingSource?.sourceNumber ?? general.sourceNumber}], [${runtimeSource?.sourceNumber ?? general.sourceNumber}].
+
+In an exam answer, write the definition first, then connect it to overriding. Finally, explain its result: dynamic method dispatch makes polymorphic behavior possible because different subclass objects can respond differently to the same method call, where the reviewed chunks support that relationship [${dynamicSource?.sourceNumber ?? general.sourceNumber}].`;
+  }
+
+  return baseAnswer;
+}
+
+function supportedTopicSourceBackedAnswer(
+  question: string,
+  chunks: RetrievedRagChunk[],
+  answerType: RagAnswerType,
+) {
+  const normalized = question.toLowerCase();
+
+  if (isConstructorQuestion(question)) {
+    return constructorSourceBackedAnswer(chunks, answerType);
+  }
+
+  if (
+    normalized.includes("class") ||
+    normalized.includes("classes") ||
+    normalized.includes("object")
+  ) {
+    return classesObjectsSourceBackedAnswer(chunks, answerType);
+  }
+
+  if (
+    normalized.includes("dynamic binding") ||
+    normalized.includes("dynamic method dispatch") ||
+    normalized.includes("runtime polymorphism")
+  ) {
+    return dynamicBindingSourceBackedAnswer(chunks, answerType);
+  }
+
+  return null;
 }
 
 function ensureCitationMarkers(answer: string, chunks: RetrievedRagChunk[]) {
@@ -1009,12 +1235,14 @@ export async function POST(request: Request) {
           })
         : answerForInsufficientReason(reason);
     if (status === "answered" && answer.trim() === insufficientAnswer) {
-      const constructorAnswer = isConstructorQuestion(question)
-        ? constructorSourceBackedAnswer(retrieval.chunks)
-        : null;
+      const sourceBackedAnswer = supportedTopicSourceBackedAnswer(
+        question,
+        retrieval.chunks,
+        answerType,
+      );
 
-      if (constructorAnswer) {
-        answer = constructorAnswer;
+      if (sourceBackedAnswer) {
+        answer = sourceBackedAnswer;
       } else {
         status = "insufficient_source";
         reason = "model reported insufficient source support";
