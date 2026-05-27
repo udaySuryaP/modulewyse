@@ -102,6 +102,28 @@ type Message = {
   persistedId?: string;
 };
 
+function answerTypeLabel(value: string | null | undefined) {
+  if (!value) {
+    return "Medium";
+  }
+
+  const normalized = value.trim().toLowerCase();
+
+  if (["short", "part a", "part_a"].includes(normalized)) {
+    return "Short";
+  }
+
+  if (["long"].includes(normalized)) {
+    return "Long";
+  }
+
+  if (["exam", "exam-ready", "exam ready", "part c", "part_c"].includes(normalized)) {
+    return "Exam-ready";
+  }
+
+  return "Medium";
+}
+
 type ChatWorkspaceProps = {
   initialConversationId: string;
   initialQuestion: string;
@@ -430,7 +452,15 @@ export function ChatWorkspace({
       ? "complete"
       : response.status === "insufficient_source"
         ? "insufficient"
-        : "failed";
+        : response.status === "rate_limited"
+          ? "rate-limited"
+          : "failed";
+  }
+
+  function rateLimitMessage(response: RagAnswerResponse) {
+    return response.retryAfter && response.retryAfter > 60
+      ? "You've reached the current ModuleWyse answer limit. Try again in a few minutes."
+      : "You've reached the current ModuleWyse answer limit. Please try again later.";
   }
 
   async function sendMessage(question: string) {
@@ -481,12 +511,7 @@ export function ChatWorkspace({
               (source) => `Module ${source.moduleNumber} · ${source.topicTitle}`,
             )
           : sourceChips;
-      const assistantStatus: AssistantStatus =
-        response.status === "answered"
-          ? "complete"
-          : response.status === "insufficient_source"
-            ? "insufficient"
-            : "failed";
+      const assistantStatus = statusFromResponse(response);
 
       setMessages((current) =>
         current.map((message) =>
@@ -519,6 +544,9 @@ export function ChatWorkspace({
         );
       }
       void refreshRecentConversations();
+      if (response.status === "rate_limited") {
+        setToast(rateLimitMessage(response));
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Answer generation failed.";
@@ -583,7 +611,11 @@ export function ChatWorkspace({
         rating: feedback,
         userId,
       });
-      setToast("Feedback submitted.");
+      setToast(
+        feedback === "up"
+          ? "Thanks - this helps tune future answers."
+          : "Thanks - regenerate can use this signal to improve the answer.",
+      );
     } catch {
       setToast("Feedback saved locally for this session.");
     }
@@ -613,6 +645,7 @@ export function ChatWorkspace({
 
     const contextSnapshot = targetMessage.context ?? context;
     const answerTypeSnapshot = targetMessage.answerType ?? answerType;
+    const previousMessageSnapshot = targetMessage;
     const fallbackSources =
       targetMessage.sources?.length
         ? targetMessage.sources
@@ -638,6 +671,25 @@ export function ChatWorkspace({
         contextSnapshot,
         regenerateAssistantMessageId: persistedId,
       });
+
+      if (response.status === "rate_limited") {
+        setMessages((current) =>
+          current.map((message) =>
+            message.id === messageId
+              ? {
+                  ...previousMessageSnapshot,
+                  status:
+                    previousMessageSnapshot.status === "loading"
+                      ? "complete"
+                      : previousMessageSnapshot.status,
+                }
+              : message,
+          ),
+        );
+        setToast(rateLimitMessage(response));
+        return;
+      }
+
       const nextSources = sourcesFromResponse(response, fallbackSources);
       const assistantStatus = statusFromResponse(response);
 
@@ -666,9 +718,11 @@ export function ChatWorkspace({
         current.map((item) =>
           item.id === messageId
             ? {
-                ...item,
-                content: "The answer could not be generated right now.",
-                status: "failed",
+                ...previousMessageSnapshot,
+                status:
+                  previousMessageSnapshot.status === "loading"
+                    ? "complete"
+                    : previousMessageSnapshot.status,
               }
             : item,
         ),
@@ -1510,21 +1564,17 @@ function AssistantMessage({
         preferences.compactAnswerCards ? "p-4" : "p-5",
       )}
     >
-      {preferences.showSourceChips && message.sources?.length ? (
-        <div className="flex flex-wrap gap-2">
-          {message.sources.map((source) => (
-            <span
-              className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]"
-              key={source}
-            >
-              {source}
-            </span>
-          ))}
-        </div>
-      ) : null}
+      <div className="flex flex-wrap gap-2">
+        <span className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]">
+          {message.context?.subject ?? "Object Oriented Programming"}
+        </span>
+        <span className="mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-3 py-1.5 text-[11px] font-medium text-[var(--mw-muted)]">
+          {answerTypeLabel(message.answerType)}
+        </span>
+      </div>
 
       <AnswerRenderer
-        className={preferences.showSourceChips && message.sources?.length ? "mt-5" : undefined}
+        className="mt-5"
         compact={preferences.compactAnswerCards}
         content={message.content}
       />

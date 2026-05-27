@@ -24,7 +24,7 @@ export function SignoutButton() {
         return;
       }
 
-      router.push("/login");
+      router.replace("/login");
       router.refresh();
     } catch {
       setMessage("Couldn't sign out. Please try again.");

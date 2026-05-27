@@ -1,4 +1,8 @@
-export type RagAnswerStatus = "answered" | "insufficient_source" | "error";
+export type RagAnswerStatus =
+  | "answered"
+  | "insufficient_source"
+  | "error"
+  | "rate_limited";
 
 export type RagAnswerType = "short" | "medium" | "long" | "exam";
 
@@ -18,6 +22,7 @@ export type RagAnswerResponse = {
   assistantMessageId: string | null;
   conversationId: string | null;
   reason?: string;
+  retryAfter?: number;
   retrieval?: {
     matchedCount: number;
     topK: number;

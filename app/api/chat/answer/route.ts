@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { retrievePbcst304Chunks, type RetrievedRagChunk } from "@/lib/data/retrieval";
 import { serverEnv } from "@/lib/env/server";
+import { checkRagAnswerRateLimit } from "@/lib/rate-limit/rag-rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import type { Conversation, Message } from "@/types/database";
 import type { RagAnswerResponse, RagAnswerType, RagSource } from "@/types/chat";
@@ -29,12 +30,48 @@ type ChatAnswerRequest = {
   subjectHint?: unknown;
 };
 
+type FeedbackSignal = {
+  note: string | null;
+  rating: "up" | "down";
+};
+
+type FeedbackSummary = {
+  down: number;
+  total: number;
+  up: number;
+};
+
 function jsonResponse(body: RagAnswerResponse, init?: ResponseInit) {
   return NextResponse.json(body, init);
 }
 
 function errorResponse(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
+}
+
+function rateLimitedResponse(input: {
+  conversationId: string | null;
+  retryAfter?: number;
+}) {
+  return jsonResponse(
+    {
+      answer:
+        "You've reached the current ModuleWyse answer limit. Please try again later.",
+      assistantMessageId: null,
+      conversationId: input.conversationId,
+      reason: "rate limit exceeded",
+      retryAfter: input.retryAfter,
+      sources: [],
+      status: "rate_limited",
+      userMessageId: null,
+    },
+    {
+      headers: input.retryAfter
+        ? { "Retry-After": String(input.retryAfter) }
+        : undefined,
+      status: 429,
+    },
+  );
 }
 
 function titleFromQuestion(question: string) {
@@ -244,13 +281,51 @@ function sufficiencyReason(input: {
 function answerInstructions(answerType: RagAnswerType) {
   switch (answerType) {
     case "short":
-      return "Write a concise definition or key-point answer. Use 1-2 short paragraphs or bullets.";
+      return [
+        "Answer length: SHORT.",
+        "Write a compact answer only.",
+        "Use 2-4 bullet points or one short paragraph.",
+        "Stay under 120 words unless a code snippet is strictly needed.",
+        "Include only the direct definition, key idea, or most important points.",
+        "Do not add long examples, long introductions, or exam-style sections.",
+      ].join(" ");
     case "medium":
-      return "Write a balanced explanation with clear points and short examples only if supported.";
+      return [
+        "Answer length: MEDIUM.",
+        "Write a balanced explanation in about 150-300 words.",
+        "Use a short heading or paragraph followed by clear points.",
+        "Include a brief source-supported example only if it helps the answer.",
+        "Avoid excessive detail.",
+      ].join(" ");
     case "long":
-      return "Write a detailed explanation with sections and enough depth for exam preparation.";
+      return [
+        "Answer length: LONG.",
+        "Write a detailed and elaborated answer in about 450-750 words when the sources support it.",
+        "Use clear Markdown sections, explanatory paragraphs, and bullet points where useful.",
+        "Explain definitions, working/principle, important characteristics, advantages or limitations if supported, and source-supported examples.",
+        "Develop the answer for exam preparation rather than giving only a summary.",
+        "If the retrieved sources support only part of the topic, elaborate only those supported parts and say what is not covered.",
+      ].join(" ");
     case "exam":
-      return "Write an exam-ready answer with an introduction, points, explanation, supported example if available, and conclusion.";
+      return [
+        "Answer length: EXAM-READY.",
+        "Write a structured exam answer in about 350-650 words when the sources support it.",
+        "Use an introduction, key points, explanation, supported example if available, and a short conclusion.",
+        "Keep the answer directly usable for university exam preparation.",
+      ].join(" ");
+  }
+}
+
+function maxOutputTokensForAnswerType(answerType: RagAnswerType) {
+  switch (answerType) {
+    case "short":
+      return 280;
+    case "medium":
+      return 700;
+    case "long":
+      return 1500;
+    case "exam":
+      return 1300;
   }
 }
 
@@ -282,6 +357,116 @@ function topicSpecificPrompt(question: string) {
   }
 
   return "";
+}
+
+function sanitizeFeedbackNote(note: string | null) {
+  if (!note) {
+    return null;
+  }
+
+  const normalized = note.replace(/\s+/g, " ").trim();
+
+  return normalized ? normalized.slice(0, 240) : null;
+}
+
+async function getMessageFeedbackSignal(input: {
+  messageId: string;
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}): Promise<FeedbackSignal | null> {
+  const { data, error } = await input.supabase
+    .from("message_feedback")
+    .select("rating,note")
+    .eq("message_id", input.messageId)
+    .eq("user_id", input.userId)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("Could not read message feedback for regeneration.");
+    return null;
+  }
+
+  if (!data || (data.rating !== "up" && data.rating !== "down")) {
+    return null;
+  }
+
+  return {
+    note: sanitizeFeedbackNote(data.note),
+    rating: data.rating,
+  };
+}
+
+async function getRecentFeedbackSummary(input: {
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  userId: string;
+}): Promise<FeedbackSummary | null> {
+  const { data, error } = await input.supabase
+    .from("message_feedback")
+    .select("rating")
+    .eq("user_id", input.userId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error) {
+    console.warn("Could not read recent answer feedback.");
+    return null;
+  }
+
+  const ratings = (data ?? []).map((item) => item.rating);
+  const up = ratings.filter((rating) => rating === "up").length;
+  const down = ratings.filter((rating) => rating === "down").length;
+
+  return {
+    down,
+    total: ratings.length,
+    up,
+  };
+}
+
+function feedbackGuidancePrompt(input: {
+  currentFeedback: FeedbackSignal | null;
+  recentSummary: FeedbackSummary | null;
+}) {
+  const guidance: string[] = [];
+
+  if (input.currentFeedback?.rating === "down") {
+    guidance.push(
+      "Regeneration feedback: the previous answer was marked not helpful. Improve clarity, directness, structure, citation placement, and source-grounding while staying within the selected answer length. Do not invent unsupported content.",
+    );
+  }
+
+  if (input.currentFeedback?.rating === "up") {
+    guidance.push(
+      "Regeneration feedback: the previous answer was marked helpful. Preserve the useful structure and source-grounded style while refreshing the answer.",
+    );
+  }
+
+  if (input.currentFeedback?.note) {
+    guidance.push(
+      `Student feedback note for this answer: ${input.currentFeedback.note}`,
+    );
+  }
+
+  const summary = input.recentSummary;
+
+  if (!input.currentFeedback && summary && summary.total >= 5) {
+    if (summary.down > summary.up) {
+      guidance.push(
+        "Recent answer feedback has more downvotes than upvotes. Be extra direct, avoid filler, and make the source-supported reasoning easier to scan.",
+      );
+    } else if (summary.up >= summary.down * 2) {
+      guidance.push(
+        "Recent answer feedback has been mostly positive. Keep the answer clear, source-cited, and easy to revise from.",
+      );
+    }
+  }
+
+  if (guidance.length === 0) {
+    return "";
+  }
+
+  return `Student feedback guidance:
+${guidance.join("\n")}`;
 }
 
 function firstSourceForTopic(chunks: RetrievedRagChunk[], terms: string[]) {
@@ -372,6 +557,7 @@ function isInsufficientAnswerText(answer: string) {
 async function generateAnswer(input: {
   answerType: RagAnswerType;
   chunks: RetrievedRagChunk[];
+  feedbackGuidance: string;
   question: string;
 }) {
   const client = new OpenAI({
@@ -399,6 +585,7 @@ Do not mention internal retrieval implementation, embeddings, or vector search.`
 const userPrompt = `Answer format:
 ${answerInstructions(input.answerType)}
 ${topicSpecificPrompt(input.question)}
+${input.feedbackGuidance}
 
 Reviewed source chunks:
 ${sourcePrompt(input.chunks)}
@@ -417,8 +604,7 @@ ${input.question}`;
         role: "user",
       },
     ],
-    max_output_tokens:
-      input.answerType === "short" ? 450 : input.answerType === "medium" ? 800 : 1200,
+    max_output_tokens: maxOutputTokensForAnswerType(input.answerType),
     model,
   });
 
@@ -540,8 +726,14 @@ async function clearMessageFeedback(input: {
     .eq("user_id", input.userId);
 
   if (error) {
-    throw error;
+    // Regeneration should not fail only because the old feedback row could
+    // not be cleared. The delete policy/grant is covered by a migration, but
+    // keeping this cleanup non-fatal protects deployments before it is applied.
+    console.warn("Could not clear feedback for regenerated assistant answer.");
+    return false;
   }
+
+  return true;
 }
 
 function messageMetadataString(message: Message, key: string) {
@@ -722,6 +914,22 @@ export async function POST(request: Request) {
   const unsupportedReason = subjectUnsupportedReason ?? moduleUnsupportedReason;
   const moduleValue = typeof moduleHint === "number" ? String(moduleHint) : "all";
 
+  try {
+    const rateLimit = await checkRagAnswerRateLimit(user.id);
+
+    if (!rateLimit.allowed) {
+      return rateLimitedResponse({
+        conversationId,
+        retryAfter: rateLimit.retryAfter,
+      });
+    }
+  } catch (error) {
+    console.error(
+      error instanceof Error ? error.message : "RAG rate limit check failed.",
+    );
+    return errorResponse("Answer generation is temporarily unavailable.", 500);
+  }
+
   let conversation: Conversation | null = null;
 
   try {
@@ -760,6 +968,22 @@ export async function POST(request: Request) {
         userId: user.id,
       }));
 
+    const currentFeedback = regenerateContext
+      ? await getMessageFeedbackSignal({
+          messageId: regenerateContext.assistant.id,
+          supabase,
+          userId: user.id,
+        })
+      : null;
+    const recentFeedbackSummary = await getRecentFeedbackSummary({
+      supabase,
+      userId: user.id,
+    });
+    const feedbackGuidance = feedbackGuidancePrompt({
+      currentFeedback,
+      recentSummary: recentFeedbackSummary,
+    });
+
     let retrieval = { chunks: [] as RetrievedRagChunk[], matchedCount: 0, topK };
     let reason = unsupportedReason;
 
@@ -777,7 +1001,12 @@ export async function POST(request: Request) {
       : "answered";
     let answer =
       status === "answered"
-        ? await generateAnswer({ answerType, chunks: retrieval.chunks, question })
+        ? await generateAnswer({
+            answerType,
+            chunks: retrieval.chunks,
+            feedbackGuidance,
+            question,
+          })
         : answerForInsufficientReason(reason);
     if (status === "answered" && answer.trim() === insufficientAnswer) {
       const constructorAnswer = isConstructorQuestion(question)
@@ -800,6 +1029,13 @@ export async function POST(request: Request) {
       model: status === "answered" ? serverEnv.OPENAI_ANSWER_MODEL : null,
       moduleScope: moduleValue,
       ...(regenerateContext ? { regeneratedAt: new Date().toISOString() } : {}),
+      feedbackGuidance: {
+        previousRating: currentFeedback?.rating ?? null,
+        recentDown: recentFeedbackSummary?.down ?? 0,
+        recentTotal: recentFeedbackSummary?.total ?? 0,
+        recentUp: recentFeedbackSummary?.up ?? 0,
+        used: feedbackGuidance.length > 0,
+      },
       retrieval: {
         matchedCount: retrieval.matchedCount,
         topK: retrieval.topK,
