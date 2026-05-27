@@ -2,6 +2,49 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-27 - Full Pre-Beta QA and Edge-Case Pass
+
+### Completed
+- Ran a full pre-beta QA and edge-case pass against Production.
+- Tested baseline validation:
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Tested public and protected route access.
+- Tested authenticated route behavior and logged-in redirects.
+- Tested auth edge cases through Supabase Auth direct checks.
+- Tested Chat/RAG supported questions across the PBCST304 OOP scope.
+- Tested answer types and fixed source-backed fallback answer-length handling.
+- Tested fallback/out-of-scope prompts, including Module 4, Module 5, PYQ prompts, current-news prompts, and prompt-injection attempts.
+- Verified source restrictions remained intact:
+  - Modules 1-3 only
+  - Module 4 excluded
+  - Module 5 non-existent under KTU 2024
+  - previous-year questions excluded
+- Tested regenerate after feedback and persisted IDs.
+- Tested rate limiting with a true Redis-backed `429`.
+- Tested answer feedback and Settings app feedback.
+- Tested app feedback RLS owner isolation.
+- Tested Subjects, Library, Settings, and legal route smoke paths.
+- Reviewed Vercel runtime logs after the final deployment and focused production rerun.
+- Created `docs/QA_PRE_BETA_REPORT.md`.
+
+### Issues / Notes
+- No critical or high blockers remain.
+- Medium deferred item: automated mobile visual QA was not available in this environment; a manual mobile visual check remains required for the first beta wave.
+- Low deferred items:
+  - browser-level auth form validation checks
+  - browser-level Library dropdown interaction checks
+  - full browser performance profiling
+- Existing moderate PostCSS advisory remains; no forced audit fix was run.
+- Private beta is conditionally approved for trusted testers after/with the manual mobile visual check.
+
+### Next
+- Invite 5-15 trusted PBCST304/OOP testers.
+- Run manual mobile visual smoke during the first tester wave.
+- Monitor Vercel logs, OpenAI usage, Upstash rate-limit activity, Supabase errors, and Settings feedback daily during beta.
+
 ## 2026-05-27 - Production Smoke QA After Upstash Fix
 
 ### Completed
