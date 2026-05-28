@@ -2,6 +2,27 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-28 - Product-Oriented Landing Design System
+
+### Completed
+- Refined product-oriented design system utilities toward the `newDesign.md` direction.
+- Rebuilt the landing page as a centered premium product landing.
+- Removed public OOP-specific product framing from the landing page.
+- Removed hero chat/answer workspace preview from the public hero.
+- Removed public subject coverage block from the landing page.
+- Strengthened the final CTA and footer treatment.
+- Preserved auth/RAG/Supabase/rate-limit behavior.
+- Ran validation and visual smoke checks.
+
+### Issues / Notes
+- Authenticated app shell/chat redesign remains next.
+- Final custom imagery remains optional.
+- Subject coverage remains available in authenticated Subjects.
+- Broad public launch claims are still avoided.
+
+### Next
+- Redesign auth and onboarding pages using the new visual system.
+
 ## 2026-05-28 - Premium Landing Hero Refinement
 
 ### Completed

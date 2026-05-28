@@ -35,16 +35,16 @@ export function HeroAskBox() {
       <form className="mw-panel p-[var(--mw-space-md)] sm:p-[var(--mw-space-lg)]" onSubmit={handleSubmit}>
         <div className="mb-[var(--mw-space-md)] flex items-start justify-between gap-[var(--mw-space-xs)] text-[length:var(--mw-type-micro)] font-medium leading-[1.35] text-[var(--mw-muted)] sm:items-center sm:gap-[var(--mw-space-md)]">
           <span className="max-w-[160px] text-left min-[380px]:max-w-[185px] sm:max-w-none">
-            KTU BASED EXAM PREP COMPANION
+            REVIEWED ACADEMIC NOTES
           </span>
           <span className="shrink-0 text-right">
             <span className="md:hidden">
-              MODULES
+              SOURCE
               <br />
-              1-3 READY
+              BACKED
             </span>
             <span className="hidden whitespace-nowrap md:inline">
-              MODULES 1-3 READY
+              SOURCE BACKED
             </span>
           </span>
         </div>
@@ -55,7 +55,7 @@ export function HeroAskBox() {
             className="min-w-0 flex-1 bg-transparent text-[length:var(--mw-type-link)] font-normal leading-[1.35] text-[var(--mw-ink)] outline-none placeholder:text-[var(--mw-muted-soft)] sm:text-[length:var(--mw-type-body)]"
             maxLength={MAX_LENGTH}
             onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask a question from your syllabus..."
+            placeholder="Ask from reviewed notes..."
             value={question}
           />
           <button

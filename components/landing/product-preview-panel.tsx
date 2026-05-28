@@ -1,4 +1,4 @@
-const sourceChips = ["Module 1", "Module 2", "Module 3"];
+const sourceChips = ["Reviewed", "Cited", "Module-aware"];
 
 export function ProductPreviewPanel() {
   return (
@@ -8,7 +8,7 @@ export function ProductPreviewPanel() {
           <div>
             <p className="mw-label">Answer workspace</p>
             <h2 className="mw-title-sm mt-[var(--mw-space-xs)]">
-              PBCST304 / OOP
+              Reviewed study context
             </h2>
           </div>
           <span className="mw-badge-blue shrink-0">Ready</span>
@@ -18,7 +18,7 @@ export function ProductPreviewPanel() {
           <div className="mw-panel-muted p-[var(--mw-space-md)]">
             <p className="mw-micro">Student question</p>
             <p className="mt-[var(--mw-space-sm)] text-[length:var(--mw-type-link)] leading-[1.45] text-[var(--mw-ink)]">
-              Explain dynamic method dispatch in Java.
+              Explain this topic from my reviewed notes.
             </p>
           </div>
 
@@ -32,7 +32,7 @@ export function ProductPreviewPanel() {
               ))}
             </div>
             <h3 className="mw-heading-sm mt-[var(--mw-space-lg)]">
-              Runtime polymorphism through overridden methods.
+              Structured answer with source-backed explanation.
             </h3>
             <div className="mt-[var(--mw-space-lg)] space-y-[var(--mw-space-sm)]">
               <div className="h-px w-full bg-[var(--mw-hairline)]" />
@@ -46,7 +46,7 @@ export function ProductPreviewPanel() {
           </div>
 
           <div className="grid grid-cols-3 border border-[var(--mw-hairline)]">
-            {["M1 ready", "M2 ready", "M3 ready"].map((item) => (
+            {["Notes", "Sources", "Depth"].map((item) => (
               <div
                 className="border-r border-[var(--mw-hairline)] p-[var(--mw-space-sm)] text-center last:border-r-0"
                 key={item}
@@ -61,7 +61,7 @@ export function ProductPreviewPanel() {
       <div className="absolute -bottom-6 right-4 hidden w-[250px] border border-[var(--mw-hairline-strong)] bg-[var(--mw-accent-blue-soft)] p-[var(--mw-space-md)] lg:block">
         <p className="mw-label text-[var(--mw-navy)]">Scope guard</p>
         <p className="mt-[var(--mw-space-sm)] text-[length:var(--mw-type-link)] leading-[1.45] text-[var(--mw-navy)]">
-          Answers stay inside reviewed OOP Modules 1-3.
+          Answers stay inside available reviewed notes.
         </p>
       </div>
     </div>

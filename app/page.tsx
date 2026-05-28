@@ -9,7 +9,7 @@ import { VideoBackground } from "@/components/landing/video-background";
 import { LiquidReveal } from "@/components/motion/liquid-motion";
 
 const trustMarkers = [
-  "Built for KTU students",
+  "Selected KTU content",
   "Syllabus-grounded",
   "Module-aware",
   "Exam-ready answers",
@@ -54,13 +54,13 @@ const solutionCards = [
     label: "Ground",
     title: "Reviewed sources",
     description:
-      "Answers are generated from indexed PBCST304 OOP notes that are marked ready.",
+      "Answers are generated from available reviewed academic notes, not open-ended web context.",
   },
   {
     label: "Scope",
     title: "Module awareness",
     description:
-      "The app keeps draft Module 4 and non-existent Module 5 out of answer sources.",
+      "ModuleWyse keeps answers inside the reviewed content that is available for the student.",
   },
   {
     label: "Format",
@@ -85,13 +85,13 @@ const solutionCards = [
 const flowSteps = [
   {
     step: "01",
-    title: "Open subject or chat",
+    title: "Open the workspace",
     description:
-      "Start from the OOP subject area or go straight into the chat workspace.",
+      "Start from the study workspace and keep the academic context organized.",
   },
   {
     step: "02",
-    title: "Ask naturally",
+    title: "Ask from reviewed notes",
     description:
       "Write the doubt the way you would ask a classmate before an exam.",
   },
@@ -169,10 +169,10 @@ export default function HomePage() {
                 KTU focused academic intelligence
               </p>
               <h1 className="mw-display-page mx-auto mt-[var(--mw-space-lg)] max-w-[900px] text-balance">
-                Syllabus-grounded AI exam prep for OOP.
+                Syllabus-grounded AI exam prep.
               </h1>
               <p className="mx-auto mt-[var(--mw-space-lg)] max-w-[670px] text-[length:var(--mw-type-subtitle)] font-normal leading-[1.55] text-[var(--mw-body)]">
-                ModuleWyse turns reviewed KTU notes into structured,
+                ModuleWyse turns reviewed academic notes into structured,
                 source-backed explanations and exam-oriented revision formats.
               </p>
               <LandingAuthActions className="mt-[var(--mw-space-xl)]" />
@@ -320,27 +320,28 @@ export default function HomePage() {
               </p>
               <LandingAuthActions className="mt-[var(--mw-space-xl)]" />
               <p className="mw-meta mx-auto mt-[var(--mw-space-lg)] max-w-[520px]">
-                Private beta currently focuses on reviewed OOP study support.
+                Private beta currently starts with selected reviewed KTU
+                content.
               </p>
             </div>
           </div>
         </section>
 
-        <footer className="relative z-10 bg-[var(--mw-primary)] text-white">
-          <div className="mw-section grid gap-[var(--mw-space-xl)] py-[var(--mw-space-xl)] text-[length:var(--mw-type-link)] leading-[1.5] lg:grid-cols-[1fr_auto] lg:items-end">
+        <footer className="relative z-10 border-t border-[var(--mw-hairline)] bg-[var(--mw-canvas)]">
+          <div className="mw-section grid gap-[var(--mw-space-xl)] py-[var(--mw-space-xl)] text-[length:var(--mw-type-link)] leading-[1.5] text-[var(--mw-body)] lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="mw-heading-sm text-white">ModuleWyse</p>
-              <p className="mt-[var(--mw-space-sm)] max-w-[560px] text-white/65">
+              <p className="mw-heading-sm text-[var(--mw-primary)]">ModuleWyse</p>
+              <p className="mt-[var(--mw-space-sm)] max-w-[560px]">
                 A private beta study workspace for source-grounded KTU exam
                 preparation. Not an official KTU service.
               </p>
             </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-white/75">
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
               <p>(c) 2026 ModuleWyse / student beta</p>
-              <Link className="hover:text-white" href="/privacy">
+              <Link className="text-[var(--mw-primary)] hover:text-[var(--mw-primary-hover)]" href="/privacy">
                 Privacy
               </Link>
-              <Link className="hover:text-white" href="/terms">
+              <Link className="text-[var(--mw-primary)] hover:text-[var(--mw-primary-hover)]" href="/terms">
                 Terms
               </Link>
             </div>
