@@ -36,7 +36,7 @@ export function SignoutButton() {
   return (
     <>
       <button
-        className="mw-pill-outline h-11 px-5 text-[14px]"
+        className="mw-pill-outline h-11 px-[var(--mw-space-lg)] text-[length:var(--mw-type-link)]"
         onClick={() => setIsOpen(true)}
         type="button"
       >
@@ -45,17 +45,17 @@ export function SignoutButton() {
 
       {isOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-[rgba(12,10,9,0.32)] px-5">
-          <div className="mw-card w-full max-w-[420px] p-6 text-center shadow-[0_24px_80px_rgba(12,10,9,0.14)]">
-            <h2 className="mw-display text-[34px] leading-[1.05]">
+          <div className="w-full max-w-[420px] border border-[var(--mw-hairline)] bg-white p-6 text-center">
+            <h2 className="mw-display-section">
               Sign out?
             </h2>
-            <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-body)]">
+            <p className="mw-meta mt-[var(--mw-space-sm)]">
               You will need to sign in again to access your chats and academic
               workspace.
             </p>
 
             {message ? (
-              <p className="mt-4 text-[14px] text-red-700">{message}</p>
+              <p className="mt-[var(--mw-space-md)] text-[length:var(--mw-type-link)] text-[var(--mw-ink)]">{message}</p>
             ) : null}
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">

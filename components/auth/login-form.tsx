@@ -76,10 +76,10 @@ export function LoginForm() {
   return (
     <form className="grid gap-4" onSubmit={handleSubmit}>
       <div>
-        <h1 className="mw-display text-[32px] leading-[1.05] text-[var(--mw-ink)] sm:text-[38px]">
+        <h1 className="mw-heading-sm text-[var(--mw-ink)]">
           Sign in with email
         </h1>
-        <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+        <p className="mw-meta mt-[var(--mw-space-sm)]">
           Continue to your ModuleWyse workspace using your registered email.
         </p>
       </div>
@@ -116,7 +116,7 @@ export function LoginForm() {
         {isSubmitting ? "Signing In..." : "Login"}
       </SubmitButton>
 
-      <div className="grid gap-2 text-center text-[14px] text-[var(--mw-muted)]">
+      <div className="mw-meta grid gap-[var(--mw-space-xs)] text-center">
         <Link
           className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
           href="/forgot-password"

@@ -794,7 +794,7 @@ export function ChatWorkspace({
 
           <div
             className={cn(
-              "mw-card min-w-0 max-w-full min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
+              "min-w-0 max-w-full min-h-[390px] border border-[var(--mw-hairline)] bg-white p-3 sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -894,13 +894,13 @@ function MobileChatTopbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
+    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-white/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
           className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]"
           href="/chat"
         >
-          modulewyse
+          ModuleWyse
         </Link>
         <button
           aria-expanded={isOpen}
@@ -923,7 +923,7 @@ function MobileChatTopbar({
               {answerTypes.map((type) => (
                 <button
                   className={cn(
-                    "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
+                    "h-9 mw-radius-card border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
                     answerType === type && "bg-[var(--mw-primary)] text-white",
                   )}
                   key={type}
@@ -995,7 +995,7 @@ function ContextControls({
   return (
     <div
       className={cn(
-        "mw-card px-4 py-4 sm:px-5 sm:py-4",
+        "mw-radius-card border border-[var(--mw-hairline)] bg-white px-4 py-4 sm:px-5 sm:py-4",
         className,
       )}
     >
@@ -1007,8 +1007,8 @@ function ContextControls({
           {answerTypes.map((type) => (
             <button
               className={cn(
-                "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
-                answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
+                "h-9 mw-radius-card border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+                answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-primary-hover)] hover:text-white",
               )}
               key={type}
               onClick={() => onAnswerTypeChange(type)}
@@ -1140,14 +1140,14 @@ function SidebarRecentConversations({
       >
         <Link
           className={cn(
-            "flex min-w-0 items-center gap-2 mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-surface-strong)] px-3 py-2.5 text-[12px] font-medium text-[var(--mw-ink)] transition-colors hover:bg-white",
-            !activeConversationId && "border-[var(--mw-primary)] bg-white",
+            "mw-pill-outline h-10 min-h-0 min-w-0 !justify-start gap-2 px-3 py-2.5 text-left !text-[12px]",
+            !activeConversationId && "bg-[var(--mw-surface-lift)]",
           )}
           href="/chat"
           onClick={onNavigate}
         >
           <Plus className="size-3.5 shrink-0" />
-          <span className="truncate">New chat</span>
+          <span className="min-w-0 flex-1 truncate text-left">New chat</span>
         </Link>
 
         {conversations.slice(0, 8).map((conversation) => {
@@ -1278,7 +1278,7 @@ function SidebarRecentConversations({
                     {conversation.is_pinned ? "Unpin chat" : "Pin chat"}
                   </button>
                   <button
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-red-700 hover:bg-red-50"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-[var(--mw-ink)] hover:bg-[var(--mw-surface-strong)]"
                     onClick={() => {
                       setOpenMenuId(null);
                       setRenamingId(null);
@@ -1298,7 +1298,7 @@ function SidebarRecentConversations({
       </div>
 
       {actionError ? (
-        <p className="px-2 text-[11px] leading-[1.4] text-red-700">{actionError}</p>
+        <p className="px-2 text-[11px] leading-[1.4] text-[var(--mw-ink)]">{actionError}</p>
       ) : null}
 
       {deleteTarget ? (
@@ -1321,7 +1321,7 @@ function SidebarRecentConversations({
                 Cancel
               </button>
               <button
-                className="h-9 mw-radius-pill bg-red-700 px-4 text-[12px] font-medium text-white disabled:opacity-60"
+                className="h-9 mw-radius-pill bg-[var(--mw-primary)] px-4 text-[12px] font-medium text-white disabled:opacity-60"
                 disabled={isSavingAction}
                 onClick={() => void confirmDelete()}
                 type="button"
@@ -1340,7 +1340,7 @@ function SetupPrompt({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "mw-card p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
+        "border border-[var(--mw-hairline)] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
         className,
       )}
     >
@@ -1422,10 +1422,10 @@ function Composer({
       className="fixed bottom-5 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 sm:bottom-6 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
       onSubmit={onSubmit}
     >
-      <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
-        <div className="flex min-h-[52px] items-end gap-2 mw-radius-input border border-[var(--mw-hairline)] bg-white py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
+      <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-white p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
+        <div className="mw-radius-card flex min-h-[52px] items-end gap-2 py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
           <textarea
-            className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
+            className="mw-radius-card max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden bg-transparent px-4 py-2 text-[15px] font-normal leading-[1.45] text-[var(--mw-ink)] outline-none placeholder:text-[var(--mw-muted-soft)] sm:min-h-[40px] sm:text-[16px]"
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={onKeyDown}
             placeholder={placeholder}
@@ -1434,7 +1434,7 @@ function Composer({
             value={draft}
           />
           <button
-            className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
+            className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--mw-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-primary-focus)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
             disabled={!canSend}
             type="submit"
           >
@@ -1560,7 +1560,7 @@ function AssistantMessage({
   return (
     <article
       className={cn(
-        "mw-card min-w-0 max-w-full overflow-hidden",
+        "min-w-0 max-w-full overflow-hidden border border-[var(--mw-hairline)] bg-white",
         preferences.compactAnswerCards ? "p-4" : "p-5",
       )}
     >
@@ -1609,7 +1609,7 @@ function AssistantMessage({
 
 function LoadingAnswer() {
   return (
-    <div className="mw-card min-w-0 max-w-full p-5">
+    <div className="min-w-0 max-w-full border border-[var(--mw-hairline)] bg-white p-5">
       <MinimalLoader label="Searching reviewed notes" variant="inline" />
     </div>
   );
@@ -1627,7 +1627,7 @@ function EdgeCard({
   onAction: () => void;
 }) {
   return (
-    <div className="mw-card min-w-0 max-w-full p-5">
+    <div className="min-w-0 max-w-full border border-[var(--mw-hairline)] bg-white p-5">
       <h3 className="text-[20px] font-medium leading-[1.2]">
         {title}
       </h3>
@@ -1661,7 +1661,7 @@ function ActionButton({
       aria-label={ariaLabel}
       className={cn(
         "inline-flex h-9 items-center gap-2 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
-        active && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
+        active && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-primary-hover)] hover:text-white",
       )}
       onClick={onClick}
       type="button"

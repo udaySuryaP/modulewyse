@@ -92,13 +92,13 @@ function MobileStudentTopbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
+    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-white/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
           className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]"
           href="/chat"
         >
-          modulewyse
+          ModuleWyse
         </Link>
         <button
           aria-expanded={isOpen}

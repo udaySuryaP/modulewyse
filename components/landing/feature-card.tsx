@@ -6,14 +6,14 @@ type FeatureCardProps = {
 
 export function FeatureCard({ label, title, description }: FeatureCardProps) {
   return (
-    <article className="mw-card mw-card-hover p-5 sm:p-6">
+    <article className="border-b border-[var(--mw-hairline)] bg-[var(--mw-surface-card)] p-[var(--mw-space-lg)] last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0">
       <p className="mw-label">
         {label}
       </p>
-      <h2 className="mt-5 text-[20px] font-medium leading-[1.25] text-[var(--mw-ink)]">
+      <h2 className="mw-heading-sm mt-[var(--mw-space-lg)] text-[var(--mw-ink)]">
         {title}
       </h2>
-      <p className="mt-3 text-[14px] font-normal leading-[1.5] text-[var(--mw-body)]">
+      <p className="mw-meta mt-[var(--mw-space-sm)]">
         {description}
       </p>
     </article>

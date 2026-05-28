@@ -78,14 +78,14 @@ export default async function SettingsPage() {
   return (
     <StudentPageShell>
       <div className="grid gap-4">
-        <section className="mw-card p-5 sm:p-8">
+        <section className="mw-page-rule">
           <p className="mw-label">Settings</p>
           <div className="mt-4">
             <div>
-              <h1 className="mw-display text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
+              <h1 className="mw-display-section text-[var(--mw-ink)]">
                 Account and settings
               </h1>
-              <p className="mt-3 max-w-[660px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
+              <p className="mw-body-copy mt-[var(--mw-space-sm)] max-w-[660px]">
                 Manage your ModuleWyse profile, academic context, local study
                 preferences, and session.
               </p>
@@ -93,11 +93,11 @@ export default async function SettingsPage() {
           </div>
         </section>
 
-        <section className="mw-card p-5 sm:p-6">
+        <section className="mw-panel p-[var(--mw-space-lg)]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="mw-label text-[11px]">Profile Summary</p>
-              <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+              <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
                 Student identity
               </h2>
             </div>
@@ -109,11 +109,11 @@ export default async function SettingsPage() {
         </section>
 
         <section className="grid gap-4 xl:grid-cols-2">
-          <div className="mw-card p-5 sm:p-6">
+          <div className="mw-panel p-[var(--mw-space-lg)]">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="mw-label text-[11px]">Academic Profile</p>
-                <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+                <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
                   Study context
                 </h2>
               </div>
@@ -126,11 +126,11 @@ export default async function SettingsPage() {
             </div>
           </div>
 
-          <div className="mw-card p-5 sm:p-6">
+          <div className="mw-panel p-[var(--mw-space-lg)]">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="mw-label text-[11px]">Account</p>
-                <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+                <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
                   Name and email
                 </h2>
               </div>
@@ -145,14 +145,14 @@ export default async function SettingsPage() {
         </section>
 
         <section className="grid gap-4 xl:grid-cols-[1.35fr_0.9fr]">
-          <div className="mw-card p-5 sm:p-6">
+          <div className="mw-panel p-[var(--mw-space-lg)]">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="mw-label text-[11px]">Preferences</p>
-                <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+                <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
                   Local study defaults
                 </h2>
-                <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-[var(--mw-body)]">
+                <p className="mw-meta mt-[var(--mw-space-xs)] max-w-[560px]">
                   These preferences are saved on this device for now.
                 </p>
               </div>
@@ -165,12 +165,12 @@ export default async function SettingsPage() {
             </div>
           </div>
 
-          <div className="mw-card p-5 sm:p-6">
+          <div className="mw-panel p-[var(--mw-space-lg)]">
             <p className="mw-label text-[11px]">Usage Snapshot</p>
-            <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+            <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
               Basic activity
             </h2>
-            <p className="mt-2 text-[14px] leading-[1.55] text-[var(--mw-body)]">
+            <p className="mw-meta mt-[var(--mw-space-xs)]">
               These counters update from your saved conversations, messages,
               and feedback.
             </p>
@@ -190,27 +190,14 @@ export default async function SettingsPage() {
           </div>
         </section>
 
-        <section className="mw-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-          <div>
-            <p className="mw-label text-[11px]">Session</p>
-            <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
-              Sign out
-            </h2>
-            <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-[var(--mw-body)]">
-              End this browser session when you are done using ModuleWyse.
-            </p>
-          </div>
-          <SignoutButton />
-        </section>
-
-        <section className="mw-card p-5 sm:p-6">
+        <section className="mw-panel p-[var(--mw-space-lg)]">
           <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
             <div>
               <p className="mw-label text-[11px]">Feedback</p>
-              <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+              <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
                 Help improve ModuleWyse
               </h2>
-              <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-[var(--mw-body)]">
+              <p className="mw-meta mt-[var(--mw-space-xs)] max-w-[560px]">
                 Share product feedback, bugs, confusing answers, or requests.
                 Add a reply email if you want us to follow up.
               </p>
@@ -219,13 +206,26 @@ export default async function SettingsPage() {
           </div>
         </section>
 
-        <section className="mw-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <section className="mw-panel flex flex-col gap-[var(--mw-space-md)] p-[var(--mw-space-lg)] sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="mw-label text-[11px]">Session</p>
+            <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
+              Sign out
+            </h2>
+            <p className="mw-meta mt-[var(--mw-space-xs)] max-w-[560px]">
+              End this browser session when you are done using ModuleWyse.
+            </p>
+          </div>
+          <SignoutButton />
+        </section>
+
+        <section className="mw-panel flex flex-col gap-[var(--mw-space-md)] p-[var(--mw-space-lg)] sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="mw-label text-[11px]">Legal</p>
-            <h2 className="mt-3 text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+            <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
               Policies and terms
             </h2>
-            <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-[var(--mw-body)]">
+            <p className="mw-meta mt-[var(--mw-space-xs)] max-w-[560px]">
               Review how ModuleWyse handles privacy, AI study support, and
               service terms.
             </p>

@@ -2,6 +2,67 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-28 - Product-Oriented Landing Design System
+
+### Completed
+- Refined product-oriented design system utilities toward the `newDesign.md` direction.
+- Rebuilt the landing page as a centered premium product landing.
+- Removed public OOP-specific product framing from the landing page.
+- Removed hero chat/answer workspace preview from the public hero.
+- Removed public subject coverage block from the landing page.
+- Strengthened the final CTA and footer treatment.
+- Preserved auth/RAG/Supabase/rate-limit behavior.
+- Ran validation and visual smoke checks.
+
+### Issues / Notes
+- Authenticated app shell/chat redesign remains next.
+- Final custom imagery remains optional.
+- Subject coverage remains available in authenticated Subjects.
+- Broad public launch claims are still avoided.
+
+### Next
+- Redesign auth and onboarding pages using the new visual system.
+
+## 2026-05-28 - Premium Landing Hero Refinement
+
+### Completed
+- Removed the landing hero chat/input preview.
+- Removed the right-side answer workspace preview from the landing hero.
+- Removed the subject coverage section from the landing page.
+- Centered the landing hero content with stronger editorial spacing and hierarchy.
+- Strengthened the final CTA section with clearer product copy and auth-aware actions.
+- Preserved auth/RAG/backend behavior, route protection, Supabase logic, and rate limiting.
+- Ran validation and visual smoke checks.
+
+### Issues / Notes
+- App shell/chat redesign remains a later phase.
+- Final custom imagery remains optional.
+- Subject coverage remains available in the authenticated Subjects page.
+
+### Next
+- Redesign auth and onboarding pages using the new visual system.
+- Then continue app shell and chat redesign.
+
+## 2026-05-28 - Phase 1 Landing Design Revamp
+
+### Completed
+- Finalized ModuleWyse design-system utilities for the Phase 1 landing pass.
+- Added/refined shared landing/design components for section headers, feature tiles, and product preview framing.
+- Rebuilt the landing page with an editorial split-hero structure.
+- Added trust, problem, solution architecture, product flow, subject coverage, answer modes, final CTA, and structured footer sections.
+- Preserved auth-aware landing behavior and the pending-question flow.
+- Preserved app/RAG/backend behavior, route protection, Supabase logic, and rate limiting.
+- Ran validation and browser smoke checks.
+
+### Issues / Notes
+- Final custom imagery remains represented by product-style framed UI composition rather than bespoke illustration.
+- App shell/chat deep redesign is deferred to the next phase.
+- Structural layout values intentionally remain local where they are page-specific.
+
+### Next
+- Redesign auth and onboarding pages using the new ModuleWyse visual system.
+- Then continue app shell and chat redesign.
+
 ## 2026-05-27 - Full Pre-Beta QA and Edge-Case Pass
 
 ### Completed

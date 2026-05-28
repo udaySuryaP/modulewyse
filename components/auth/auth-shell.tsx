@@ -24,30 +24,30 @@ export function AuthShell({
       <VideoBackground />
       <PageOverlay />
       <Link
-        className="mw-pill-outline fixed left-5 top-4 z-20 px-4 text-[13px] sm:left-8 sm:top-6"
+        className="mw-pill-outline fixed left-[var(--mw-space-lg)] top-[var(--mw-space-md)] z-20 px-[var(--mw-space-md)] text-[length:var(--mw-type-meta)] sm:left-[var(--mw-space-xl)] sm:top-[var(--mw-space-lg)]"
         href="/"
       >
         Home
       </Link>
       <main className="grid min-h-svh place-items-center px-5 py-4 sm:min-h-dvh sm:px-8 sm:py-10 lg:px-14">
-        <LiquidReveal className="mw-card w-full max-w-[460px] p-4 text-center shadow-[0_24px_80px_rgba(12,10,9,0.06)] sm:p-8">
+        <LiquidReveal className="mw-panel w-full max-w-[460px] p-[var(--mw-space-md)] text-center sm:p-[var(--mw-space-xl)]">
           {showHeader ? (
             <>
               <Link
-                className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)] sm:text-[24px]"
+                className="mw-wordmark"
                 href="/"
               >
                 ModuleWyse
               </Link>
 
-              {eyebrow ? <p className="mw-label mt-5 sm:mt-10">{eyebrow}</p> : null}
+              {eyebrow ? <p className="mw-label mt-[var(--mw-space-lg)] sm:mt-[var(--mw-space-xxl)]">{eyebrow}</p> : null}
               {title ? (
-                <h1 className="mw-display mt-3 text-[32px] leading-[1.05] text-[var(--mw-ink)] sm:mt-4 sm:text-[42px]">
+                <h1 className="mw-display-section mt-[var(--mw-space-sm)] text-[var(--mw-ink)] sm:mt-[var(--mw-space-md)]">
                   {title}
                 </h1>
               ) : null}
               {body ? (
-                <p className="mt-3 text-[14px] font-normal leading-[1.55] text-[var(--mw-body)] sm:mt-4 sm:text-[16px]">
+                <p className="mw-body-copy mt-[var(--mw-space-sm)] sm:mt-[var(--mw-space-md)]">
                   {body}
                 </p>
               ) : null}
@@ -58,7 +58,7 @@ export function AuthShell({
             {children}
           </div>
 
-          <div className="mt-6 flex justify-center gap-4 border-t border-[var(--mw-hairline)] pt-4 text-[12px] font-medium text-[var(--mw-muted)]">
+          <div className="mt-[var(--mw-space-lg)] flex justify-center gap-[var(--mw-space-md)] border-t border-[var(--mw-hairline)] pt-[var(--mw-space-md)] text-[length:var(--mw-type-micro)] font-medium text-[var(--mw-muted)]">
             <Link className="hover:text-[var(--mw-ink)]" href="/privacy">
               Privacy
             </Link>

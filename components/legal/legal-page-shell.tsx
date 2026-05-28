@@ -26,16 +26,16 @@ export function LegalPageShell({
       <div className="mx-auto w-full max-w-4xl">
         <BackLink href="/" label="Back to home" />
 
-        <article className="mt-6 mw-card overflow-hidden">
-          <header className="border-b border-[var(--mw-hairline)] bg-white p-5 sm:p-8">
-            <p className="mw-label text-[11px]">ModuleWyse legal</p>
-            <h1 className="mw-display mt-4 text-[42px] leading-[1.05] sm:text-[58px]">
+        <article className="mw-panel mt-[var(--mw-space-lg)] overflow-hidden">
+          <header className="border-b border-[var(--mw-hairline)] bg-white p-[var(--mw-space-lg)] sm:p-[var(--mw-space-xl)]">
+            <p className="mw-label text-[length:var(--mw-type-micro)]">ModuleWyse legal</p>
+            <h1 className="mw-display-section mt-[var(--mw-space-md)]">
               {title}
             </h1>
-            <p className="mt-4 max-w-2xl text-[15px] leading-[1.65] text-[var(--mw-body)] sm:text-[16px]">
+            <p className="mw-body-copy mt-[var(--mw-space-md)] max-w-2xl">
               {description}
             </p>
-            <p className="mt-5 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] p-4 text-[13px] leading-[1.55] text-[var(--mw-body)]">
+            <p className="mw-panel-muted mt-[var(--mw-space-lg)] p-[var(--mw-space-md)] text-[length:var(--mw-type-meta)] leading-[1.55] text-[var(--mw-body)]">
               This is a practical launch draft for ModuleWyse and should be
               reviewed before a wider public launch.
             </p>
@@ -44,11 +44,11 @@ export function LegalPageShell({
 
           <div className="grid gap-0 divide-y divide-[var(--mw-hairline)]">
             {sections.map((section) => (
-              <section className="p-5 sm:p-8" key={section.title}>
-                <h2 className="text-[24px] font-medium leading-[1.2] text-[var(--mw-ink)]">
+              <section className="p-[var(--mw-space-lg)] sm:p-[var(--mw-space-xl)]" key={section.title}>
+                <h2 className="mw-heading-sm text-[var(--mw-ink)]">
                   {section.title}
                 </h2>
-                <div className="mt-4 grid gap-3 text-[14px] leading-[1.65] text-[var(--mw-body)] sm:text-[15px]">
+                <div className="mw-body-copy mt-[var(--mw-space-md)] grid gap-[var(--mw-space-sm)]">
                   {section.body}
                 </div>
               </section>

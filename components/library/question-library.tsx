@@ -313,24 +313,24 @@ export function QuestionLibrary({
 
   return (
     <div className="grid gap-4">
-      <section className="mw-card p-5 sm:p-8">
+      <section className="mw-page-rule">
         <p className="mw-label">
           Library
         </p>
-        <h1 className="mw-display mt-4 text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
+        <h1 className="mw-display-section mt-[var(--mw-space-md)] text-[var(--mw-ink)]">
           Previous-question library
         </h1>
-        <p className="mt-4 max-w-[720px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
+        <p className="mw-body-copy mt-[var(--mw-space-md)] max-w-[720px]">
           Browse previous-year questions and open supported subjects directly in
           the ModuleWyse mock chat flow.
         </p>
         {dataSource === "fallback" ? (
-          <p className="mt-3 text-[13px] leading-[1.5] text-[var(--mw-muted)]">
+          <p className="mw-meta mt-[var(--mw-space-sm)]">
             Showing fallback sample questions while the database library is unavailable.
           </p>
         ) : null}
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="mw-panel mt-[var(--mw-space-xl)] grid gap-[var(--mw-space-md)] p-[var(--mw-space-lg)] sm:grid-cols-2 xl:grid-cols-5">
           <FilterSelect
             label="Subject"
             onChange={(value) => updateFilter("subject", value)}
@@ -364,17 +364,17 @@ export function QuestionLibrary({
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="mw-slab grid">
         {filteredQuestions.length > 0 ? (
           filteredQuestions.map((question) => (
             <QuestionCard key={question.id} question={question} />
           ))
         ) : (
-          <div className="mw-card p-5 text-[15px] leading-[1.5] text-[var(--mw-body)]">
+          <div className="mw-body-copy p-[var(--mw-space-lg)]">
             <p className="font-medium text-[var(--mw-ink)]">
               No questions found for this filter.
             </p>
-            <p className="mt-2 text-[14px] text-[var(--mw-muted)]">
+            <p className="mw-meta mt-[var(--mw-space-xs)]">
               Try changing the module, year, or question type.
             </p>
           </div>
@@ -397,7 +397,7 @@ function FilterSelect({
 }) {
   return (
     <label className="grid min-w-0 gap-2">
-      <span className="mw-label text-[11px]">
+      <span className="mw-label text-[length:var(--mw-type-micro)]">
         {label}
       </span>
       <SelectInput
@@ -432,7 +432,7 @@ function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
   return (
     <article
       className={cn(
-        "mw-card p-4 sm:p-5",
+        "border-b border-[var(--mw-hairline)] p-[var(--mw-space-lg)] last:border-b-0",
         !canAsk && "opacity-78",
       )}
     >
@@ -451,16 +451,16 @@ function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
             </span>
           </div>
 
-          <h2 className="mt-4 text-[22px] font-medium leading-[1.25] text-[var(--mw-ink)] sm:text-[24px]">
+          <h2 className="mw-heading-sm mt-[var(--mw-space-md)] text-[var(--mw-ink)]">
             {question.question}
           </h2>
 
-          <p className="mt-3 truncate text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+          <p className="mw-meta mt-[var(--mw-space-sm)] truncate">
             {subjectDisplayLabel(question)} / {question.moduleLabel}
           </p>
 
           {!canAsk ? (
-            <p className="mt-3 text-[14px] leading-[1.5] text-[var(--mw-muted)]">
+            <p className="mw-meta mt-[var(--mw-space-sm)]">
               Subject coming soon. This question is visible for preview, but
               chat is not enabled for this subject yet.
             </p>
@@ -476,7 +476,7 @@ function QuestionCard({ question }: { question: LibraryQuestionViewModel }) {
           </Link>
         ) : (
           <button
-            className="h-11 w-full mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-5 text-[13px] font-medium text-[var(--mw-muted)] lg:w-auto"
+            className="h-11 w-full mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-[var(--mw-space-lg)] text-[length:var(--mw-type-meta)] font-medium text-[var(--mw-muted)] lg:w-auto"
             disabled
             type="button"
           >

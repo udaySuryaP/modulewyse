@@ -12,19 +12,19 @@ function trimSubjectName(name: string) {
 
 export function SubjectStatusPanel() {
   return (
-    <aside className="mw-card mx-auto w-full p-5 sm:p-6">
+    <aside className="mw-panel mx-auto w-full p-[var(--mw-space-lg)]">
       <h2 className="mw-label">
         Available Subjects
       </h2>
 
-      <div className="mt-5 grid gap-3">
+      <div className="mt-[var(--mw-space-lg)] grid divide-y divide-[var(--mw-hairline)] border-y border-[var(--mw-hairline)]">
         {mockSubjects.map((subject) => (
           <div
-            className="flex items-center justify-between gap-3 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3"
+            className="flex items-center justify-between gap-[var(--mw-space-sm)] px-[var(--mw-space-xxs)] py-[var(--mw-space-sm)]"
             key={subject.slug}
           >
             <span
-              className="min-w-0 max-w-[22ch] truncate whitespace-nowrap text-[14px] font-normal leading-[1.4] text-[var(--mw-body)]"
+              className="min-w-0 max-w-[22ch] truncate whitespace-nowrap text-[length:var(--mw-type-link)] font-normal leading-[1.4] text-[var(--mw-body)]"
               title={subject.name}
             >
               {trimSubjectName(subject.name)}
@@ -37,7 +37,7 @@ export function SubjectStatusPanel() {
       </div>
 
       <GlassButton
-        className="mt-5 w-full"
+        className="mt-[var(--mw-space-lg)] w-full"
         href="/subjects"
         variant="primary"
       >

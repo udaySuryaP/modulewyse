@@ -103,7 +103,7 @@ function ToggleRow({
         aria-pressed={checked}
         className={cn(
           "h-8 w-[58px] mw-radius-pill border border-[var(--mw-hairline-strong)] p-1 transition-colors",
-          checked ? "bg-[var(--mw-primary)]" : "bg-white",
+          checked ? "bg-[var(--mw-primary)]" : "bg-[var(--mw-surface-card)]",
         )}
         onClick={() => onChange(!checked)}
         type="button"
@@ -111,7 +111,7 @@ function ToggleRow({
         <span
           className={cn(
             "block size-6 mw-radius-pill transition-transform",
-            checked ? "translate-x-6 bg-white" : "translate-x-0 bg-[var(--mw-surface-strong)]",
+            checked ? "translate-x-6 bg-[#f7f8f8]" : "translate-x-0 bg-[var(--mw-surface-strong)]",
           )}
         />
       </button>

@@ -16,7 +16,7 @@ type SubjectDetailPanelProps = {
 const moduleStatusClasses: Record<ModuleReadiness, string> = {
   empty: "bg-[var(--mw-surface-strong)] text-[var(--mw-muted)]",
   ready: "bg-[var(--mw-primary)] text-white",
-  review: "bg-[rgba(244,197,168,0.28)] text-[var(--mw-ink)]",
+  review: "bg-[var(--mw-surface-lift)] text-[var(--mw-ink)]",
 };
 
 function moduleMeta(module: SubjectModuleViewModel) {
@@ -44,7 +44,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
 
   return (
     <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="mw-card min-w-0 overflow-hidden p-4 sm:p-8">
+      <section className="min-w-0 overflow-hidden border border-[var(--mw-hairline)] bg-white p-4 sm:p-8">
         <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:justify-between">
           <div className="min-w-0">
             <p className="mw-label">
@@ -74,7 +74,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         </div>
 
         {subject.status === "beta" ? (
-          <div className="mt-6 mw-radius-card border border-[var(--mw-hairline)] bg-[rgba(244,197,168,0.22)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
+          <div className="mt-6 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
             This subject is in beta. Answers may be less complete until the
             curated content set is expanded.
           </div>
@@ -103,14 +103,14 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           </div>
 
           {subject.modules.length > 0 ? (
-            <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          <div className="mt-4 grid overflow-hidden border border-[var(--mw-hairline)] bg-white lg:grid-cols-2">
               {subject.modules.map((module) => {
                 const moduleChatEnabled =
                   subjectChatEnabled && module.hasReadyContent;
 
                 return (
                   <article
-                    className="mw-radius-card min-w-0 border border-[var(--mw-hairline)] bg-white p-4"
+                    className="min-w-0 border-b border-[var(--mw-hairline)] p-4 lg:border-r"
                     key={module.value}
                   >
                     <div className="flex min-w-0 items-start justify-between gap-3">
@@ -164,7 +164,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         </div>
       </section>
 
-      <aside className="mw-card min-w-0 p-4 sm:p-6 xl:self-start">
+      <aside className="min-w-0 border border-[var(--mw-hairline)] bg-white p-4 sm:p-6 xl:self-start">
         <p className="mw-label">
           Topic preview
         </p>

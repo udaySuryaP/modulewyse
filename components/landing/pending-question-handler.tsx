@@ -26,15 +26,15 @@ export function PendingQuestionHandler() {
   }
 
   return (
-    <div className="mw-card p-4">
+    <div className="border border-[var(--mw-hairline)] bg-white p-4">
       <p className="mw-label">
         Pending question
       </p>
-      <p className="mt-2 text-[16px] font-normal leading-[1.5] text-[var(--mw-body)]">
+      <p className="mw-body-copy mt-[var(--mw-space-xs)]">
         {question}
       </p>
       <button
-        className="mw-pill-outline mt-4 px-4 py-2 text-[13px]"
+        className="mw-pill-outline mt-[var(--mw-space-md)] px-[var(--mw-space-md)] py-[var(--mw-space-xs)] text-[length:var(--mw-type-meta)]"
         onClick={() => {
           clearPendingQuestion();
           setDismissed(true);
