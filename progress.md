@@ -2,6 +2,26 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-28 - Phase 1 Landing Design Revamp
+
+### Completed
+- Finalized ModuleWyse design-system utilities for the Phase 1 landing pass.
+- Added/refined shared landing/design components for section headers, feature tiles, and product preview framing.
+- Rebuilt the landing page with an editorial split-hero structure.
+- Added trust, problem, solution architecture, product flow, subject coverage, answer modes, final CTA, and structured footer sections.
+- Preserved auth-aware landing behavior and the pending-question flow.
+- Preserved app/RAG/backend behavior, route protection, Supabase logic, and rate limiting.
+- Ran validation and browser smoke checks.
+
+### Issues / Notes
+- Final custom imagery remains represented by product-style framed UI composition rather than bespoke illustration.
+- App shell/chat deep redesign is deferred to the next phase.
+- Structural layout values intentionally remain local where they are page-specific.
+
+### Next
+- Redesign auth and onboarding pages using the new ModuleWyse visual system.
+- Then continue app shell and chat redesign.
+
 ## 2026-05-27 - Full Pre-Beta QA and Edge-Case Pass
 
 ### Completed

@@ -64,7 +64,7 @@ export function StudentSidebar({
   return (
     <aside
       className={cn(
-        "sticky top-0 z-20 flex h-dvh shrink-0 flex-col border-r border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-2 py-4 transition-[width] duration-300 sm:px-3 sm:py-5",
+        "sticky top-0 z-20 flex h-dvh shrink-0 flex-col border-r border-[var(--mw-hairline)] bg-white px-2 py-4 transition-[width] duration-300 sm:px-3 sm:py-5",
         expanded ? "w-[60px] sm:w-[72px] lg:w-[228px]" : "w-[60px] sm:w-[72px]",
         className,
       )}
@@ -84,7 +84,7 @@ export function StudentSidebar({
           )}
           href="/chat"
         >
-          {expanded ? "modulewyse" : "mw"}
+          {expanded ? "ModuleWyse" : "MW"}
         </Link>
         <button
           aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}

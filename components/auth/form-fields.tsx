@@ -6,7 +6,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const inputClassName =
-  "mw-input h-10 px-4 text-[15px] font-normal sm:h-12 sm:text-[16px]";
+  "mw-input h-10 px-[var(--mw-space-md)] text-[length:var(--mw-type-body)] font-normal sm:h-12";
 
 export function Field({
   label,
@@ -17,7 +17,7 @@ export function Field({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[14px] font-normal leading-[1.4] text-[var(--mw-body)]">
+      <span className="mw-meta font-normal">
         {label}
       </span>
       {children}
@@ -75,7 +75,7 @@ export function SelectInput({
     <span className="relative block">
       <select
         className={cn(
-          "mw-input h-11 w-full min-w-0 appearance-none py-0 pl-4 pr-10 text-[14px] font-normal [&>option]:bg-white [&>option]:text-[var(--mw-ink)]",
+          "mw-input h-11 w-full min-w-0 appearance-none py-0 pl-[var(--mw-space-md)] pr-[var(--mw-space-xxl)] text-[length:var(--mw-type-link)] font-normal [&>option]:bg-white [&>option]:text-[var(--mw-ink)]",
           className,
         )}
         {...props}
@@ -102,7 +102,7 @@ export function FormMessage({
   return (
     <p
       className={cn(
-        "text-center text-[14px] font-normal leading-[1.4] tracking-[-0.01em]",
+        "text-center text-[length:var(--mw-type-link)] font-normal leading-[1.4] tracking-[-0.01em]",
         tone === "error" && "text-[var(--mw-ink)]",
         tone === "success" && "text-[var(--mw-ink)]",
         tone === "muted" && "text-[var(--mw-muted)]",

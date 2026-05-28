@@ -19,31 +19,33 @@ export default async function SubjectsPage() {
 
   return (
     <StudentPageShell>
-      <div className="mw-card min-w-0 overflow-hidden p-4 sm:p-8">
-        <p className="mw-label">
-          Subjects
-        </p>
-        <h1 className="mw-display mt-4 max-w-[980px] text-[32px] leading-[1.08] text-[var(--mw-ink)] sm:text-[44px] lg:text-[52px]">
-          Browse available and upcoming ModuleWyse subjects.
-        </h1>
-        <p className="mt-4 max-w-[760px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
-          Start with available subjects and see what is currently in beta or
-          being prepared.
-        </p>
+      <div className="min-w-0">
+        <section className="mw-page-rule">
+          <p className="mw-label">
+            Subjects
+          </p>
+          <h1 className="mw-display-section mt-[var(--mw-space-md)] max-w-[980px] text-[var(--mw-ink)]">
+            Browse available and upcoming ModuleWyse subjects.
+          </h1>
+          <p className="mw-body-copy mt-[var(--mw-space-md)] max-w-[760px]">
+            Start with available subjects and see what is currently in beta or
+            being prepared.
+          </p>
+        </section>
 
         {source === "fallback" && process.env.NODE_ENV === "development" ? (
-          <p className="mt-4 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)] px-4 py-3 text-[13px] leading-[1.4] text-[var(--mw-muted)]">
+          <p className="mw-panel-muted mw-meta mt-[var(--mw-space-md)] px-[var(--mw-space-md)] py-[var(--mw-space-sm)]">
             Using fallback subject data.
           </p>
         ) : null}
 
-        <div className="mt-7 grid min-w-0 gap-3 sm:mt-8 lg:grid-cols-2">
+        <div className="mw-slab mt-[var(--mw-space-xl)] grid min-w-0 lg:grid-cols-2">
           {subjects.map((subject) => {
             const enabled = subject.status === "available" || subject.status === "beta";
             const card = (
               <article
                 className={cn(
-                  "mw-card mw-card-hover flex h-full min-h-[188px] min-w-0 flex-col p-4 sm:p-5",
+                  "flex h-full min-h-[188px] min-w-0 flex-col border-b border-[var(--mw-hairline)] p-[var(--mw-space-lg)] transition-colors hover:bg-[var(--mw-canvas-soft)] lg:border-r",
                   enabled
                     ? ""
                     : "opacity-70",
@@ -51,11 +53,11 @@ export default async function SubjectsPage() {
               >
                 <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
                   <div className="min-w-0">
-                    <p className="mw-label text-[11px]">
+                    <p className="mw-label text-[length:var(--mw-type-micro)]">
                       {subject.semester} / {subject.code}
                     </p>
                     <h2
-                      className="mt-3 line-clamp-2 text-[19px] font-medium leading-[1.25] text-[var(--mw-ink)] sm:text-[20px]"
+                      className="mw-title-sm mt-[var(--mw-space-sm)] line-clamp-2 text-[var(--mw-ink)]"
                       title={subject.name}
                     >
                       {subject.name}
@@ -66,19 +68,19 @@ export default async function SubjectsPage() {
                   </span>
                 </div>
 
-                <p className="mt-4 line-clamp-3 text-[14px] font-normal leading-[1.5] text-[var(--mw-body)]">
+                <p className="mw-meta mt-[var(--mw-space-md)] line-clamp-3">
                   {subject.description}
                 </p>
 
                 <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
-                  <p className="mw-label text-[11px]">
+                  <p className="mw-label text-[length:var(--mw-type-micro)]">
                     {enabled
                       ? `${subject.moduleCountLabel} · ${subject.contentStatusLabel}`
                       : subject.totalModules > 0
                         ? `${subject.moduleCountLabel} · ${subject.contentStatusLabel}`
                         : subjectStatusLabel(subject.status)}
                   </p>
-                  <span className="text-[13px] font-medium text-[var(--mw-ink)]">
+                  <span className="text-[length:var(--mw-type-meta)] font-medium text-[var(--mw-ink)]">
                     {enabled ? "Open Subject" : "In Preparation"}
                   </span>
                 </div>

@@ -794,7 +794,7 @@ export function ChatWorkspace({
 
           <div
             className={cn(
-              "mw-card min-w-0 max-w-full min-h-[390px] p-3 sm:min-h-[520px] sm:p-5",
+              "min-w-0 max-w-full min-h-[390px] border border-[var(--mw-hairline)] bg-white p-3 sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -894,13 +894,13 @@ function MobileChatTopbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
+    <header className="sticky top-0 z-40 border-b border-[var(--mw-hairline)] bg-white/95 px-3 py-3 text-[var(--mw-ink)] shadow-sm md:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
           className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)]"
           href="/chat"
         >
-          modulewyse
+          ModuleWyse
         </Link>
         <button
           aria-expanded={isOpen}
@@ -995,7 +995,7 @@ function ContextControls({
   return (
     <div
       className={cn(
-        "mw-card px-4 py-4 sm:px-5 sm:py-4",
+        "border border-[var(--mw-hairline)] bg-white px-4 py-4 sm:px-5 sm:py-4",
         className,
       )}
     >
@@ -1340,7 +1340,7 @@ function SetupPrompt({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "mw-card p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
+        "border border-[var(--mw-hairline)] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
         className,
       )}
     >
@@ -1560,7 +1560,7 @@ function AssistantMessage({
   return (
     <article
       className={cn(
-        "mw-card min-w-0 max-w-full overflow-hidden",
+        "min-w-0 max-w-full overflow-hidden border border-[var(--mw-hairline)] bg-white",
         preferences.compactAnswerCards ? "p-4" : "p-5",
       )}
     >
@@ -1609,7 +1609,7 @@ function AssistantMessage({
 
 function LoadingAnswer() {
   return (
-    <div className="mw-card min-w-0 max-w-full p-5">
+    <div className="min-w-0 max-w-full border border-[var(--mw-hairline)] bg-white p-5">
       <MinimalLoader label="Searching reviewed notes" variant="inline" />
     </div>
   );
@@ -1627,7 +1627,7 @@ function EdgeCard({
   onAction: () => void;
 }) {
   return (
-    <div className="mw-card min-w-0 max-w-full p-5">
+    <div className="min-w-0 max-w-full border border-[var(--mw-hairline)] bg-white p-5">
       <h3 className="text-[20px] font-medium leading-[1.2]">
         {title}
       </h3>

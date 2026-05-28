@@ -16,12 +16,12 @@ export default async function AcademicSettingsPage() {
     <StudentPageShell>
       <div className="mx-auto max-w-[760px]">
         <BackLink className="mb-6" href="/settings" label="Back to settings" />
-        <div className="mw-card p-5 sm:p-8">
+        <div className="mw-panel p-[var(--mw-space-lg)] sm:p-[var(--mw-space-xl)]">
           <p className="mw-label">Settings</p>
-          <h1 className="mw-display mt-4 text-[40px] leading-[1.05] text-[var(--mw-ink)] sm:text-[52px]">
+          <h1 className="mw-display-section mt-[var(--mw-space-md)] text-[var(--mw-ink)]">
             Academic settings
           </h1>
-          <p className="mt-4 max-w-[620px] text-[16px] font-normal leading-[1.55] text-[var(--mw-body)]">
+          <p className="mw-body-copy mt-[var(--mw-space-md)] max-w-[620px]">
             Edit the academic context ModuleWyse uses for student-side
             preparation.
           </p>

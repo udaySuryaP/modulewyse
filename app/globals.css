@@ -64,6 +64,9 @@
   --mw-body: #505050;
   --mw-muted: #77736d;
   --mw-muted-soft: #9a948c;
+  --mw-accent-blue: #5fa8e8;
+  --mw-accent-blue-soft: #e8f3fb;
+  --mw-navy: #0e1726;
   --mw-hairline: #e5e0d8;
   --mw-hairline-strong: #cfc7bb;
   --mw-hairline-tertiary: #f0ece5;
@@ -75,6 +78,24 @@
   --mw-radius-card: 1rem;
   --mw-radius-large: 1rem;
   --mw-radius-pill: 9999px;
+  --mw-space-xxs: 0.25rem;
+  --mw-space-xs: 0.5rem;
+  --mw-space-sm: 0.75rem;
+  --mw-space-md: 1rem;
+  --mw-space-lg: 1.5rem;
+  --mw-space-xl: 2rem;
+  --mw-space-xxl: 3rem;
+  --mw-space-section: 4rem;
+  --mw-space-section-lg: 6rem;
+  --mw-type-display: 3rem;
+  --mw-type-display-sm: 2.5rem;
+  --mw-type-heading-md: 2.25rem;
+  --mw-type-heading-sm: 1.5rem;
+  --mw-type-subtitle: 1.25rem;
+  --mw-type-body: 1rem;
+  --mw-type-link: 0.875rem;
+  --mw-type-meta: 0.8125rem;
+  --mw-type-micro: 0.6875rem;
 
   --background: var(--mw-canvas);
   --foreground: var(--mw-ink);
@@ -94,8 +115,8 @@
   --border: var(--mw-hairline);
   --input: var(--mw-hairline-strong);
   --ring: var(--mw-primary-focus);
-  --chart-1: var(--mw-primary);
-  --chart-2: var(--mw-primary-hover);
+  --chart-1: var(--mw-accent-blue);
+  --chart-2: var(--mw-navy);
   --chart-3: var(--mw-muted);
   --chart-4: var(--mw-surface-lift);
   --chart-5: var(--mw-semantic-success);
@@ -184,6 +205,73 @@
     letter-spacing: -0.035em;
   }
 
+  .mw-display-page {
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: clamp(var(--mw-type-display-sm), 8vw, 4.75rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+
+  .mw-display-section {
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: clamp(2rem, 5vw, var(--mw-type-display));
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+
+  .mw-heading-sm {
+    font-size: var(--mw-type-heading-sm);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+
+  .mw-title-sm {
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .mw-body-copy {
+    color: var(--mw-body);
+    font-size: var(--mw-type-body);
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  .mw-body-tight {
+    color: var(--mw-body);
+    font-size: var(--mw-type-body);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .mw-meta {
+    color: var(--mw-muted);
+    font-size: var(--mw-type-meta);
+    line-height: 1.45;
+  }
+
+  .mw-micro {
+    color: var(--mw-muted);
+    font-size: var(--mw-type-micro);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+
+  .mw-wordmark {
+    color: var(--mw-ink);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
   .mw-section {
     margin-inline: auto;
     width: min(100%, 1200px);
@@ -208,6 +296,46 @@
     background: var(--mw-surface-card);
     color: var(--mw-ink);
     box-shadow: none;
+  }
+
+  .mw-section-frame {
+    border-top: 1px solid var(--mw-hairline);
+    border-bottom: 1px solid var(--mw-hairline);
+    background: var(--mw-canvas);
+  }
+
+  .mw-panel {
+    border: 1px solid var(--mw-hairline);
+    background: var(--mw-surface-card);
+    color: var(--mw-ink);
+  }
+
+  .mw-panel-muted {
+    border: 1px solid var(--mw-hairline);
+    background: var(--mw-canvas-soft);
+    color: var(--mw-ink);
+  }
+
+  .mw-panel-ink {
+    border: 1px solid color-mix(in srgb, var(--mw-surface-card) 18%, transparent);
+    background: var(--mw-navy);
+    color: var(--mw-surface-card);
+  }
+
+  .mw-slab {
+    overflow: hidden;
+    border: 1px solid var(--mw-hairline);
+    background: var(--mw-surface-card);
+  }
+
+  .mw-slab-cell {
+    border-bottom: 1px solid var(--mw-hairline);
+    padding: var(--mw-space-lg);
+  }
+
+  .mw-page-rule {
+    border-bottom: 1px solid var(--mw-hairline);
+    padding-bottom: var(--mw-space-xl);
   }
 
   .mw-card-hover {
@@ -318,6 +446,20 @@
   .mw-input:focus-visible {
     border-color: var(--mw-primary-focus);
     box-shadow: none;
+  }
+
+  .mw-badge-blue {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--mw-radius-pill);
+    background: var(--mw-accent-blue-soft);
+    color: var(--mw-navy);
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
   }
 
   .mw-atmosphere {
