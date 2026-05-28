@@ -306,23 +306,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="relative z-10 bg-[var(--mw-navy)] py-[var(--mw-space-section)] text-white lg:py-[var(--mw-space-section-lg)]">
+        <section className="mw-section-frame relative z-10 py-[var(--mw-space-section)] lg:py-[var(--mw-space-section-lg)]">
           <div className="mw-section">
             <div className="mx-auto max-w-[860px] text-center">
-              <p className="mw-label text-white/60">Private beta</p>
-              <h2 className="mw-display-section mx-auto mt-[var(--mw-space-md)] max-w-[760px] text-white">
+              <p className="mw-label">Private beta</p>
+              <h2 className="mw-display-section mx-auto mt-[var(--mw-space-md)] max-w-[760px]">
                 Start studying with clarity.
               </h2>
-              <p className="mx-auto mt-[var(--mw-space-lg)] max-w-[680px] text-[length:var(--mw-type-body)] leading-[1.6] text-white/70">
+              <p className="mx-auto mt-[var(--mw-space-lg)] max-w-[680px] text-[length:var(--mw-type-body)] leading-[1.6] text-[var(--mw-body)]">
                 Ask syllabus-grounded questions, choose the answer depth you
                 need, and revise from structured explanations built around
                 reviewed ModuleWyse notes.
               </p>
-              <LandingAuthActions
-                className="mt-[var(--mw-space-xl)]"
-                inverse
-              />
-              <p className="mw-meta mx-auto mt-[var(--mw-space-lg)] max-w-[520px] text-white/55">
+              <LandingAuthActions className="mt-[var(--mw-space-xl)]" />
+              <p className="mw-meta mx-auto mt-[var(--mw-space-lg)] max-w-[520px]">
                 Private beta currently focuses on reviewed OOP study support.
               </p>
             </div>
