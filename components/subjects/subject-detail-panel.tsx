@@ -16,7 +16,7 @@ type SubjectDetailPanelProps = {
 const moduleStatusClasses: Record<ModuleReadiness, string> = {
   empty: "bg-[var(--mw-surface-strong)] text-[var(--mw-muted)]",
   ready: "bg-[var(--mw-primary)] text-white",
-  review: "bg-[rgba(244,197,168,0.28)] text-[var(--mw-ink)]",
+  review: "bg-[var(--mw-surface-lift)] text-[var(--mw-ink)]",
 };
 
 function moduleMeta(module: SubjectModuleViewModel) {
@@ -74,7 +74,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         </div>
 
         {subject.status === "beta" ? (
-          <div className="mt-6 mw-radius-card border border-[var(--mw-hairline)] bg-[rgba(244,197,168,0.22)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
+          <div className="mt-6 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] p-4 text-[14px] leading-[1.5] text-[var(--mw-body)]">
             This subject is in beta. Answers may be less complete until the
             curated content set is expanded.
           </div>

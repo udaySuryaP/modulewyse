@@ -33,7 +33,7 @@ export function LandingNavigation() {
         className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)] sm:text-[24px]"
         href={ROUTES.HOME}
       >
-        ModuleWyse
+        modulewyse
       </Link>
 
       <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">

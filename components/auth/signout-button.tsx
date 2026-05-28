@@ -55,7 +55,7 @@ export function SignoutButton() {
             </p>
 
             {message ? (
-              <p className="mt-4 text-[14px] text-red-700">{message}</p>
+              <p className="mt-4 text-[14px] text-[var(--mw-ink)]">{message}</p>
             ) : null}
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">

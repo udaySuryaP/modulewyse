@@ -43,7 +43,7 @@ export function TextInput({
         />
         <button
           aria-label={showPassword ? "Hide password" : "Show password"}
-          className="absolute right-3 top-1/2 grid size-8 -translate-y-1/2 place-items-center mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20"
+          className="absolute right-3 top-1/2 grid size-8 -translate-y-1/2 place-items-center mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-canvas)] text-[var(--mw-muted)] transition-colors hover:text-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20"
           onClick={() => setShowPassword((current) => !current)}
           type="button"
         >
@@ -103,8 +103,8 @@ export function FormMessage({
     <p
       className={cn(
         "text-center text-[14px] font-normal leading-[1.4] tracking-[-0.01em]",
-        tone === "error" && "text-red-700",
-        tone === "success" && "text-green-700",
+        tone === "error" && "text-[var(--mw-ink)]",
+        tone === "success" && "text-[var(--mw-ink)]",
         tone === "muted" && "text-[var(--mw-muted)]",
       )}
     >

@@ -1008,7 +1008,7 @@ function ContextControls({
             <button
               className={cn(
                 "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
-                answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
+                answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-primary-hover)] hover:text-white",
               )}
               key={type}
               onClick={() => onAnswerTypeChange(type)}
@@ -1278,7 +1278,7 @@ function SidebarRecentConversations({
                     {conversation.is_pinned ? "Unpin chat" : "Pin chat"}
                   </button>
                   <button
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-red-700 hover:bg-red-50"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-[var(--mw-ink)] hover:bg-[var(--mw-surface-strong)]"
                     onClick={() => {
                       setOpenMenuId(null);
                       setRenamingId(null);
@@ -1298,7 +1298,7 @@ function SidebarRecentConversations({
       </div>
 
       {actionError ? (
-        <p className="px-2 text-[11px] leading-[1.4] text-red-700">{actionError}</p>
+        <p className="px-2 text-[11px] leading-[1.4] text-[var(--mw-ink)]">{actionError}</p>
       ) : null}
 
       {deleteTarget ? (
@@ -1321,7 +1321,7 @@ function SidebarRecentConversations({
                 Cancel
               </button>
               <button
-                className="h-9 mw-radius-pill bg-red-700 px-4 text-[12px] font-medium text-white disabled:opacity-60"
+                className="h-9 mw-radius-pill bg-[var(--mw-primary)] px-4 text-[12px] font-medium text-white disabled:opacity-60"
                 disabled={isSavingAction}
                 onClick={() => void confirmDelete()}
                 type="button"
@@ -1422,10 +1422,10 @@ function Composer({
       className="fixed bottom-5 left-[calc(var(--chat-sidebar-width)+0.75rem)] right-3 z-30 sm:bottom-6 sm:left-[calc(var(--chat-sidebar-width)+1.5rem)] sm:right-6 lg:left-[calc(var(--chat-sidebar-width)+2rem)] lg:right-8"
       onSubmit={onSubmit}
     >
-      <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-canvas-soft)] p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
-        <div className="flex min-h-[52px] items-end gap-2 mw-radius-input border border-[var(--mw-hairline)] bg-white py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
+      <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-white p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
+        <div className="flex min-h-[52px] items-end gap-2 py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
           <textarea
-            className="mw-input max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden px-4 py-2 text-[15px] font-normal leading-[1.45] sm:min-h-[40px] sm:text-[16px]"
+            className="max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden bg-transparent px-4 py-2 text-[15px] font-normal leading-[1.45] text-[var(--mw-ink)] outline-none placeholder:text-[var(--mw-muted-soft)] sm:min-h-[40px] sm:text-[16px]"
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={onKeyDown}
             placeholder={placeholder}
@@ -1434,7 +1434,7 @@ function Composer({
             value={draft}
           />
           <button
-            className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[var(--mw-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-ink)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
+            className="grid h-10 shrink-0 place-items-center mw-radius-pill bg-[var(--mw-primary)] px-5 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--mw-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mw-primary-focus)]/20 disabled:pointer-events-none disabled:opacity-45 sm:px-6"
             disabled={!canSend}
             type="submit"
           >
@@ -1661,7 +1661,7 @@ function ActionButton({
       aria-label={ariaLabel}
       className={cn(
         "inline-flex h-9 items-center gap-2 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
-        active && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-ink)] hover:text-white",
+        active && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-primary-hover)] hover:text-white",
       )}
       onClick={onClick}
       type="button"

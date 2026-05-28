@@ -59,7 +59,7 @@ export default function HomePage() {
             CURATED NOTES / MODULE-AWARE ANSWERS / KTU BASED EXAM PREP COMPANION
           </p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
-            <p>© 2026 MODULEWYSE / STUDENT BETA</p>
+            <p>(c) 2026 modulewyse / student beta</p>
             <Link className="hover:text-[var(--mw-ink)]" href="/privacy">
               Privacy
             </Link>

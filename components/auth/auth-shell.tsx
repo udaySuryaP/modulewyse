@@ -37,7 +37,7 @@ export function AuthShell({
                 className="text-[20px] font-medium leading-none tracking-[-0.03em] text-[var(--mw-ink)] sm:text-[24px]"
                 href="/"
               >
-                ModuleWyse
+                modulewyse
               </Link>
 
               {eyebrow ? <p className="mw-label mt-5 sm:mt-10">{eyebrow}</p> : null}

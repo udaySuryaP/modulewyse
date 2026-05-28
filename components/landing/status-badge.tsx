@@ -14,7 +14,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
         normalizedStatus === "available" &&
           "bg-[var(--mw-surface-strong)] text-[var(--mw-ink)]",
         normalizedStatus === "beta" &&
-          "bg-[rgba(244,197,168,0.36)] text-[var(--mw-primary)]",
+          "bg-[var(--mw-surface-lift)] text-[var(--mw-ink)]",
         normalizedStatus === "coming soon" && "bg-[var(--mw-surface-strong)] text-[var(--mw-muted)]",
       )}
     >
