@@ -2,6 +2,26 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-28 - Premium Landing Hero Refinement
+
+### Completed
+- Removed the landing hero chat/input preview.
+- Removed the right-side answer workspace preview from the landing hero.
+- Removed the subject coverage section from the landing page.
+- Centered the landing hero content with stronger editorial spacing and hierarchy.
+- Strengthened the final CTA section with clearer product copy and auth-aware actions.
+- Preserved auth/RAG/backend behavior, route protection, Supabase logic, and rate limiting.
+- Ran validation and visual smoke checks.
+
+### Issues / Notes
+- App shell/chat redesign remains a later phase.
+- Final custom imagery remains optional.
+- Subject coverage remains available in the authenticated Subjects page.
+
+### Next
+- Redesign auth and onboarding pages using the new visual system.
+- Then continue app shell and chat redesign.
+
 ## 2026-05-28 - Phase 1 Landing Design Revamp
 
 ### Completed

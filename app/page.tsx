@@ -1,13 +1,10 @@
 import Link from "next/link";
 
 import { FeatureTile } from "@/components/landing/feature-tile";
-import { GlassButton } from "@/components/landing/glass-button";
-import { HeroAskBox } from "@/components/landing/hero-ask-box";
+import { LandingAuthActions } from "@/components/landing/landing-auth-actions";
 import { LandingNavigation } from "@/components/landing/landing-navigation";
 import { PageOverlay } from "@/components/landing/page-overlay";
-import { ProductPreviewPanel } from "@/components/landing/product-preview-panel";
 import { SectionHeader } from "@/components/landing/section-header";
-import { SubjectStatusPanel } from "@/components/landing/subject-status-panel";
 import { VideoBackground } from "@/components/landing/video-background";
 import { LiquidReveal } from "@/components/motion/liquid-motion";
 
@@ -165,29 +162,25 @@ export default function HomePage() {
       <main className="relative min-h-dvh overflow-hidden">
         <LandingNavigation />
 
-        <section className="relative z-10 pb-[var(--mw-space-section)] pt-[var(--mw-space-lg)] lg:pb-[var(--mw-space-section-lg)]">
-          <LiquidReveal className="mw-section grid gap-[var(--mw-space-xxl)] lg:grid-cols-[minmax(0,1fr)_minmax(360px,520px)] lg:items-center">
-            <div className="max-w-[760px]">
-              <p className="mw-label">KTU focused academic intelligence</p>
-              <h1 className="mw-display-page mt-[var(--mw-space-lg)] max-w-[780px]">
+        <section className="relative z-10 pb-[calc(var(--mw-space-section-lg)+var(--mw-space-xl))] pt-[var(--mw-space-section)] lg:pb-[8rem] lg:pt-[7rem]">
+          <LiquidReveal className="mw-section">
+            <div className="mx-auto max-w-[940px] text-center">
+              <p className="mw-label text-[var(--mw-ink)]">
+                KTU focused academic intelligence
+              </p>
+              <h1 className="mw-display-page mx-auto mt-[var(--mw-space-lg)] max-w-[900px] text-balance">
                 Syllabus-grounded AI exam prep for OOP.
               </h1>
-              <p className="mt-[var(--mw-space-lg)] max-w-[640px] text-[length:var(--mw-type-subtitle)] font-normal leading-[1.5] text-[var(--mw-body)]">
-                ModuleWyse turns reviewed KTU notes into structured answers,
-                source-backed explanations, and exam-oriented revision formats.
+              <p className="mx-auto mt-[var(--mw-space-lg)] max-w-[670px] text-[length:var(--mw-type-subtitle)] font-normal leading-[1.55] text-[var(--mw-body)]">
+                ModuleWyse turns reviewed KTU notes into structured,
+                source-backed explanations and exam-oriented revision formats.
               </p>
-              <div className="mt-[var(--mw-space-xl)] flex flex-col gap-[var(--mw-space-sm)] sm:flex-row">
-                <GlassButton href="/signup">Get Started</GlassButton>
-                <GlassButton href="/login" variant="secondary">
-                  Login
-                </GlassButton>
-              </div>
-              <div className="mt-[var(--mw-space-xxl)]">
-                <HeroAskBox />
-              </div>
+              <LandingAuthActions className="mt-[var(--mw-space-xl)]" />
+              <p className="mw-meta mx-auto mt-[var(--mw-space-lg)] max-w-[520px]">
+                Built for focused academic revision, not generic chatbot
+                browsing.
+              </p>
             </div>
-
-            <ProductPreviewPanel />
           </LiquidReveal>
         </section>
 
@@ -290,50 +283,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mw-section-frame relative z-10 py-[var(--mw-space-section)] lg:py-[var(--mw-space-section-lg)]">
-          <div className="mw-section grid gap-[var(--mw-space-xl)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div>
-              <SectionHeader
-                eyebrow="Subject coverage"
-                title="Honest academic scope for the private beta."
-                description="ModuleWyse currently supports PBCST304 / Object Oriented Programming under the KTU 2024 scheme."
-              />
-              <div className="mt-[var(--mw-space-xl)]">
-                <SubjectStatusPanel />
-              </div>
-            </div>
-
-            <div className="mw-slab">
-              {[
-                ["Module 1", "Ready", "Reviewed notes available"],
-                ["Module 2", "Ready", "Reviewed notes available"],
-                ["Module 3", "Ready", "Reviewed notes available"],
-                ["Module 4", "In review", "Excluded from answers"],
-                ["Module 5", "Not in scheme", "Does not exist under KTU 2024"],
-              ].map(([module, status, detail]) => (
-                <div
-                  className="grid gap-[var(--mw-space-sm)] border-b border-[var(--mw-hairline)] p-[var(--mw-space-lg)] last:border-b-0 sm:grid-cols-[1fr_auto]"
-                  key={module}
-                >
-                  <div>
-                    <h3 className="mw-title-sm">{module}</h3>
-                    <p className="mw-meta mt-[var(--mw-space-xs)]">
-                      {detail}
-                    </p>
-                  </div>
-                  <span
-                    className={
-                      status === "Ready" ? "mw-badge-blue" : "mw-badge"
-                    }
-                  >
-                    {status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section className="mw-section relative z-10 py-[var(--mw-space-section)] lg:py-[var(--mw-space-section-lg)]">
           <SectionHeader
             align="center"
@@ -358,32 +307,24 @@ export default function HomePage() {
         </section>
 
         <section className="relative z-10 bg-[var(--mw-navy)] py-[var(--mw-space-section)] text-white lg:py-[var(--mw-space-section-lg)]">
-          <div className="mw-section grid gap-[var(--mw-space-xl)] lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
+          <div className="mw-section">
+            <div className="mx-auto max-w-[860px] text-center">
               <p className="mw-label text-white/60">Private beta</p>
-              <h2 className="mw-display-section mt-[var(--mw-space-md)] max-w-[760px] text-white">
+              <h2 className="mw-display-section mx-auto mt-[var(--mw-space-md)] max-w-[760px] text-white">
                 Start studying with clarity.
               </h2>
-              <p className="mt-[var(--mw-space-lg)] max-w-[620px] text-[length:var(--mw-type-body)] leading-[1.6] text-white/70">
-                Try the focused OOP answer workspace, review sources, and send
-                feedback from Settings as the beta expands.
+              <p className="mx-auto mt-[var(--mw-space-lg)] max-w-[680px] text-[length:var(--mw-type-body)] leading-[1.6] text-white/70">
+                Ask syllabus-grounded questions, choose the answer depth you
+                need, and revise from structured explanations built around
+                reviewed ModuleWyse notes.
               </p>
-            </div>
-            <div className="flex flex-col gap-[var(--mw-space-sm)] sm:flex-row">
-              <GlassButton
-                className="bg-white text-[var(--mw-navy)] hover:bg-white/90"
-                href="/signup"
-                variant="primary"
-              >
-                Get Started
-              </GlassButton>
-              <GlassButton
-                className="border-white/25 bg-transparent text-white hover:bg-white/10"
-                href="/login"
-                variant="secondary"
-              >
-                Login
-              </GlassButton>
+              <LandingAuthActions
+                className="mt-[var(--mw-space-xl)]"
+                inverse
+              />
+              <p className="mw-meta mx-auto mt-[var(--mw-space-lg)] max-w-[520px] text-white/55">
+                Private beta currently focuses on reviewed OOP study support.
+              </p>
             </div>
           </div>
         </section>
