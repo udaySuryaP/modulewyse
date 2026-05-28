@@ -190,19 +190,6 @@ export default async function SettingsPage() {
           </div>
         </section>
 
-        <section className="mw-panel flex flex-col gap-[var(--mw-space-md)] p-[var(--mw-space-lg)] sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="mw-label text-[11px]">Session</p>
-            <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
-              Sign out
-            </h2>
-            <p className="mw-meta mt-[var(--mw-space-xs)] max-w-[560px]">
-              End this browser session when you are done using ModuleWyse.
-            </p>
-          </div>
-          <SignoutButton />
-        </section>
-
         <section className="mw-panel p-[var(--mw-space-lg)]">
           <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
             <div>
@@ -217,6 +204,19 @@ export default async function SettingsPage() {
             </div>
             <AppFeedbackForm defaultReplyEmail={email} />
           </div>
+        </section>
+
+        <section className="mw-panel flex flex-col gap-[var(--mw-space-md)] p-[var(--mw-space-lg)] sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="mw-label text-[11px]">Session</p>
+            <h2 className="mw-heading-sm mt-[var(--mw-space-sm)] text-[var(--mw-ink)]">
+              Sign out
+            </h2>
+            <p className="mw-meta mt-[var(--mw-space-xs)] max-w-[560px]">
+              End this browser session when you are done using ModuleWyse.
+            </p>
+          </div>
+          <SignoutButton />
         </section>
 
         <section className="mw-panel flex flex-col gap-[var(--mw-space-md)] p-[var(--mw-space-lg)] sm:flex-row sm:items-center sm:justify-between">

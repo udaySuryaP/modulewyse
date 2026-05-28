@@ -44,6 +44,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --radius-xs: var(--mw-radius-input);
   --radius-sm: var(--mw-radius-input);
   --radius-md: var(--mw-radius-input);
   --radius-lg: var(--mw-radius-card);
@@ -74,10 +75,10 @@
   --mw-surface-lift: #f7f7f7;
   --mw-semantic-success: #05b169;
   --mw-shadow-soft: none;
-  --mw-radius-input: 0.75rem;
+  --mw-radius-input: 1.5rem;
   --mw-radius-card: 1.5rem;
   --mw-radius-large: 1.5rem;
-  --mw-radius-pill: 9999px;
+  --mw-radius-pill: 1.5rem;
   --mw-space-xxs: 0.25rem;
   --mw-space-xs: 0.5rem;
   --mw-space-sm: 0.75rem;
@@ -377,7 +378,7 @@
     min-height: 2.75rem;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--mw-hairline-strong);
+    border: 0;
     border-radius: var(--mw-radius-pill);
     background: var(--mw-surface-strong);
     color: var(--mw-ink);
@@ -385,12 +386,11 @@
     font-size: 1rem;
     font-weight: 600;
     line-height: 1;
-    transition: background-color 180ms ease, border-color 180ms ease;
+    transition: background-color 180ms ease, color 180ms ease;
   }
 
   .mw-pill-outline:hover {
-    background: var(--mw-surface-card);
-    border-color: var(--mw-ink);
+    background: var(--mw-surface-lift);
   }
 
   .mw-badge {
@@ -417,13 +417,12 @@
   }
 
   .mw-input {
-    border: 0;
-    border-bottom: 1px solid var(--mw-hairline-strong);
-    border-radius: 0;
-    background: transparent;
+    border: 1px solid var(--mw-hairline);
+    border-radius: var(--mw-radius-input);
+    background: var(--mw-surface-card);
     color: var(--mw-ink);
     outline: none;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
+    transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
   }
 
   .mw-radius-input {
@@ -450,6 +449,29 @@
   .mw-input:focus-visible {
     border-color: var(--mw-primary-focus);
     box-shadow: none;
+  }
+
+  .mw-select {
+    min-height: 2.75rem;
+    width: 100%;
+    min-width: 0;
+    appearance: none;
+    border: 0;
+    border-radius: var(--mw-radius-card);
+    background: var(--mw-surface-strong);
+    color: var(--mw-ink);
+    outline: none;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .mw-select:hover {
+    background: var(--mw-surface-lift);
+  }
+
+  .mw-select:focus,
+  .mw-select:focus-visible {
+    background: var(--mw-surface-card);
+    box-shadow: inset 0 0 0 1px var(--mw-primary-focus);
   }
 
   .mw-badge-blue {

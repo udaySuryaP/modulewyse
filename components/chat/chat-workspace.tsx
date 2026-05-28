@@ -923,7 +923,7 @@ function MobileChatTopbar({
               {answerTypes.map((type) => (
                 <button
                   className={cn(
-                    "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
+                    "h-9 mw-radius-card border border-[var(--mw-hairline)] bg-white px-3 text-[12px] font-medium text-[var(--mw-body)]",
                     answerType === type && "bg-[var(--mw-primary)] text-white",
                   )}
                   key={type}
@@ -995,7 +995,7 @@ function ContextControls({
   return (
     <div
       className={cn(
-        "border border-[var(--mw-hairline)] bg-white px-4 py-4 sm:px-5 sm:py-4",
+        "mw-radius-card border border-[var(--mw-hairline)] bg-white px-4 py-4 sm:px-5 sm:py-4",
         className,
       )}
     >
@@ -1007,7 +1007,7 @@ function ContextControls({
           {answerTypes.map((type) => (
             <button
               className={cn(
-                "h-9 mw-radius-pill border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
+                "h-9 mw-radius-card border border-[var(--mw-hairline)] bg-white px-4 text-[12px] font-medium text-[var(--mw-body)] transition-colors hover:bg-[var(--mw-surface-strong)] hover:text-[var(--mw-ink)]",
                 answerType === type && "bg-[var(--mw-primary)] text-white hover:bg-[var(--mw-primary-hover)] hover:text-white",
               )}
               key={type}
@@ -1140,14 +1140,14 @@ function SidebarRecentConversations({
       >
         <Link
           className={cn(
-            "flex min-w-0 items-center gap-2 mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-surface-strong)] px-3 py-2.5 text-[12px] font-medium text-[var(--mw-ink)] transition-colors hover:bg-white",
-            !activeConversationId && "border-[var(--mw-primary)] bg-white",
+            "mw-pill-outline h-10 min-h-0 min-w-0 !justify-start gap-2 px-3 py-2.5 text-left !text-[12px]",
+            !activeConversationId && "bg-[var(--mw-surface-lift)]",
           )}
           href="/chat"
           onClick={onNavigate}
         >
           <Plus className="size-3.5 shrink-0" />
-          <span className="truncate">New chat</span>
+          <span className="min-w-0 flex-1 truncate text-left">New chat</span>
         </Link>
 
         {conversations.slice(0, 8).map((conversation) => {
@@ -1423,9 +1423,9 @@ function Composer({
       onSubmit={onSubmit}
     >
       <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-white p-1.5 shadow-[0_16px_60px_rgba(12,10,9,0.08)] sm:p-2">
-        <div className="flex min-h-[52px] items-end gap-2 py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
+        <div className="mw-radius-card flex min-h-[52px] items-end gap-2 py-1.5 pl-2.5 pr-1.5 sm:min-h-[58px] sm:gap-3 sm:py-2 sm:pl-3 sm:pr-2">
           <textarea
-            className="max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden bg-transparent px-4 py-2 text-[15px] font-normal leading-[1.45] text-[var(--mw-ink)] outline-none placeholder:text-[var(--mw-muted-soft)] sm:min-h-[40px] sm:text-[16px]"
+            className="mw-radius-card max-h-[180px] min-h-[36px] min-w-0 flex-1 resize-none overflow-hidden bg-transparent px-4 py-2 text-[15px] font-normal leading-[1.45] text-[var(--mw-ink)] outline-none placeholder:text-[var(--mw-muted-soft)] sm:min-h-[40px] sm:text-[16px]"
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={onKeyDown}
             placeholder={placeholder}

@@ -75,7 +75,7 @@ export function SelectInput({
     <span className="relative block">
       <select
         className={cn(
-          "mw-input h-11 w-full min-w-0 appearance-none py-0 pl-[var(--mw-space-md)] pr-[var(--mw-space-xxl)] text-[length:var(--mw-type-link)] font-normal [&>option]:bg-white [&>option]:text-[var(--mw-ink)]",
+          "mw-select py-0 pl-[var(--mw-space-md)] pr-[calc(var(--mw-space-xxl)+0.5rem)] text-[length:var(--mw-type-link)] font-medium [&>option]:bg-white [&>option]:text-[var(--mw-ink)]",
           className,
         )}
         {...props}
@@ -84,7 +84,7 @@ export function SelectInput({
       </select>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--mw-muted)]"
+        className="pointer-events-none absolute right-2.5 top-1/2 grid size-8 -translate-y-1/2 place-items-center mw-radius-card bg-white text-[var(--mw-muted)]"
       >
         <ChevronDown className="size-4" />
       </span>
