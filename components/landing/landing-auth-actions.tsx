@@ -38,13 +38,13 @@ export function LandingAuthActions({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-[var(--mw-space-sm)] sm:flex-row",
+        "mx-auto flex w-full max-w-[390px] flex-col items-center justify-center gap-[var(--mw-space-sm)] sm:w-auto sm:max-w-none sm:flex-row",
         className,
       )}
     >
       <GlassButton
         className={cn(
-          "min-w-[148px]",
+          "w-full min-w-[168px] sm:w-auto",
           inverse && "bg-white text-[var(--mw-navy)] hover:bg-white/90",
         )}
         onClick={() => handleAuthAction(ROUTES.SIGNUP)}
@@ -53,7 +53,7 @@ export function LandingAuthActions({
       </GlassButton>
       <GlassButton
         className={cn(
-          "min-w-[148px]",
+          "w-full min-w-[168px] sm:w-auto",
           inverse &&
             "border-white/25 bg-transparent text-white hover:bg-white/10",
         )}

@@ -22,7 +22,7 @@ export function ProductPreviewPanel() {
             </p>
           </div>
 
-          <div className="border border-[var(--mw-hairline-strong)] bg-white p-[var(--mw-space-lg)]">
+          <div className="mw-radius-card border border-[var(--mw-hairline-strong)] bg-white p-[var(--mw-space-lg)]">
             <div className="flex flex-wrap items-center gap-[var(--mw-space-xs)]">
               <span className="mw-badge">Exam-ready</span>
               {sourceChips.map((chip) => (
@@ -45,7 +45,7 @@ export function ProductPreviewPanel() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 border border-[var(--mw-hairline)]">
+          <div className="grid grid-cols-3 overflow-hidden mw-radius-card border border-[var(--mw-hairline)]">
             {["Notes", "Sources", "Depth"].map((item) => (
               <div
                 className="border-r border-[var(--mw-hairline)] p-[var(--mw-space-sm)] text-center last:border-r-0"
@@ -58,7 +58,7 @@ export function ProductPreviewPanel() {
         </div>
       </div>
 
-      <div className="absolute -bottom-6 right-4 hidden w-[250px] border border-[var(--mw-hairline-strong)] bg-[var(--mw-accent-blue-soft)] p-[var(--mw-space-md)] lg:block">
+      <div className="absolute -bottom-6 right-4 hidden w-[250px] mw-radius-card border border-[var(--mw-hairline-strong)] bg-[var(--mw-accent-blue-soft)] p-[var(--mw-space-md)] lg:block">
         <p className="mw-label text-[var(--mw-navy)]">Scope guard</p>
         <p className="mt-[var(--mw-space-sm)] text-[length:var(--mw-type-link)] leading-[1.45] text-[var(--mw-navy)]">
           Answers stay inside available reviewed notes.

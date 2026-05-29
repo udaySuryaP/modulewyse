@@ -45,7 +45,7 @@ export function SignoutButton() {
 
       {isOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-[rgba(12,10,9,0.32)] px-5">
-          <div className="w-full max-w-[420px] border border-[var(--mw-hairline)] bg-white p-6 text-center">
+          <div className="w-full max-w-[420px] mw-radius-card border border-[var(--mw-hairline)] bg-white p-6 text-center">
             <h2 className="mw-display-section">
               Sign out?
             </h2>

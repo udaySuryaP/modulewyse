@@ -794,7 +794,7 @@ export function ChatWorkspace({
 
           <div
             className={cn(
-              "min-w-0 max-w-full min-h-[390px] border border-[var(--mw-hairline)] bg-white p-3 sm:min-h-[520px] sm:p-5",
+              "min-w-0 max-w-full min-h-[390px] mw-radius-card border border-[var(--mw-hairline)] bg-white p-3 sm:min-h-[520px] sm:p-5",
               isProfileIncomplete ? "md:row-start-3" : "md:row-start-2",
             )}
           >
@@ -1340,7 +1340,7 @@ function SetupPrompt({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "border border-[var(--mw-hairline)] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
+        "mw-radius-card border border-[var(--mw-hairline)] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6",
         className,
       )}
     >
@@ -1560,7 +1560,7 @@ function AssistantMessage({
   return (
     <article
       className={cn(
-        "min-w-0 max-w-full overflow-hidden border border-[var(--mw-hairline)] bg-white",
+        "min-w-0 max-w-full overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-white",
         preferences.compactAnswerCards ? "p-4" : "p-5",
       )}
     >
@@ -1609,7 +1609,7 @@ function AssistantMessage({
 
 function LoadingAnswer() {
   return (
-    <div className="min-w-0 max-w-full border border-[var(--mw-hairline)] bg-white p-5">
+    <div className="min-w-0 max-w-full mw-radius-card border border-[var(--mw-hairline)] bg-white p-5">
       <MinimalLoader label="Searching reviewed notes" variant="inline" />
     </div>
   );
@@ -1627,7 +1627,7 @@ function EdgeCard({
   onAction: () => void;
 }) {
   return (
-    <div className="min-w-0 max-w-full border border-[var(--mw-hairline)] bg-white p-5">
+    <div className="min-w-0 max-w-full mw-radius-card border border-[var(--mw-hairline)] bg-white p-5">
       <h3 className="text-[20px] font-medium leading-[1.2]">
         {title}
       </h3>

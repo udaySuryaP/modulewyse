@@ -44,7 +44,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
 
   return (
     <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="min-w-0 overflow-hidden border border-[var(--mw-hairline)] bg-white p-4 sm:p-8">
+      <section className="min-w-0 overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-white p-4 sm:p-8">
         <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:justify-between">
           <div className="min-w-0">
             <p className="mw-label">
@@ -103,11 +103,8 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
           </div>
 
           {subject.modules.length > 0 ? (
-          <div className="mt-4 grid overflow-hidden border border-[var(--mw-hairline)] bg-white lg:grid-cols-2">
+          <div className="mt-4 grid overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-white lg:grid-cols-2">
               {subject.modules.map((module) => {
-                const moduleChatEnabled =
-                  subjectChatEnabled && module.hasReadyContent;
-
                 return (
                   <article
                     className="min-w-0 border-b border-[var(--mw-hairline)] p-4 lg:border-r"
@@ -135,23 +132,6 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
                     <p className="mt-3 text-[13px] leading-[1.45] text-[var(--mw-muted)]">
                       {moduleMeta(module)}
                     </p>
-
-                    {moduleChatEnabled ? (
-                      <Link
-                        className="mw-pill-outline mt-4 w-full justify-center sm:w-auto"
-                        href={`/chat?subject=${subject.slug}&module=${module.value}`}
-                      >
-                        Start Chat
-                      </Link>
-                    ) : (
-                      <button
-                        className="mt-4 h-10 w-full cursor-not-allowed mw-radius-pill border border-[var(--mw-hairline)] bg-[var(--mw-surface-strong)] px-4 text-[13px] font-medium text-[var(--mw-muted)] sm:w-auto"
-                        disabled
-                        type="button"
-                      >
-                        Notes not ready yet
-                      </button>
-                    )}
                   </article>
                 );
               })}
@@ -164,7 +144,7 @@ export function SubjectDetailPanel({ subject }: SubjectDetailPanelProps) {
         </div>
       </section>
 
-      <aside className="min-w-0 border border-[var(--mw-hairline)] bg-white p-4 sm:p-6 xl:self-start">
+      <aside className="min-w-0 mw-radius-card border border-[var(--mw-hairline)] bg-white p-4 sm:p-6 xl:self-start">
         <p className="mw-label">
           Topic preview
         </p>
