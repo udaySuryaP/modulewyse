@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
+import { Field, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { ToastNotice, type ToastPriority } from "@/components/ui/toast-notice";
 import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { env, hasSupabasePublicEnv } from "@/lib/env/public";
 import {
@@ -14,6 +15,16 @@ import {
   readPendingQuestion,
 } from "@/lib/landing-flow";
 import { createClient } from "@/lib/supabase/client";
+
+type AuthToast = {
+  description?: string;
+  priority: ToastPriority;
+  title: string;
+};
+
+function isValidEmail(value: string) {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+}
 
 function authErrorMessage(message: string) {
   const lowerMessage = message.toLowerCase();
@@ -39,32 +50,66 @@ export function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [success, setSuccess] = useState("");
+  const [toast, setToast] = useState<AuthToast | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage("");
-    setSuccess("");
+    setToast(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
 
     if (!fullName.trim()) {
-      setMessage("Full name is required.");
+      setToast({
+        description: "Add your name before creating the account.",
+        priority: "error",
+        title: "Full name is required",
+      });
+      return;
+    }
+
+    if (!normalizedEmail) {
+      setToast({
+        description: "Use the email address you want to use for ModuleWyse.",
+        priority: "error",
+        title: "Email is required",
+      });
+      return;
+    }
+
+    if (!isValidEmail(normalizedEmail)) {
+      setToast({
+        description: "Use a valid email address, for example name@example.com.",
+        priority: "error",
+        title: "Enter a valid email",
+      });
       return;
     }
 
     if (password.length < 8) {
-      setMessage("Use at least 8 characters.");
+      setToast({
+        description: "Create a password with at least 8 characters.",
+        priority: "error",
+        title: "Password is too short",
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      setMessage("Passwords do not match.");
+      setToast({
+        description: "Re-enter the same password in both password fields.",
+        priority: "error",
+        title: "Passwords do not match",
+      });
       return;
     }
 
     if (!hasSupabasePublicEnv()) {
-      setMessage("Supabase is not configured yet.");
+      setToast({
+        description: "Account creation is temporarily unavailable.",
+        priority: "warning",
+        title: "Supabase is not configured yet",
+      });
       return;
     }
 
@@ -73,7 +118,7 @@ export function SignupForm() {
     try {
       const supabase = createClient();
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
         options: {
           data: {
@@ -84,7 +129,11 @@ export function SignupForm() {
       });
 
       if (error) {
-        setMessage(authErrorMessage(error.message));
+        setToast({
+          description: authErrorMessage(error.message),
+          priority: "error",
+          title: "Could not create account",
+        });
         return;
       }
 
@@ -99,18 +148,34 @@ export function SignupForm() {
         return;
       }
 
-      setSuccess(
-        "Check your email. Confirm your account, then sign in to continue.",
-      );
+      setToast({
+        description: "Confirm your account from the email link, then sign in to continue.",
+        priority: "success",
+        title: "Check your email",
+      });
     } catch {
-      setMessage("Unable to connect. Please try again.");
+      setToast({
+        description: "Check your connection and try again.",
+        priority: "error",
+        title: "Unable to connect",
+      });
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="grid gap-3 sm:gap-4" onSubmit={handleSubmit}>
+    <>
+      {toast ? (
+        <ToastNotice
+          description={toast.description}
+          onDismiss={() => setToast(null)}
+          priority={toast.priority}
+          title={toast.title}
+        />
+      ) : null}
+
+      <form className="grid gap-3 sm:gap-4" noValidate onSubmit={handleSubmit}>
       <div className="mb-1">
         <h1 className="mw-heading-sm text-[var(--mw-ink)]">
           Get started
@@ -163,9 +228,6 @@ export function SignupForm() {
         />
       </Field>
 
-      {message ? <FormMessage>{message}</FormMessage> : null}
-      {success ? <FormMessage tone="success">{success}</FormMessage> : null}
-
       <SubmitButton disabled={isSubmitting}>
         {isSubmitting ? "Creating..." : "Create Account"}
       </SubmitButton>
@@ -176,6 +238,7 @@ export function SignupForm() {
           Login
         </Link>
       </p>
-    </form>
+      </form>
+    </>
   );
 }

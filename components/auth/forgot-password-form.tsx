@@ -3,24 +3,57 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
+import { Field, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { ToastNotice, type ToastPriority } from "@/components/ui/toast-notice";
 import { env, hasSupabasePublicEnv } from "@/lib/env/public";
 import { createClient } from "@/lib/supabase/client";
 
+type AuthToast = {
+  description?: string;
+  priority: ToastPriority;
+  title: string;
+};
+
+function isValidEmail(value: string) {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+}
+
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [success, setSuccess] = useState("");
+  const [toast, setToast] = useState<AuthToast | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage("");
-    setSuccess("");
+    setToast(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setToast({
+        description: "Enter the email address linked to your account.",
+        priority: "error",
+        title: "Email is required",
+      });
+      return;
+    }
+
+    if (!isValidEmail(normalizedEmail)) {
+      setToast({
+        description: "Use a valid email address, for example name@example.com.",
+        priority: "error",
+        title: "Enter a valid email",
+      });
+      return;
+    }
 
     if (!hasSupabasePublicEnv()) {
-      setMessage("Supabase is not configured yet.");
+      setToast({
+        description: "Password reset is temporarily unavailable.",
+        priority: "warning",
+        title: "Supabase is not configured yet",
+      });
       return;
     }
 
@@ -28,40 +61,58 @@ export function ForgotPasswordForm() {
 
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/settings/account`,
       });
 
       if (error) {
-        setMessage("Unable to send reset link. Please try again.");
+        setToast({
+          description: "Please try again in a moment.",
+          priority: "error",
+          title: "Unable to send reset link",
+        });
         return;
       }
 
-      setSuccess(
-        "Check your email. We sent a password reset link if an account exists for this email.",
-      );
+      setToast({
+        description:
+          "If an account exists for this email, a password reset link has been sent.",
+        priority: "success",
+        title: "Check your email",
+      });
     } catch {
-      setMessage("Unable to send reset link. Please try again.");
+      setToast({
+        description: "Please try again in a moment.",
+        priority: "error",
+        title: "Unable to send reset link",
+      });
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="grid gap-4" onSubmit={handleSubmit}>
+    <>
+      {toast ? (
+        <ToastNotice
+          description={toast.description}
+          onDismiss={() => setToast(null)}
+          priority={toast.priority}
+          title={toast.title}
+        />
+      ) : null}
+
+      <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
       <Field label="Email">
         <TextInput
           autoComplete="email"
           onChange={(event) => setEmail(event.target.value)}
           placeholder="name@example.com"
           required
-          type="email"
+          type="text"
           value={email}
         />
       </Field>
-
-      {message ? <FormMessage>{message}</FormMessage> : null}
-      {success ? <FormMessage tone="success">{success}</FormMessage> : null}
 
       <SubmitButton disabled={isSubmitting}>
         {isSubmitting ? "Sending..." : "Send Reset Link"}
@@ -73,6 +124,7 @@ export function ForgotPasswordForm() {
           Back to login
         </Link>
       </p>
-    </form>
+      </form>
+    </>
   );
 }

@@ -74,6 +74,8 @@
   --mw-surface-strong: #eef0f3;
   --mw-surface-lift: #f7f7f7;
   --mw-semantic-success: #05b169;
+  --mw-semantic-warning: #c27a00;
+  --mw-semantic-danger: #7f1d1d;
   --mw-shadow-soft: none;
   --mw-radius-input: 1.5rem;
   --mw-radius-card: 1.5rem;
@@ -112,7 +114,7 @@
   --muted-foreground: var(--mw-muted);
   --accent: var(--mw-surface-strong);
   --accent-foreground: var(--mw-ink);
-  --destructive: #7f1d1d;
+  --destructive: var(--mw-semantic-danger);
   --border: var(--mw-hairline);
   --input: var(--mw-hairline-strong);
   --ring: var(--mw-primary-focus);

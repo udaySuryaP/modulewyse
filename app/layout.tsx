@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
@@ -49,6 +50,7 @@ export default function RootLayout({
       <body className="min-h-dvh font-sans antialiased">
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
