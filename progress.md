@@ -2,6 +2,52 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-29 - Post-Design Production QA on Main
+
+### Completed
+- Ran full post-design production confidence checks on `main`.
+- Verified local git baseline, sync with `origin/main`, and production commit alignment.
+- Ran local validation:
+  - `npm install`
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Verified Vercel Production deployment for `https://modulewyse.vercel.app` is ready and deployed from `main`.
+- Verified required Vercel Production/Preview env names are present without printing values.
+- Verified public routes return 200:
+  - `/`
+  - `/login`
+  - `/signup`
+  - `/privacy`
+  - `/terms`
+- Verified protected logged-out routes redirect to `/login?next=...`.
+- Verified logged-out `/api/chat/answer` and `/api/feedback` return 401.
+- Verified Supabase live tables, migrations, RLS policies, grants, and owner-scoped feedback/conversation/message policies.
+- Verified live PBCST304 RAG-ready content remains notes-only for Modules 1-3.
+- Verified Module 4 has no ready embedded chunks and Module 5 has no PBCST304 rows.
+- Verified `match_content_chunks` exists and filters ready embedded content.
+- Verified retrieval code still restricts to PBCST304/OOP notes, Modules 1-3, source type `notes`, and ready status.
+- Verified rate-limit implementation remains server-only and ordered before retrieval/embedding/OpenAI calls.
+- Ran public browser checks for landing, auth pages, legal pages, mobile landing overflow, console errors, and protected route redirects.
+- Reviewed Vercel build/runtime logs and Supabase API/auth/postgres logs.
+- Documented findings in `docs/QA_POST_DESIGN_MAIN_REPORT.md`.
+
+### Issues / Notes
+- No critical or high blockers were found in this pass.
+- Full authenticated browser RAG/regenerate/rate-limit QA was not re-executed because no disposable confirmed production session/credentials were available in Chrome or the in-app browser.
+- Supabase advisor warnings remain:
+  - `vector` extension is installed in `public`
+  - leaked password protection is disabled
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+- Legal metadata currently duplicates the ModuleWyse suffix on `/privacy` and `/terms`.
+- Private beta can continue with trusted testers, but public launch remains deferred until a final authenticated tester run and legal/operator details are complete.
+
+### Next
+- Re-run a short authenticated production smoke pass with a disposable confirmed QA account before expanding testers.
+- Continue private beta rollout if authenticated smoke remains clean.
+- Address Supabase advisor warnings and legal metadata polish in later maintenance passes.
+
 ## 2026-05-28 - Product-Oriented Landing Design System
 
 ### Completed
