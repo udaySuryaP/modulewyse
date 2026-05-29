@@ -9,6 +9,7 @@ const publicRoutes = new Set([
   "/login",
   "/signup",
   "/forgot-password",
+  "/reset-password",
   "/auth/callback",
   "/privacy",
   "/terms",

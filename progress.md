@@ -2,6 +2,78 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-29 - Password Recovery Redirect Fix
+
+### Completed
+- Fixed the Supabase recovery-link flow so reset links are treated as recovery sessions before normal authenticated app redirects.
+- Made `/auth/callback?next=/reset-password` recovery-aware and added a `flow=recovery` marker to new reset-email redirect URLs.
+- Updated recovery callback failures to return users to `/forgot-password?error=reset_link`.
+- Preserved `/reset-password` as an auth-flow route so recovery users are not redirected to `/chat`.
+- Displayed the recovery user identity on the reset-password page when Supabase provides an email.
+- Kept the fallback identity copy: `Updating password for your ModuleWyse account`.
+- Validated new password and confirmation fields before calling Supabase Auth.
+- Updated the password through `supabase.auth.updateUser({ password })`.
+- Signed users out after successful password update.
+- Redirected successful recovery updates to `/login?password=updated`.
+- Added a login success toast for `/login?password=updated`.
+- Aligned the reset identity row and form with the current ModuleWyse design system.
+- Preserved protected app route behavior, RAG behavior, source restrictions, rate limiting, Supabase data behavior, and KTU 2024 Module 5 handling.
+- Ran validation:
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Ran local route smoke checks for `/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/privacy`, `/terms`, logged-out `/chat`, and recovery callback failure routing.
+
+### Issues / Notes
+- Root cause: Supabase recovery links create a temporary authenticated session, so the app must prioritize the recovery callback/reset route before normal logged-in redirects.
+- Email expiry remains 10 minutes.
+- Supabase reset password email templates should keep using `{{ .ConfirmationURL }}` and avoid hardcoded localhost or visible raw token URLs in the body.
+- Full live reset QA on the `design-update` deployment is still pending after this fix.
+- No merge to `main` was done.
+- No production deploy was explicitly triggered.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Run final password reset QA on the `design-update` deployment with a disposable confirmed account.
+- Merge `design-update` only after reset QA passes and approval is given.
+- Run short production auth/RAG smoke after merge.
+
+## 2026-05-29 - Forgot Password Recovery Flow
+
+### Completed
+- Implemented the forgot-password request flow with `supabase.auth.resetPasswordForEmail`.
+- Updated reset email redirects to use `NEXT_PUBLIC_APP_URL` with `/auth/callback?next=/reset-password`, avoiding hardcoded production or localhost URLs.
+- Added `/reset-password` with a dedicated reset-password form.
+- Added new-password and confirm-password validation:
+  - required fields
+  - minimum 8 characters
+  - matching confirmation
+- Updated `/auth/callback` so password recovery exchanges the Supabase code, redirects to `/reset-password`, and sets a short-lived recovery marker.
+- Added expired/invalid reset-link handling for `/reset-password` when there is no valid recovery marker/session.
+- Kept forgot-password success copy non-enumerating: users see the same success state regardless of whether an account exists.
+- Added `/reset-password` to public auth-flow routes without weakening protection for `/chat`, `/subjects`, `/library`, `/settings`, or nested settings pages.
+- Preserved RAG retrieval scope, source restrictions, rate limiting, Supabase data behavior, OpenAI behavior, and KTU 2024 Module 5 handling.
+- Ran validation:
+  - `npm install`
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Ran local route smoke checks for `/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/privacy`, `/terms`, and logged-out `/chat` redirect behavior.
+
+### Issues / Notes
+- Email link expiry is aligned to the current 10-minute Supabase Auth OTP/link expiry.
+- Full live email reset QA with a disposable inbox is still pending; local checks verified route rendering, public/protected routing, and invalid/no-session reset-link handling.
+- No GitHub/main merge was done.
+- No production deploy decision was made in this task; Vercel may create a branch preview after the push.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Run password reset QA on the `design-update` deployment with a disposable account.
+- After recovery QA passes, merge `design-update` only when approved.
+- Continue private beta monitoring.
+
 ## 2026-05-29 - KTU 2024 Module Count Rule Generalized
 
 ### Completed
