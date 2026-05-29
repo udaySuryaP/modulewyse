@@ -2,6 +2,35 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-30 - Reset Password UI Polish
+
+### Completed
+- Cleaned the valid reset-password screen shown after the recovery link flow.
+- Removed the valid-session `Request another reset` / new-link option.
+- Removed the bulky recovery session block from the valid reset UI.
+- Removed the duplicate reset heading inside the form.
+- Removed the extra reset-page description line.
+- Kept a subtle identity line for the recovery account context.
+- Preserved the new password field, confirm password field, and Update Password button.
+- Preserved the expired/invalid reset-link state and kept `Request new link` only there.
+- Preserved Supabase password update behavior, sign-out after update, and redirect to `/login?password=updated`.
+- Preserved protected route behavior, RAG behavior, source restrictions, rate limiting, Supabase data behavior, and KTU 2024 Module 5 handling.
+- Ran validation:
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+
+### Issues / Notes
+- Full live reset QA on the `design-update` deployment is still pending.
+- No merge to `main` was done.
+- No production deploy was explicitly triggered.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Run live reset QA on the `design-update` deployment with a disposable confirmed account.
+- Merge `design-update` only after QA approval.
+
 ## 2026-05-29 - Password Recovery Redirect Fix
 
 ### Completed

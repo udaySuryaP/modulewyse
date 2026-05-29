@@ -10,7 +10,6 @@ export default async function ResetPasswordPage() {
 
   return (
     <AuthShell
-      body="Use the secure recovery session from your email to create a new password."
       eyebrow="Account recovery"
       title="Create a new password."
     >
