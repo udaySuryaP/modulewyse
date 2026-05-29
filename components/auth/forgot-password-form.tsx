@@ -115,10 +115,10 @@ export function ForgotPasswordForm() {
       <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
         <div>
           <h1 className="mw-heading-sm text-[var(--mw-ink)]">
-            Reset your password.
+            Reset your password
           </h1>
           <p className="mw-meta mt-[var(--mw-space-sm)]">
-            Enter your email and we&apos;ll send a secure password reset link.
+            Enter your email and we&apos;ll send a secure reset link.
           </p>
         </div>
 
@@ -134,16 +134,15 @@ export function ForgotPasswordForm() {
         </Field>
 
         <SubmitButton disabled={isSubmitting}>
-          {isSubmitting ? "Sending..." : "Send Reset Link"}
+          {isSubmitting ? "Sending..." : "Send reset link"}
         </SubmitButton>
 
         <p className="text-center text-[14px] text-[var(--mw-muted)]">
-          Remembered it?{" "}
           <Link
             className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
             href="/login"
           >
-            Back to login
+            Back to sign in
           </Link>
         </p>
       </form>

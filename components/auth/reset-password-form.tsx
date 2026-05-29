@@ -221,22 +221,12 @@ export function ResetPasswordForm({
       <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
         <div>
           <h1 className="mw-heading-sm text-[var(--mw-ink)]">
-            Create a new password.
+            Create a new password
           </h1>
-          <p className="mw-meta mt-[var(--mw-space-sm)]">
-            Choose a new password for your ModuleWyse account.
-          </p>
-        </div>
-
-        <div className="mw-panel-muted grid gap-1 px-[var(--mw-space-md)] py-[var(--mw-space-sm)]">
-          <p className="mw-label text-[10px]">Recovery session</p>
-          <p className="truncate text-[14px] font-semibold leading-[1.4] text-[var(--mw-ink)]">
+          <p className="mw-meta mt-[var(--mw-space-sm)] break-words">
             {recoveryEmail
               ? `Updating password for ${recoveryEmail}`
               : "Updating password for your ModuleWyse account"}
-          </p>
-          <p className="text-[12px] leading-[1.45] text-[var(--mw-muted)]">
-            Reset links expire in 10 minutes.
           </p>
         </div>
 
@@ -265,16 +255,15 @@ export function ResetPasswordForm({
         </Field>
 
         <SubmitButton disabled={isSubmitting}>
-          {isSubmitting ? "Updating..." : "Update Password"}
+          {isSubmitting ? "Updating..." : "Update password"}
         </SubmitButton>
 
         <p className="text-center text-[14px] text-[var(--mw-muted)]">
-          Need a new link?{" "}
           <Link
             className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
-            href="/forgot-password"
+            href="/login"
           >
-            Request another reset
+            Back to sign in
           </Link>
         </p>
       </form>
