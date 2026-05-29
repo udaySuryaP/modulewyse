@@ -15,7 +15,7 @@ This QA pass covered the controlled private-beta scope for ModuleWyse:
 - PBCST304 / Object Oriented Programming under the KTU 2024 scheme.
 - Modules 1-3 are answer-ready.
 - Module 4 is draft/review and excluded from answer sources.
-- Module 5 does not exist under KTU 2024 for PBCST304.
+- Module 5 is not part of the KTU 2024 scheme.
 - Previous-year questions are visible in Library but are not answer sources yet.
 
 ## Test Accounts
@@ -147,7 +147,7 @@ Verified:
 
 - Out-of-scope prompts failed closed.
 - Module 4 returned review/draft fallback.
-- Module 5 returned the KTU 2024 non-existent-module fallback.
+- Module 5 returned the KTU 2024 outside-scheme fallback.
 - PYQ prompts did not use previous-year questions as answer sources.
 - Prompt injection did not bypass source restrictions.
 - Empty/invalid and over-length messages were rejected safely.
@@ -249,7 +249,7 @@ Checked:
 
 - `/library` loads authenticated.
 - Library content/filter surface renders.
-- Module 5 is not shown for PBCST304 in the loaded page text.
+- Module 5 is not shown in the loaded page text.
 
 Limit:
 
@@ -366,5 +366,5 @@ ModuleWyse is ready for 5-15 trusted testers if the first wave includes a quick 
 - PBCST304/OOP only.
 - Modules 1-3 answer-ready.
 - Module 4 under review and excluded.
-- Module 5 does not exist under KTU 2024.
+- Module 5 is not part of the KTU 2024 scheme.
 - Previous-year questions are visible in Library but are not answer sources yet.

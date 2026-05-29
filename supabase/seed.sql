@@ -82,22 +82,18 @@ with module_seed as (
       ('dbms', 2, 'Module 2'),
       ('dbms', 3, 'Module 3'),
       ('dbms', 4, 'Module 4'),
-      ('dbms', 5, 'Module 5'),
       ('os', 1, 'Module 1'),
       ('os', 2, 'Module 2'),
       ('os', 3, 'Module 3'),
       ('os', 4, 'Module 4'),
-      ('os', 5, 'Module 5'),
       ('cn', 1, 'Module 1'),
       ('cn', 2, 'Module 2'),
       ('cn', 3, 'Module 3'),
       ('cn', 4, 'Module 4'),
-      ('cn', 5, 'Module 5'),
       ('ds', 1, 'Module 1'),
       ('ds', 2, 'Module 2'),
       ('ds', 3, 'Module 3'),
-      ('ds', 4, 'Module 4'),
-      ('ds', 5, 'Module 5')
+      ('ds', 4, 'Module 4')
   ) as modules(subject_slug, module_number, title)
   join public.subjects
     on subjects.slug = modules.subject_slug

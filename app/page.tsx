@@ -163,12 +163,12 @@ export default function HomePage() {
         <LandingNavigation />
 
         <section className="relative z-10 pb-[calc(var(--mw-space-section-lg)+var(--mw-space-xl))] pt-[var(--mw-space-section)] lg:pb-[8rem] lg:pt-[7rem]">
-          <LiquidReveal className="mw-section">
+          <LiquidReveal className="mw-hero-section">
             <div className="mx-auto max-w-[940px] text-center">
               <p className="mw-label text-[var(--mw-ink)]">
                 KTU focused academic intelligence
               </p>
-              <h1 className="mw-display-page mx-auto mt-[var(--mw-space-lg)] max-w-[900px] text-balance [font-size:clamp(2.15rem,9vw,var(--mw-type-display))]">
+              <h1 className="mw-display-page mw-hero-title mx-auto mt-[var(--mw-space-lg)] max-w-[900px] text-balance">
                 <span className="whitespace-nowrap">Syllabus-grounded</span>{" "}
                 AI exam prep.
               </h1>

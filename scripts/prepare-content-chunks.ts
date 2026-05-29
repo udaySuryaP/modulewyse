@@ -6,6 +6,7 @@ import {
   approximateTokenCount,
   isAllowedContentStatus,
   isAllowedSourceType,
+  ktu2024Module5Message,
   pbcst304ModulePlan,
   pbcst304ReadyModules,
   validateChunkMetadata,
@@ -286,8 +287,7 @@ async function buildPreview() {
     if (metadata.module === 5 && subjectCode === expectedCourseCode) {
       sourceWarnings.push({
         fileName,
-        message:
-          "Module 5 does not exist in the KTU 2024 scheme for PBCST304; file skipped.",
+        message: `${ktu2024Module5Message} File skipped.`,
         severity: "error",
       });
     } else if (
@@ -299,7 +299,7 @@ async function buildPreview() {
     ) {
       sourceWarnings.push({
         fileName,
-        message: "PBCST304 valid modules are 1, 2, 3, and 4 for the KTU 2024 scheme.",
+        message: "KTU 2024 valid modules are 1, 2, 3, and 4.",
         severity: "error",
       });
     }

@@ -6,11 +6,11 @@ The product is not an official KTU service. AI answers can be imperfect and shou
 
 ## Current Scope
 
-ModuleWyse currently focuses on PBCST304 / Object Oriented Programming under the KTU 2024 scheme.
+ModuleWyse currently starts with selected reviewed KTU 2024 content, with PBCST304 / Object Oriented Programming as the first supported subject.
 
-- Modules 1-3 are reviewed and answer-ready.
-- Module 4 is draft/review and excluded from RAG answers.
-- Module 5 does not exist for PBCST304 under the KTU 2024 scheme.
+- PBCST304 Modules 1-3 are reviewed and answer-ready.
+- PBCST304 Module 4 is draft/review and excluded from RAG answers.
+- KTU 2024 scheme subjects use Modules 1-4. Module 5 is not part of the KTU 2024 scheme.
 - Previous-year questions are available in the Library but are not used as answer sources yet.
 
 Public product copy should stay scalable and avoid presenting ModuleWyse as only an OOP chatbot. Authenticated academic views can show the exact subject, module, and source details where they are relevant.
@@ -138,6 +138,7 @@ progress.md          Working progress log
 - Read the relevant installed Next.js docs in `node_modules/next/dist/docs/` before changing Next.js APIs or routing behavior.
 - Preserve RAG source restrictions unless the task explicitly changes them.
 - Do not use Module 4, Module 5, or previous-year questions as RAG answer sources.
+- KTU 2024 scheme subjects use Modules 1-4. Module 5 is not part of the KTU 2024 scheme.
 - Do not touch `.env.local` or commit secrets.
 - Keep UI changes separate from backend, retrieval, and database changes where possible.
 - Update `progress.md` for substantial project work.

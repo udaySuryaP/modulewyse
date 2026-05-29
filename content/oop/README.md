@@ -8,7 +8,7 @@ This folder holds curated Object Oriented Programming notes for PBCST304. Studen
 - Module 2: ready
 - Module 3: ready
 - Module 4: draft/review
-- Module 5: does not exist in the KTU 2024 scheme for PBCST304 and should not be created or ingested
+- Module 5: not part of the KTU 2024 scheme and should not be created or ingested
 
 ## File rules
 

@@ -9,7 +9,7 @@ ModuleWyse is a KTU AI exam-prep web app for students. It focuses on syllabus-gr
 - Student-side MVP first.
 - CSE and important subjects first.
 - Object Oriented Programming is the first subject to prove quality.
-- For KTU 2024 scheme PBCST304 / Object Oriented Programming, Modules 1-3 are ready, Module 4 is draft/review, and Module 5 does not exist in the KTU 2024 scheme for PBCST304.
+- KTU 2024 scheme subjects use Modules 1-4. Module 5 is not part of the KTU 2024 scheme. For PBCST304 / Object Oriented Programming, Modules 1-3 are ready and Module 4 is draft/review.
 - Admin UI, student uploads, OCR, payments, faculty tools, and all-branch coverage are deferred.
 
 ## Technical Direction

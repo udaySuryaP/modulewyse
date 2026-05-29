@@ -13,7 +13,7 @@ export type MockSubject = {
   topicSamples: string[];
 };
 
-export const subjectModules: SubjectModule[] = ["all", "1", "2", "3", "4", "5"];
+export const subjectModules: SubjectModule[] = ["all", "1", "2", "3", "4"];
 
 export const mockSubjects: MockSubject[] = [
   {

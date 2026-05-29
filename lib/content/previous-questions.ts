@@ -9,7 +9,7 @@ import type {
   PreviousQuestionType,
   QuestionConfidence,
 } from "@/types/database";
-import { pbcst304ModulePlan } from "@/lib/content/validation";
+import { ktu2024Module5Message, pbcst304ModulePlan } from "@/lib/content/validation";
 
 const expectedSubjectCode = "PBCST304";
 const expectedSubjectSlug = "oop";
@@ -232,10 +232,10 @@ export function preparePreviousQuestions(source: StagedPreviousQuestionFile): Pr
     }
 
     if (moduleNumber === 5) {
-      increment(skippedReasons, "module 5 does not exist in PBCST304 2024 scheme");
+      increment(skippedReasons, ktu2024Module5Message);
       invalidRecords.push({
         id,
-        reason: "module 5 does not exist in PBCST304 2024 scheme",
+        reason: ktu2024Module5Message,
       });
       continue;
     }

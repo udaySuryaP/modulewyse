@@ -21,12 +21,16 @@ export const allowedContentStatuses = [
 
 export const pbcst304ReadyModules = [1, 2, 3] as const;
 export const pbcst304DraftModules = [4] as const;
-export const pbcst304ValidModules = [1, 2, 3, 4] as const;
-export const pbcst304NonexistentModules = [5] as const;
+export const ktu2024ValidModules = [1, 2, 3, 4] as const;
+export const ktu2024OutsideSchemeModules = [5] as const;
+export const ktu2024Module5Message =
+  "Module 5 is not part of the KTU 2024 scheme.";
+export const pbcst304ValidModules = ktu2024ValidModules;
+export const pbcst304OutsideSchemeModules = ktu2024OutsideSchemeModules;
 
 export const pbcst304ModulePlan = {
   draftModules: pbcst304DraftModules,
-  nonexistentModules: pbcst304NonexistentModules,
+  outsideSchemeModules: pbcst304OutsideSchemeModules,
   readyModules: pbcst304ReadyModules,
   scheme: 2024,
   validModules: pbcst304ValidModules,
@@ -87,14 +91,14 @@ export function validateSourceMetadata(
       moduleNumber as (typeof pbcst304ModulePlan.validModules)[number],
     )
   ) {
-    const isNonexistentModule = pbcst304ModulePlan.nonexistentModules.includes(
-      moduleNumber as (typeof pbcst304ModulePlan.nonexistentModules)[number],
+    const isOutsideSchemeModule = pbcst304ModulePlan.outsideSchemeModules.includes(
+      moduleNumber as (typeof pbcst304ModulePlan.outsideSchemeModules)[number],
     );
     issues.push({
       fileName,
-      message: isNonexistentModule
-        ? "Module 5 does not exist in the KTU 2024 scheme for PBCST304."
-        : "PBCST304 valid modules are 1, 2, 3, and 4 for the KTU 2024 scheme.",
+      message: isOutsideSchemeModule
+        ? ktu2024Module5Message
+        : "KTU 2024 valid modules are 1, 2, 3, and 4.",
       severity: "error",
     });
   }
@@ -164,8 +168,15 @@ export function validateChunkMetadata({
     issues.push({ fileName, message: "chunk subject metadata is missing.", severity: "error" });
   }
 
-  if (!Number.isInteger(moduleNumber) || moduleNumber < 1 || moduleNumber > 5) {
-    issues.push({ fileName, message: "chunk module metadata is invalid.", severity: "error" });
+  if (!Number.isInteger(moduleNumber) || moduleNumber < 1 || moduleNumber > 4) {
+    issues.push({
+      fileName,
+      message:
+        moduleNumber === 5
+          ? ktu2024Module5Message
+          : "chunk module metadata is invalid for KTU 2024.",
+      severity: "error",
+    });
   }
 
   if (!title.trim()) {

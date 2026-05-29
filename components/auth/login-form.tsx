@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { Field, FormMessage, TextInput } from "@/components/auth/form-fields";
+import { Field, TextInput } from "@/components/auth/form-fields";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { ToastNotice, type ToastPriority } from "@/components/ui/toast-notice";
 import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { safeNextPath } from "@/lib/auth/redirects";
 import { hasSupabasePublicEnv } from "@/lib/env/public";
@@ -16,6 +17,16 @@ import {
 } from "@/lib/landing-flow";
 import { createClient } from "@/lib/supabase/client";
 
+type AuthToast = {
+  description?: string;
+  priority: ToastPriority;
+  title: string;
+};
+
+function isValidEmail(value: string) {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,22 +34,53 @@ export function LoginForm() {
   const callbackError = searchParams.get("error") === "callback";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [notice] = useState(
+  const [toast, setToast] = useState<AuthToast | null>(
     callbackError
-      ? "Unable to complete sign in. Please try again."
+      ? {
+          description: "Please try signing in again.",
+          priority: "error",
+          title: "Unable to complete sign in",
+        }
       : next
-        ? "Sign in to continue."
-        : "",
+        ? {
+            description: "Sign in to continue to the requested page.",
+            priority: "info",
+            title: "Sign in required",
+          }
+        : null,
   );
-  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage("");
+    setToast(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
+      setToast({
+        description: "Enter both your email and password to continue.",
+        priority: "error",
+        title: "Missing sign-in details",
+      });
+      return;
+    }
+
+    if (!isValidEmail(normalizedEmail)) {
+      setToast({
+        description: "Use a valid email address, for example name@example.com.",
+        priority: "error",
+        title: "Enter a valid email",
+      });
+      return;
+    }
 
     if (!hasSupabasePublicEnv()) {
-      setMessage("Supabase is not configured yet.");
+      setToast({
+        description: "Authentication is temporarily unavailable.",
+        priority: "warning",
+        title: "Supabase is not configured yet",
+      });
       return;
     }
 
@@ -47,12 +89,16 @@ export function LoginForm() {
     try {
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizedEmail,
         password,
       });
 
       if (error || !data.user) {
-        setMessage("Invalid email or password.");
+        setToast({
+          description: "Check your credentials and try again.",
+          priority: "error",
+          title: "Invalid email or password",
+        });
         return;
       }
 
@@ -67,14 +113,28 @@ export function LoginForm() {
       );
       router.refresh();
     } catch {
-      setMessage("Unable to connect. Please try again.");
+      setToast({
+        description: "Check your connection and try again.",
+        priority: "error",
+        title: "Unable to connect",
+      });
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="grid gap-4" onSubmit={handleSubmit}>
+    <>
+      {toast ? (
+        <ToastNotice
+          description={toast.description}
+          onDismiss={() => setToast(null)}
+          priority={toast.priority}
+          title={toast.title}
+        />
+      ) : null}
+
+      <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
       <div>
         <h1 className="mw-heading-sm text-[var(--mw-ink)]">
           Sign in with email
@@ -90,7 +150,7 @@ export function LoginForm() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder="name@example.com"
           required
-          type="email"
+          type="text"
           value={email}
         />
       </Field>
@@ -104,13 +164,6 @@ export function LoginForm() {
           value={password}
         />
       </Field>
-
-      {notice && !message ? (
-        <FormMessage tone={callbackError ? "error" : "muted"}>
-          {notice}
-        </FormMessage>
-      ) : null}
-      {message ? <FormMessage>{message}</FormMessage> : null}
 
       <SubmitButton disabled={isSubmitting}>
         {isSubmitting ? "Signing In..." : "Login"}
@@ -133,6 +186,7 @@ export function LoginForm() {
           </Link>
         </p>
       </div>
-    </form>
+      </form>
+    </>
   );
 }
