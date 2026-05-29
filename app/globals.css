@@ -279,14 +279,38 @@
     padding-inline: 1.25rem;
   }
 
+  .mw-hero-section {
+    margin-inline: auto;
+    width: min(100%, 1200px);
+    padding-inline: 1.25rem;
+  }
+
+  .mw-hero-title {
+    font-size: clamp(2.15rem, 8.2vw, var(--mw-type-display));
+  }
+
+  @media (max-width: 520px) {
+    .mw-hero-title {
+      font-size: clamp(1.9rem, 8.8vw, 2.35rem);
+    }
+  }
+
   @media (min-width: 640px) {
     .mw-section {
+      padding-inline: 2rem;
+    }
+
+    .mw-hero-section {
       padding-inline: 2rem;
     }
   }
 
   @media (min-width: 1024px) {
     .mw-section {
+      padding-inline: 3.5rem;
+    }
+
+    .mw-hero-section {
       padding-inline: 3.5rem;
     }
   }
