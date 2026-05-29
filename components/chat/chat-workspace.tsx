@@ -1127,14 +1127,14 @@ function SidebarRecentConversations({
   }
 
   return (
-    <section className={cn("grid min-w-0 gap-3", className)}>
-      <div className="px-2">
+    <section className={cn("flex min-h-0 min-w-0 flex-col gap-3", className)}>
+      <div className="shrink-0 px-2">
         <p className="mw-label text-[11px]">Recent chats</p>
       </div>
 
       <div
         className={cn(
-          "grid max-h-[calc(100dvh-390px)] gap-1.5 overflow-y-auto pr-1",
+          "grid min-h-0 flex-1 content-start gap-1.5 overflow-y-auto pb-12 pr-1",
           listClassName,
         )}
       >
@@ -1150,8 +1150,9 @@ function SidebarRecentConversations({
           <span className="min-w-0 flex-1 truncate text-left">New chat</span>
         </Link>
 
-        {conversations.slice(0, 8).map((conversation) => {
+        {conversations.map((conversation, index) => {
           const isActive = conversation.id === activeConversationId;
+          const shouldOpenMenuUpward = index >= conversations.length - 2;
           const subject = conversation.subject_slug?.toUpperCase() ?? "CHAT";
           const moduleLabel =
             conversation.module_value && conversation.module_value !== "all"
@@ -1255,7 +1256,12 @@ function SidebarRecentConversations({
               ) : null}
 
               {openMenuId === conversation.id ? (
-                <div className="absolute right-2 top-10 z-20 w-40 overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-white py-1 shadow-[0_18px_42px_rgba(12,10,9,0.14)]">
+                <div
+                  className={cn(
+                    "absolute right-2 z-20 w-40 overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-white py-1 shadow-[0_18px_42px_rgba(12,10,9,0.14)]",
+                    shouldOpenMenuUpward ? "bottom-10" : "top-10",
+                  )}
+                >
                   <button
                     className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-medium text-[var(--mw-body)] hover:bg-[var(--mw-surface-strong)]"
                     onClick={() => startRename(conversation)}

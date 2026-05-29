@@ -2,6 +2,28 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-30 - Recent Chats Sidebar Height Fix
+
+### Completed
+- Updated the desktop student sidebar to allocate remaining height to the Recent Chats section.
+- Removed the fixed recent-chat max-height that caused unused empty space above the time/date footer.
+- Made the recent-chat list the only scrollable area with `flex-1 min-h-0`.
+- Kept the time/date footer pinned at the bottom as a non-scrolling block.
+- Adjusted recent chat menus near the end of the list to open upward to avoid awkward clipping.
+- Preserved New Chat, chat selection, rename, delete, pin/unpin, active styling, and mobile sidebar behavior.
+- Ran validation:
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+
+### Issues / Notes
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+- No chat, RAG, auth, Supabase, rate-limit, or backend logic was changed.
+
+### Next
+- Verify the sidebar visually in production after deployment with enough recent chats to force scrolling.
+
 ## 2026-05-30 - Password Recovery Auth UI Alignment
 
 ### Completed

@@ -126,10 +126,17 @@ export function StudentSidebar({
       </nav>
 
       {expanded && children ? (
-        <div className="mt-6 hidden min-w-0 lg:block">{children}</div>
+        <div className="mt-6 hidden min-h-0 min-w-0 flex-1 overflow-visible lg:flex lg:flex-col">
+          {children}
+        </div>
       ) : null}
 
-      <div className="mt-auto hidden text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)] lg:block">
+      <div
+        className={cn(
+          "hidden shrink-0 text-[11px] font-medium uppercase leading-[1.5] tracking-[0.08em] text-[var(--mw-muted)] lg:block",
+          expanded && children ? "mt-4" : "mt-auto",
+        )}
+      >
         {expanded ? (
           <p className="grid gap-1.5">
             <span className="flex items-center gap-2">
