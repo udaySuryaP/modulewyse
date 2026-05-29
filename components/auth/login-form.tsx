@@ -142,57 +142,61 @@ export function LoginForm() {
       ) : null}
 
       <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
-      <div>
-        <h1 className="mw-heading-sm text-[var(--mw-ink)]">
-          Sign in with email
-        </h1>
-        <p className="mw-meta mt-[var(--mw-space-sm)]">
-          Continue to your ModuleWyse workspace using your registered email.
-        </p>
-      </div>
+        <div>
+          <h1 className="mw-heading-sm text-[var(--mw-ink)]">
+            Sign in with email
+          </h1>
+          <p className="mw-meta mt-[var(--mw-space-sm)]">
+            Continue to your ModuleWyse workspace using your registered email.
+          </p>
+        </div>
 
-      <Field label="Email">
-        <TextInput
-          autoComplete="email"
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="name@example.com"
-          required
-          type="text"
-          value={email}
-        />
-      </Field>
-      <Field label="Password">
-        <TextInput
-          autoComplete="current-password"
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="Enter your password"
-          required
-          type="password"
-          value={password}
-        />
-      </Field>
+        <Field label="Email">
+          <TextInput
+            autoComplete="email"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="name@example.com"
+            required
+            type="text"
+            value={email}
+          />
+        </Field>
 
-      <SubmitButton disabled={isSubmitting}>
-        {isSubmitting ? "Signing In..." : "Login"}
-      </SubmitButton>
+        <div className="grid gap-2">
+          <div className="flex items-center justify-between gap-3">
+            <span className="mw-meta font-normal">Password</span>
+            <Link
+              className="text-[length:var(--mw-type-micro)] font-medium text-[var(--mw-ink)] underline-offset-4 hover:underline"
+              href="/forgot-password"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <TextInput
+            autoComplete="current-password"
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter your password"
+            required
+            type="password"
+            value={password}
+          />
+        </div>
 
-      <div className="mw-meta grid gap-[var(--mw-space-xs)] text-center">
-        <Link
-          className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
-          href="/forgot-password"
-        >
-          Forgot password?
-        </Link>
-        <p>
-          New to ModuleWyse?{" "}
-          <Link
-            className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
-            href="/signup"
-          >
-            Get started
-          </Link>
-        </p>
-      </div>
+        <SubmitButton disabled={isSubmitting}>
+          {isSubmitting ? "Signing In..." : "Login"}
+        </SubmitButton>
+
+        <div className="mw-meta grid gap-[var(--mw-space-xs)] text-center">
+          <p>
+            New to ModuleWyse?{" "}
+            <Link
+              className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
+              href="/signup"
+            >
+              Get started
+            </Link>
+          </p>
+        </div>
       </form>
     </>
   );
