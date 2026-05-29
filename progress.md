@@ -2,6 +2,37 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-30 - Password Recovery Auth UI Alignment
+
+### Completed
+- Aligned the forgot-password UI with the login form design.
+- Removed the duplicate forgot-password shell heading and description.
+- Aligned the reset-password UI with the login form design.
+- Kept one valid-session reset heading: `Create a new password`.
+- Removed the valid-session `Request new link` option.
+- Removed the recovery session block from the valid reset UI.
+- Removed the duplicate reset heading.
+- Removed the extra reset-page description line.
+- Preserved the expired/invalid reset-link state with `Request new link` only there.
+- Preserved Supabase password update behavior.
+- Preserved sign-out and redirect to `/login?password=updated`.
+- Preserved protected route behavior.
+- Ran validation:
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+
+### Issues / Notes
+- Full live reset QA on the `design-update` deployment is still pending.
+- No merge to `main` was done.
+- No production deploy was explicitly triggered.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Run live reset QA on the `design-update` deployment with a disposable confirmed account.
+- Merge `design-update` only after QA approval.
+
 ## 2026-05-30 - Reset Password UI Polish
 
 ### Completed

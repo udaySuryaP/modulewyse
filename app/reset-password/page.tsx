@@ -9,10 +9,7 @@ export default async function ResetPasswordPage() {
     cookieStore.get("modulewyse.recovery")?.value === "1";
 
   return (
-    <AuthShell
-      eyebrow="Account recovery"
-      title="Create a new password."
-    >
+    <AuthShell showHeader={false}>
       <ResetPasswordForm hasRecoveryIntent={hasRecoveryIntent} />
     </AuthShell>
   );

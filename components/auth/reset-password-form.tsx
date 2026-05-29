@@ -219,11 +219,16 @@ export function ResetPasswordForm({
       ) : null}
 
       <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
-        <p className="text-center text-[14px] font-medium leading-[1.45] text-[var(--mw-muted)]">
-          {recoveryEmail
-            ? `Updating password for ${recoveryEmail}`
-            : "Updating password for your ModuleWyse account"}
-        </p>
+        <div>
+          <h1 className="mw-heading-sm text-[var(--mw-ink)]">
+            Create a new password
+          </h1>
+          <p className="mw-meta mt-[var(--mw-space-sm)] break-words">
+            {recoveryEmail
+              ? `Updating password for ${recoveryEmail}`
+              : "Updating password for your ModuleWyse account"}
+          </p>
+        </div>
 
         <Field label="New password">
           <TextInput
@@ -250,8 +255,17 @@ export function ResetPasswordForm({
         </Field>
 
         <SubmitButton disabled={isSubmitting}>
-          {isSubmitting ? "Updating..." : "Update Password"}
+          {isSubmitting ? "Updating..." : "Update password"}
         </SubmitButton>
+
+        <p className="text-center text-[14px] text-[var(--mw-muted)]">
+          <Link
+            className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
+            href="/login"
+          >
+            Back to sign in
+          </Link>
+        </p>
       </form>
     </>
   );
