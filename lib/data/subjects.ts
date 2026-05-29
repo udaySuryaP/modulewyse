@@ -20,6 +20,7 @@ const statusRank: Record<(typeof visibleSubjectStatuses)[number], number> = {
   beta: 1,
   "coming-soon": 2,
 };
+const ktu2024MaxModuleNumber = 4;
 
 type ContentCounter = {
   chunkCount: number;
@@ -195,6 +196,17 @@ function moduleValue(moduleNumber: number): SubjectModule {
   return String(moduleNumber) as SubjectModule;
 }
 
+function isKtu2024ModuleNumber(
+  moduleNumber: number | null | undefined,
+): moduleNumber is number {
+  return (
+    typeof moduleNumber === "number" &&
+    Number.isInteger(moduleNumber) &&
+    moduleNumber >= 1 &&
+    moduleNumber <= ktu2024MaxModuleNumber
+  );
+}
+
 function moduleReadinessLabel(
   moduleStatus: SubjectStatus,
   hasFedContent: boolean,
@@ -282,12 +294,19 @@ function normalizeSubjectWithStats(
   subject: Subject,
   data: SubjectSupplementalData,
 ): SubjectViewModel {
-  const moduleById = new Map(data.modules.map((module) => [module.id, module]));
-  const moduleNumbers = new Set(data.modules.map((module) => module.module_number));
+  const visibleModules = data.modules.filter((module) =>
+    isKtu2024ModuleNumber(module.module_number),
+  );
+  const moduleById = new Map(visibleModules.map((module) => [module.id, module]));
+  const moduleNumbers = new Set(visibleModules.map((module) => module.module_number));
   const topicCountByModuleId = new Map<string, number>();
   const countersByModuleNumber = new Map<number, ContentCounter>();
 
   data.topics.forEach((topic) => {
+    if (topic.module_id && !moduleById.has(topic.module_id)) {
+      return;
+    }
+
     topicCountByModuleId.set(
       topic.module_id,
       (topicCountByModuleId.get(topic.module_id) ?? 0) + 1,
@@ -299,7 +318,7 @@ function normalizeSubjectWithStats(
       ? moduleById.get(source.module_id)?.module_number
       : metadataModuleNumber(source.metadata);
 
-    if (!moduleNumber) {
+    if (!isKtu2024ModuleNumber(moduleNumber)) {
       return;
     }
 
@@ -317,7 +336,7 @@ function normalizeSubjectWithStats(
       ? moduleById.get(chunk.module_id)?.module_number
       : metadataModuleNumber(chunk.metadata);
 
-    if (!moduleNumber) {
+    if (!isKtu2024ModuleNumber(moduleNumber)) {
       return;
     }
 
@@ -381,6 +400,7 @@ function normalizeSubjectWithStats(
   const readyModules = moduleViews.filter((module) => module.hasReadyContent).length;
   const totalModules = moduleViews.length;
   const topicSamples = data.topics
+    .filter((topic) => !topic.module_id || moduleById.has(topic.module_id))
     .sort((left, right) => left.priority - right.priority || left.title.localeCompare(right.title))
     .map((topic) => topic.title)
     .filter((topic, index, topics) => topics.indexOf(topic) === index)
@@ -463,6 +483,10 @@ async function getSupplementalData(
   });
 
   ((modulesResult.data ?? []) as Module[]).forEach((module) => {
+    if (!isKtu2024ModuleNumber(module.module_number)) {
+      return;
+    }
+
     dataBySubject.get(module.subject_id)?.modules.push(module);
   });
 
@@ -531,6 +555,7 @@ export async function getSubjectModules(subjectId: string): Promise<Module[]> {
     .from("modules")
     .select("*")
     .eq("subject_id", subjectId)
+    .lte("module_number", ktu2024MaxModuleNumber)
     .order("module_number", { ascending: true });
 
   if (error) {

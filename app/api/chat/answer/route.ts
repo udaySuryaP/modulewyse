@@ -17,9 +17,11 @@ const topK = 8;
 const insufficientAnswer =
   "I don't have enough reviewed ModuleWyse notes to answer this reliably yet.";
 const module5NotInSchemeAnswer =
-  "PBCST304 under the KTU 2024 scheme does not include Module 5. I can answer from reviewed Modules 1-3, while Module 4 is still under review.";
+  "Module 5 is not part of the KTU 2024 scheme. Please ask from Modules 1-4, or from currently reviewed notes where available.";
 const module4UnderReviewAnswer =
   "Module 4 for PBCST304 is still under review in ModuleWyse. I can answer from reviewed Modules 1-3 for now.";
+const module5NotInSchemeReason =
+  "module 5 is not part of the KTU 2024 scheme";
 
 type ChatAnswerRequest = {
   answerType?: unknown;
@@ -162,7 +164,7 @@ function normalizeModuleHint(value: unknown) {
   if (normalized === "5") {
     return {
       moduleHint: "all" as const,
-      unsupportedReason: "module 5 does not exist in the KTU 2024 scheme for PBCST304",
+      unsupportedReason: module5NotInSchemeReason,
     };
   }
 
@@ -210,8 +212,8 @@ function unsupportedModuleReasonFromQuestion(question: string) {
     return "module 4 is still under review";
   }
 
-  if (/\bmodule\s*(5|v)\b/.test(normalized)) {
-    return "module 5 does not exist in the KTU 2024 scheme for PBCST304";
+  if (/\bmodule\s*(5|v|five)\b/.test(normalized) || /\bfifth\s+module\b/.test(normalized)) {
+    return module5NotInSchemeReason;
   }
 
   return null;
@@ -1137,7 +1139,9 @@ export async function POST(request: Request) {
   );
   const { moduleHint, unsupportedReason: moduleUnsupportedReason } =
     normalizeModuleHint(payload.moduleHint);
-  const unsupportedReason = subjectUnsupportedReason ?? moduleUnsupportedReason;
+  const questionUnsupportedReason = unsupportedModuleReasonFromQuestion(question);
+  const unsupportedReason =
+    subjectUnsupportedReason ?? moduleUnsupportedReason ?? questionUnsupportedReason;
   const moduleValue = typeof moduleHint === "number" ? String(moduleHint) : "all";
 
   try {

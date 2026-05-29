@@ -105,7 +105,7 @@ Live PBCST304/OOP content state:
 - Module 2: 42 ready embedded note chunks.
 - Module 3: 29 ready embedded note chunks.
 - Module 4: 0 ready embedded note chunks.
-- Module 5: no rows for PBCST304.
+- Module 5: no rows for KTU 2024 subjects.
 
 Live source check:
 
@@ -241,7 +241,7 @@ Verified by infrastructure and code inspection:
 - Retrieval still targets PBCST304/OOP notes only.
 - Modules 1-3 remain the only eligible RAG modules.
 - Module 4 fallback logic remains present.
-- Module 5 non-existent fallback logic remains present.
+- Module 5 outside the KTU 2024 scheme fallback logic remains present.
 - Previous-year questions remain excluded from retrieval.
 - Regenerate resolves the original user question and answer type, updates the existing assistant message, and clears stale feedback non-fatally.
 
@@ -260,7 +260,7 @@ These should be smoke-tested again with a confirmed QA account before expanding 
 
 Subjects:
 
-- Live database confirms PBCST304 has Modules 1-4, no Module 5.
+- Live database confirms KTU 2024 scheme subjects use Modules 1-4; Module 5 is not part of the KTU 2024 scheme.
 - Module 4 has no ready embedded chunks.
 - Subject UI itself was not authenticated-browser re-tested in this pass.
 

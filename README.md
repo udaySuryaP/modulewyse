@@ -38,7 +38,7 @@ progress.md           End-of-session progress log
 
 ## Current Scope
 
-The student-side MVP comes first: landing, auth/onboarding flow, subjects, chat, library, profile/settings, curated OOP content ingestion, RAG retrieval, answer verification, and eval gates. For KTU 2024 scheme PBCST304 / Object Oriented Programming, Modules 1-3 are ready, Module 4 is draft/review, and Module 5 does not exist in the KTU 2024 scheme for PBCST304.
+The student-side MVP comes first: landing, auth/onboarding flow, subjects, chat, library, profile/settings, curated OOP content ingestion, RAG retrieval, answer verification, and eval gates. KTU 2024 scheme subjects use Modules 1-4. Module 5 is not part of the KTU 2024 scheme. For PBCST304 / Object Oriented Programming, Modules 1-3 are ready and Module 4 is draft/review.
 
 Students do not upload notes. Admin UI is deferred.
 

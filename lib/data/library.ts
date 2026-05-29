@@ -43,6 +43,10 @@ type PreviousQuestionRow = {
   year: number | null;
 };
 
+function isKtu2024LibraryModule(moduleNumber: number | null | undefined) {
+  return !moduleNumber || (moduleNumber >= 1 && moduleNumber <= 4);
+}
+
 function answerTypeLabel(questionType: PreviousQuestionType) {
   const labels: Record<PreviousQuestionType, string> = {
     long: "Long",
@@ -80,7 +84,9 @@ function normalizeYearLabel(year: number | string | null) {
 }
 
 function fallbackQuestions(): LibraryQuestionViewModel[] {
-  return mockLibraryQuestions.map((question) => {
+  return mockLibraryQuestions.filter((question) =>
+    isKtu2024LibraryModule(Number(question.module)),
+  ).map((question) => {
     const subject = getFallbackSubjectBySlug(question.subjectSlug);
 
     return {
@@ -146,7 +152,9 @@ export async function getPreviousQuestions(): Promise<LibraryQuestionViewModel[]
     return [];
   }
 
-  return ((data ?? []) as unknown as PreviousQuestionRow[]).map(rowToViewModel);
+  return ((data ?? []) as unknown as PreviousQuestionRow[])
+    .filter((row) => isKtu2024LibraryModule(row.modules?.module_number))
+    .map(rowToViewModel);
 }
 
 export async function getPreviousQuestionsBySubject(subjectSlug: string) {
