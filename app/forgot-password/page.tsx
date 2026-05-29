@@ -4,9 +4,9 @@ import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 export default function ForgotPasswordPage() {
   return (
     <AuthShell
-      body="Enter your email and ModuleWyse will send a secure password reset link."
+      body="We will email a secure link that lets you create a new password. The reset link expires in 10 minutes."
       eyebrow="Account recovery"
-      title="Reset access safely."
+      title="Reset access."
     >
       <ForgotPasswordForm />
     </AuthShell>

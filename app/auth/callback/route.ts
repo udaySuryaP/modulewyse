@@ -29,9 +29,27 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (user) {
+      if (next === "/reset-password") {
+        const response = NextResponse.redirect(
+          new URL("/reset-password", request.url),
+        );
+
+        response.cookies.set("modulewyse.recovery", "1", {
+          httpOnly: true,
+          maxAge: 600,
+          path: "/reset-password",
+          sameSite: "lax",
+          secure: requestUrl.protocol === "https:",
+        });
+
+        return response;
+      }
+
       try {
         await ensureProfile(supabase, user);
-        return NextResponse.redirect(new URL(redirectAfterAuth(next), request.url));
+        return NextResponse.redirect(
+          new URL(redirectAfterAuth(next), request.url),
+        );
       } catch {
         return NextResponse.redirect(
           new URL("/login?error=callback", request.url),

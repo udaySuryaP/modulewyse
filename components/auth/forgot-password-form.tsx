@@ -19,6 +19,12 @@ function isValidEmail(value: string) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 }
 
+function passwordResetRedirectUrl() {
+  const url = new URL("/auth/callback", env.NEXT_PUBLIC_APP_URL);
+  url.searchParams.set("next", "/reset-password");
+  return url.toString();
+}
+
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [toast, setToast] = useState<AuthToast | null>(null);
@@ -61,9 +67,12 @@ export function ForgotPasswordForm() {
 
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/settings/account`,
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        normalizedEmail,
+        {
+          redirectTo: passwordResetRedirectUrl(),
+        },
+      );
 
       if (error) {
         setToast({
@@ -76,7 +85,7 @@ export function ForgotPasswordForm() {
 
       setToast({
         description:
-          "If an account exists for this email, a password reset link has been sent.",
+          "If an account exists for that email, a reset link has been sent. The link expires in 10 minutes.",
         priority: "success",
         title: "Check your email",
       });
@@ -103,27 +112,39 @@ export function ForgotPasswordForm() {
       ) : null}
 
       <form className="grid gap-4" noValidate onSubmit={handleSubmit}>
-      <Field label="Email">
-        <TextInput
-          autoComplete="email"
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="name@example.com"
-          required
-          type="text"
-          value={email}
-        />
-      </Field>
+        <div>
+          <h1 className="mw-heading-sm text-[var(--mw-ink)]">
+            Reset your password.
+          </h1>
+          <p className="mw-meta mt-[var(--mw-space-sm)]">
+            Enter your email and we&apos;ll send a secure password reset link.
+          </p>
+        </div>
 
-      <SubmitButton disabled={isSubmitting}>
-        {isSubmitting ? "Sending..." : "Send Reset Link"}
-      </SubmitButton>
+        <Field label="Email">
+          <TextInput
+            autoComplete="email"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="name@example.com"
+            required
+            type="text"
+            value={email}
+          />
+        </Field>
 
-      <p className="text-center text-[14px] text-[var(--mw-muted)]">
-        Remembered it?{" "}
-        <Link className="text-[var(--mw-ink)] underline-offset-4 hover:underline" href="/login">
-          Back to login
-        </Link>
-      </p>
+        <SubmitButton disabled={isSubmitting}>
+          {isSubmitting ? "Sending..." : "Send Reset Link"}
+        </SubmitButton>
+
+        <p className="text-center text-[14px] text-[var(--mw-muted)]">
+          Remembered it?{" "}
+          <Link
+            className="text-[var(--mw-ink)] underline-offset-4 hover:underline"
+            href="/login"
+          >
+            Back to login
+          </Link>
+        </p>
       </form>
     </>
   );

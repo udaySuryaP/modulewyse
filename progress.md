@@ -2,6 +2,41 @@
 
 This file is updated at the end of each working session.
 
+## 2026-05-29 - Forgot Password Recovery Flow
+
+### Completed
+- Implemented the forgot-password request flow with `supabase.auth.resetPasswordForEmail`.
+- Updated reset email redirects to use `NEXT_PUBLIC_APP_URL` with `/auth/callback?next=/reset-password`, avoiding hardcoded production or localhost URLs.
+- Added `/reset-password` with a dedicated reset-password form.
+- Added new-password and confirm-password validation:
+  - required fields
+  - minimum 8 characters
+  - matching confirmation
+- Updated `/auth/callback` so password recovery exchanges the Supabase code, redirects to `/reset-password`, and sets a short-lived recovery marker.
+- Added expired/invalid reset-link handling for `/reset-password` when there is no valid recovery marker/session.
+- Kept forgot-password success copy non-enumerating: users see the same success state regardless of whether an account exists.
+- Added `/reset-password` to public auth-flow routes without weakening protection for `/chat`, `/subjects`, `/library`, `/settings`, or nested settings pages.
+- Preserved RAG retrieval scope, source restrictions, rate limiting, Supabase data behavior, OpenAI behavior, and KTU 2024 Module 5 handling.
+- Ran validation:
+  - `npm install`
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Ran local route smoke checks for `/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/privacy`, `/terms`, and logged-out `/chat` redirect behavior.
+
+### Issues / Notes
+- Email link expiry is aligned to the current 10-minute Supabase Auth OTP/link expiry.
+- Full live email reset QA with a disposable inbox is still pending; local checks verified route rendering, public/protected routing, and invalid/no-session reset-link handling.
+- No GitHub/main merge was done.
+- No production deploy decision was made in this task; Vercel may create a branch preview after the push.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Run password reset QA on the `design-update` deployment with a disposable account.
+- After recovery QA passes, merge `design-update` only when approved.
+- Continue private beta monitoring.
+
 ## 2026-05-29 - KTU 2024 Module Count Rule Generalized
 
 ### Completed
