@@ -21,6 +21,7 @@ function isValidEmail(value: string) {
 
 function passwordResetRedirectUrl() {
   const url = new URL("/auth/callback", env.NEXT_PUBLIC_APP_URL);
+  url.searchParams.set("flow", "recovery");
   url.searchParams.set("next", "/reset-password");
   return url.toString();
 }

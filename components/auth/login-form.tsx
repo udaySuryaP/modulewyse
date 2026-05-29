@@ -32,6 +32,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error") === "callback";
+  const passwordUpdated = searchParams.get("password") === "updated";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [toast, setToast] = useState<AuthToast | null>(
@@ -41,6 +42,12 @@ export function LoginForm() {
           priority: "error",
           title: "Unable to complete sign in",
         }
+      : passwordUpdated
+        ? {
+            description: "Your password has been updated. Sign in with your new password.",
+            priority: "success",
+            title: "Password updated",
+          }
       : next
         ? {
             description: "Sign in to continue to the requested page.",

@@ -16,7 +16,7 @@ type AuthToast = {
   title: string;
 };
 
-type RecoveryState = "checking" | "ready" | "expired" | "updated";
+type RecoveryState = "checking" | "ready" | "expired";
 
 function friendlyUpdateError(message: string) {
   const lowerMessage = message.toLowerCase();
@@ -40,6 +40,7 @@ export function ResetPasswordForm({
   const router = useRouter();
   const [recoveryState, setRecoveryState] =
     useState<RecoveryState>("checking");
+  const [recoveryEmail, setRecoveryEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [toast, setToast] = useState<AuthToast | null>(null);
@@ -70,7 +71,13 @@ export function ResetPasswordForm({
           return;
         }
 
-        setRecoveryState(error || !user ? "expired" : "ready");
+        if (error || !user) {
+          setRecoveryState("expired");
+          return;
+        }
+
+        setRecoveryEmail(user.email ?? "");
+        setRecoveryState("ready");
       } catch {
         if (isMounted) {
           setRecoveryState("expired");
@@ -143,12 +150,12 @@ export function ResetPasswordForm({
       await supabase.auth.signOut();
       setPassword("");
       setConfirmPassword("");
-      setRecoveryState("updated");
       setToast({
         description: "Your password has been updated. Sign in again to continue.",
         priority: "success",
         title: "Password updated",
       });
+      router.replace("/login?password=updated");
       router.refresh();
     } catch {
       setToast({
@@ -200,36 +207,6 @@ export function ResetPasswordForm({
     );
   }
 
-  if (recoveryState === "updated") {
-    return (
-      <>
-        {toast ? (
-          <ToastNotice
-            description={toast.description}
-            onDismiss={() => setToast(null)}
-            priority={toast.priority}
-            title={toast.title}
-          />
-        ) : null}
-
-        <div className="grid gap-[var(--mw-space-md)] text-center">
-          <h1 className="mw-heading-sm text-[var(--mw-ink)]">
-            Password updated.
-          </h1>
-          <p className="mw-meta">
-            Use your new password to sign in to ModuleWyse.
-          </p>
-          <Link
-            className="mw-pill-primary inline-flex h-11 items-center justify-center px-[var(--mw-space-lg)]"
-            href="/login"
-          >
-            Back to sign in
-          </Link>
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       {toast ? (
@@ -248,6 +225,18 @@ export function ResetPasswordForm({
           </h1>
           <p className="mw-meta mt-[var(--mw-space-sm)]">
             Choose a new password for your ModuleWyse account.
+          </p>
+        </div>
+
+        <div className="mw-panel-muted grid gap-1 px-[var(--mw-space-md)] py-[var(--mw-space-sm)]">
+          <p className="mw-label text-[10px]">Recovery session</p>
+          <p className="truncate text-[14px] font-semibold leading-[1.4] text-[var(--mw-ink)]">
+            {recoveryEmail
+              ? `Updating password for ${recoveryEmail}`
+              : "Updating password for your ModuleWyse account"}
+          </p>
+          <p className="text-[12px] leading-[1.45] text-[var(--mw-muted)]">
+            Reset links expire in 10 minutes.
           </p>
         </div>
 
