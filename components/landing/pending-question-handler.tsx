@@ -26,7 +26,7 @@ export function PendingQuestionHandler() {
   }
 
   return (
-    <div className="border border-[var(--mw-hairline)] bg-white p-4">
+    <div className="mw-radius-card border border-[var(--mw-hairline)] bg-white p-4">
       <p className="mw-label">
         Pending question
       </p>

@@ -127,7 +127,7 @@ function DiagramBars() {
     <div className="grid h-24 grid-cols-4 gap-[var(--mw-space-xs)]">
       {[45, 72, 55, 88].map((height) => (
         <div
-          className="flex items-end border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]"
+          className="flex items-end overflow-hidden mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]"
           key={height}
         >
           <div
@@ -147,8 +147,8 @@ function DiagramLines() {
       <div className="h-px w-10/12 bg-[var(--mw-hairline)]" />
       <div className="h-px w-7/12 bg-[var(--mw-hairline)]" />
       <div className="flex gap-[var(--mw-space-xs)] pt-[var(--mw-space-sm)]">
-        <span className="h-7 flex-1 border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]" />
-        <span className="h-7 flex-1 border border-[var(--mw-hairline)] bg-[var(--mw-accent-blue-soft)]" />
+        <span className="h-7 flex-1 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-canvas-soft)]" />
+        <span className="h-7 flex-1 mw-radius-card border border-[var(--mw-hairline)] bg-[var(--mw-accent-blue-soft)]" />
       </div>
     </div>
   );
@@ -168,8 +168,9 @@ export default function HomePage() {
               <p className="mw-label text-[var(--mw-ink)]">
                 KTU focused academic intelligence
               </p>
-              <h1 className="mw-display-page mx-auto mt-[var(--mw-space-lg)] max-w-[900px] text-balance">
-                Syllabus-grounded AI exam prep.
+              <h1 className="mw-display-page mx-auto mt-[var(--mw-space-lg)] max-w-[900px] text-balance [font-size:clamp(2.15rem,9vw,var(--mw-type-display))]">
+                <span className="whitespace-nowrap">Syllabus-grounded</span>{" "}
+                AI exam prep.
               </h1>
               <p className="mx-auto mt-[var(--mw-space-lg)] max-w-[670px] text-[length:var(--mw-type-subtitle)] font-normal leading-[1.55] text-[var(--mw-body)]">
                 ModuleWyse turns reviewed academic notes into structured,
@@ -330,18 +331,18 @@ export default function HomePage() {
         <footer className="relative z-10 border-t border-[var(--mw-hairline)] bg-[var(--mw-canvas)]">
           <div className="mw-section grid gap-[var(--mw-space-xl)] py-[var(--mw-space-xl)] text-[length:var(--mw-type-link)] leading-[1.5] text-[var(--mw-body)] lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="mw-heading-sm text-[var(--mw-primary)]">ModuleWyse</p>
+              <p className="mw-heading-sm text-[var(--mw-ink)]">ModuleWyse</p>
               <p className="mt-[var(--mw-space-sm)] max-w-[560px]">
                 A private beta study workspace for source-grounded KTU exam
                 preparation. Not an official KTU service.
               </p>
             </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-2">
-              <p>(c) 2026 ModuleWyse / student beta</p>
-              <Link className="text-[var(--mw-primary)] hover:text-[var(--mw-primary-hover)]" href="/privacy">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[var(--mw-muted)]">
+              <p className="text-[var(--mw-body)]">(c) 2026 ModuleWyse / student beta</p>
+              <Link className="text-[var(--mw-ink)] transition-colors hover:text-[var(--mw-body)]" href="/privacy">
                 Privacy
               </Link>
-              <Link className="text-[var(--mw-primary)] hover:text-[var(--mw-primary-hover)]" href="/terms">
+              <Link className="text-[var(--mw-ink)] transition-colors hover:text-[var(--mw-body)]" href="/terms">
                 Terms
               </Link>
             </div>
