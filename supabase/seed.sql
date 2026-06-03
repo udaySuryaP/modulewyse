@@ -8,6 +8,7 @@ insert into public.subjects (
   short_name,
   code,
   semester,
+  scheme,
   status,
   description
 )
@@ -18,6 +19,7 @@ values
     'OOP',
     'PBCST304',
     4,
+    '2024',
     'available',
     'Covers classes, objects, inheritance, polymorphism, exception handling, and core OOP principles.'
   ),
@@ -27,6 +29,7 @@ values
     'DBMS',
     'TBD',
     null,
+    '2024',
     'beta',
     'Covers relational databases, SQL, normalization, transactions, and database design.'
   ),
@@ -36,6 +39,7 @@ values
     'OS',
     'TBD',
     null,
+    '2024',
     'coming-soon',
     'Covers process management, memory management, scheduling, synchronization, and file systems.'
   ),
@@ -45,6 +49,7 @@ values
     'CN',
     'TBD',
     null,
+    '2024',
     'coming-soon',
     'Covers network models, protocols, routing, TCP/UDP, IP addressing, and network security basics.'
   ),
@@ -54,6 +59,7 @@ values
     'DS',
     'TBD',
     null,
+    '2024',
     'coming-soon',
     'Covers arrays, linked lists, stacks, queues, trees, graphs, searching, and sorting.'
   )
@@ -63,6 +69,7 @@ set
   short_name = excluded.short_name,
   code = excluded.code,
   semester = excluded.semester,
+  scheme = excluded.scheme,
   status = excluded.status,
   description = excluded.description;
 

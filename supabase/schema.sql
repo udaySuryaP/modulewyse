@@ -107,6 +107,7 @@ create table if not exists public.subjects (
   short_name text not null,
   code text,
   semester integer,
+  scheme text not null default '2024',
   status text not null default 'draft',
   description text,
   created_at timestamptz not null default now(),
@@ -114,7 +115,9 @@ create table if not exists public.subjects (
   constraint subjects_status_check
     check (status in ('available', 'beta', 'coming-soon', 'draft')),
   constraint subjects_semester_check
-    check (semester is null or semester between 1 and 8)
+    check (semester is null or semester between 1 and 8),
+  constraint subjects_scheme_check
+    check (scheme ~ '^[0-9]{4}$')
 );
 
 create table if not exists public.modules (
@@ -255,6 +258,39 @@ create trigger modules_set_updated_at
 before update on public.modules
 for each row
 execute function public.set_updated_at();
+
+create or replace function public.prevent_ktu2024_outside_scheme_modules()
+returns trigger
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  subject_scheme text;
+begin
+  select scheme
+  into subject_scheme
+  from public.subjects
+  where id = new.subject_id;
+
+  if subject_scheme = '2024' and new.module_number >= 5 then
+    raise exception 'Module 5 is not part of the KTU 2024 scheme.'
+      using errcode = '23514';
+  end if;
+
+  return new;
+end;
+$$;
+
+revoke all on function public.prevent_ktu2024_outside_scheme_modules() from public;
+revoke all on function public.prevent_ktu2024_outside_scheme_modules() from anon;
+revoke all on function public.prevent_ktu2024_outside_scheme_modules() from authenticated;
+
+drop trigger if exists prevent_ktu2024_outside_scheme_modules on public.modules;
+create trigger prevent_ktu2024_outside_scheme_modules
+before insert or update of subject_id, module_number on public.modules
+for each row
+execute function public.prevent_ktu2024_outside_scheme_modules();
 
 drop trigger if exists topics_set_updated_at on public.topics;
 create trigger topics_set_updated_at

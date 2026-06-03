@@ -2,6 +2,84 @@
 
 This file is updated at the end of each working session.
 
+## 2026-06-03 - Module 5 Live Cleanup And Security Headers
+
+### Completed
+- Inspected live Supabase KTU 2024 Module 5 placeholder rows before cleanup.
+- Confirmed four placeholder rows existed for `cn`, `dbms`, `ds`, and `os`.
+- Confirmed those four Module 5 rows had zero dependent topics, content sources, content chunks, or previous-year questions.
+- Added migration `20260603070000_remove_ktu2024_module5_placeholders.sql`.
+- Applied live Supabase migration `remove_ktu2024_module5_placeholders`.
+- Removed the live KTU 2024 Module 5 placeholder rows.
+- Added `subjects.scheme` with default `2024` and updated seed/type/schema coverage.
+- Added a database trigger guard that rejects KTU 2024 modules with `module_number >= 5`.
+- Verified the trigger rejects a Module 5 insert with the scheme-wide fallback message.
+- Verified live KTU 2024 Module 5+ row count is now `0`.
+- Verified OOP/PBCST304 still has Modules 1-4.
+- Verified ready embedded PBCST304 note chunk counts remain unchanged: Module 1 = 107, Module 2 = 42, Module 3 = 29.
+- Added Next.js security headers in `next.config.ts`: CSP, frame protection, content-type sniffing protection, referrer policy, and permissions policy.
+- Verified the configured security headers locally from the built app on `/`.
+- Updated `docs/SECURITY_AUDIT_2026-06-03.md` with remediation results.
+- Ran `npm install`: passed.
+- Ran `npx tsc --noEmit`: passed.
+- Ran `npm run lint`: passed.
+- Ran `npm run build`: passed.
+- Ran `npm audit --audit-level=high`: passed for high severity.
+- Ran `npm run content:preview`: passed with 178 chunks and the known 310 warnings.
+- Ran `npm run questions:preview`: passed with 125 ready questions and 11 skipped.
+- Ran `npm run embeddings:status`: passed with 178/178 ready PBCST304 chunks embedded.
+
+### Issues / Notes
+- Module 5 is not part of the KTU 2024 scheme and now has both live-data cleanup and DB recurrence protection.
+- RAG retrieval scope remains unchanged: PBCST304 ready note chunks from Modules 1-3 only.
+- Module 4 review-state fallback, Module 5 outside-scheme fallback, previous-year-question exclusion, auth, rate limiting, OpenAI behavior, and RLS behavior were preserved.
+- Security headers are configured locally; production header verification requires deployment or merge through the approved release path.
+- `npm run retrieval:test` was attempted twice and failed before retrieval with `UND_ERR_SOCKET` / `fetch failed`; embedding status and live chunk counts remained healthy, so this is documented as a support-script network failure pending rerun.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Deploy `rag-quality` or merge through the approved release path, then verify production security headers.
+
+## 2026-06-03 - Security Infrastructure And Production Risk Audit
+
+### Completed
+- Ran a full security, infrastructure, repo cleanliness, and production risk audit on branch `rag-quality`.
+- Created `docs/SECURITY_AUDIT_2026-06-03.md`.
+- Verified local branch state, ignored files, tracked secret references, and repo cleanliness.
+- Verified production public routes return 200 and protected routes redirect logged-out users to `/login?next=...`.
+- Verified logged-out `/api/chat/answer` and `/api/feedback` return 401.
+- Reviewed Vercel production deployment metadata and build logs.
+- Reviewed Supabase project health, migrations, RLS, policies, grants, functions, extensions, advisors, logs, storage, and content metadata.
+- Confirmed all public Supabase tables inspected have RLS enabled.
+- Confirmed no `anon` table grants were found for public tables.
+- Confirmed RAG retrieval remains server-side and restricted to ready PBCST304 note chunks from Modules 1-3.
+- Ran validation:
+  - `npm install`
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+- Ran audit/support checks:
+  - `npm audit`
+  - `npm outdated`
+  - `npm run content:preview`
+  - `npm run questions:preview`
+  - `npm run embeddings:status`
+  - `npm run retrieval:test`
+
+### Issues / Notes
+- Critical product/data hygiene issue found: live Supabase still contains Module 5 placeholder rows for non-OOP/TBD KTU subjects, even though Module 5 is not part of the KTU 2024 scheme.
+- Current app code filters KTU 2024 subject/library modules to Modules 1-4 and RAG does not use Module 5 rows, but the live data should still be cleaned.
+- Production responses have HSTS but are missing CSP, frame, content-type sniffing, referrer, and permissions-policy headers.
+- Supabase security advisors report `vector` installed in `public` and leaked-password protection disabled.
+- Existing moderate PostCSS/Next advisory remains; high-severity audit still passes.
+- Vercel production deployment is ready, but deployment metadata reports the deployed commit as unverified.
+- GitHub and Vercel CLI tools were not available locally, so branch protection, secret scanning, and Vercel env names were not directly verified through CLI.
+- No code, schema, production data, branch merge, deploy, or release change was made in this audit.
+
+### Next
+- Fix live KTU 2024 Module 5 placeholder rows and add production security headers.
+
 ## 2026-06-03 - Dataset Readiness And Content QA Guides
 
 ### Completed

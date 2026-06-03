@@ -9,6 +9,7 @@ export type Subject = {
   short_name: string;
   code: string | null;
   semester: number | null;
+  scheme: string;
   status: SubjectStatus;
   description: string | null;
   created_at: string;
