@@ -4,6 +4,8 @@
 
 ModuleWyse uses developer/admin-curated academic material. Students do not upload notes. The content foundation should stay reviewed, syllabus-grounded, and safe to ingest later.
 
+Use this guide for writing individual content files. Use `docs/DATASET_PREPARATION_GUIDE.md` and `docs/DATASET_QA_CHECKLIST.md` for full subject-level dataset preparation, QA, ingestion readiness, and RAG testset planning.
+
 ## OOP-First Plan
 
 Start with Object Oriented Programming for PBCST304 under the KTU 2024 scheme. KTU 2024 scheme subjects use Modules 1-4. PBCST304 Modules 1, 2, and 3 are ready. Module 4 should remain draft/review until cleaned and checked. Module 5 is not part of the KTU 2024 scheme and should not be created, required, or ingested. If a Module 5 file appears accidentally, validation should fail because it is outside the scheme.
@@ -58,6 +60,25 @@ Required metadata:
 - Do not mark content as `ready` until manually reviewed.
 - Keep Module 4 as `status: draft` and `needs_review: true` until reviewed.
 - Do not create or ingest Module 5 because it is not part of the KTU 2024 scheme.
+- Keep previous-year questions out of notes files; stage them separately for Library-only workflows.
+- Only reviewed `ready` notes can become RAG answer sources.
+
+## Dataset Readiness References
+
+Before preparing a new subject dataset, read:
+
+- `docs/DATASET_PREPARATION_GUIDE.md`
+- `docs/DATASET_QA_CHECKLIST.md`
+
+Those docs define:
+
+- the expected folder structure for new subjects
+- content quality rules for RAG-ready notes
+- preparation statuses: `draft`, `review`, `ready`, `rejected`, and `outside-scheme`
+- source type rules for notes, syllabus, previous-year questions, textbook references, and admin notes
+- KTU 2024 module rules
+- dataset and ingestion readiness checklists
+- a reusable RAG testset template
 
 ## Chunking Guidelines
 

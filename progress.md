@@ -2,6 +2,35 @@
 
 This file is updated at the end of each working session.
 
+## 2026-06-03 - Dataset Readiness And Content QA Guides
+
+### Completed
+- Created `docs/DATASET_PREPARATION_GUIDE.md`.
+- Created `docs/DATASET_QA_CHECKLIST.md`.
+- Documented the expected subject dataset folder structure for future content preparation.
+- Added content quality rules for RAG-ready academic notes.
+- Defined the preparation status system: `draft`, `review`, `ready`, `rejected`, and `outside-scheme`.
+- Documented source type rules for notes, syllabus, previous-year questions, textbook references, and admin notes.
+- Reconfirmed the KTU 2024 module rule: Modules 1-4 are valid, and Module 5 is not part of the KTU 2024 scheme.
+- Added dataset readiness and ingestion readiness checklists.
+- Added a reusable RAG testset template for future subjects.
+- Updated `docs/CONTENT_AUTHORING_GUIDE.md` to point authors to the new dataset preparation and QA docs.
+- Preserved RAG retrieval logic, Supabase schema, auth, rate limiting, UI, ingestion scripts, content files, and embeddings.
+- Ran validation:
+  - `npx tsc --noEmit`
+  - `npm run lint`
+  - `npm run build`
+  - `npm audit --audit-level=high`
+
+### Issues / Notes
+- No new datasets were ingested.
+- No embeddings were generated.
+- No unverified academic content was marked ready.
+- Existing moderate PostCSS/Next advisory remains; no forced audit fix was run.
+
+### Next
+- Use the new dataset preparation and QA checklists before adding or ingesting the next subject/module dataset.
+
 ## 2026-05-30 - Recent Chats Sidebar Height Fix
 
 ### Completed
