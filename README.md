@@ -6,7 +6,9 @@ A syllabus-aware AI study workspace for KTU students, built around reviewed acad
 
 ## Product Status
 
-ModuleWyse is under active private development. The current content rollout begins with the KTU 2024 scheme and PBCST304 — Object Oriented Programming.
+ModuleWyse is under active development. The current content rollout begins with the KTU 2024 scheme and PBCST304 — Object Oriented Programming.
+
+The source is publicly viewable for portfolio and evaluation purposes, but the project is not currently accepting public contributions and is not distributed under an open-source license.
 
 | Content | Status |
 | --- | --- |
