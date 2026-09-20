@@ -28,6 +28,15 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Validate academic content
+        run: npm run content:preview
+
+      - name: Validate previous-year questions
+        run: npm run questions:preview
+
       - name: Build
         env:
           NEXT_PUBLIC_APP_URL: http://localhost:3000

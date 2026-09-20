@@ -173,4 +173,4 @@ The production application is hosted on Vercel. Configure secrets in the Vercel 
 
 ## License
 
-Private and proprietary. Not open source.
+**Source-available and proprietary. No open-source license is granted.**
